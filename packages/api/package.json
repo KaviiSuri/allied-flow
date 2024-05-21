@@ -1,0 +1,38 @@
+{
+  "name": "@repo/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf .turbo node_modules",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.43.2",
+    "@trpc/server": "11.0.0-rc.364",
+    "@repo/db": "workspace:*",
+    "@repo/validators": "workspace:*",
+    "superjson": "2.2.1",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/prettier-config": "workspace:*",
+    "@repo/tsconfig": "workspace:*",
+    "eslint": "^9.2.0",
+    "prettier": "^3.2.5",
+    "typescript": "^5.4.5"
+  },
+  "prettier": "@repo/prettier-config"
+}

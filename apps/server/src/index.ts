@@ -1,8 +1,6 @@
 import * as trpcExpress from "@trpc/server/adapters/express";
 import express from "express";
-
 import { appRouter } from "@repo/api";
-
 import { env } from "./config/env.js";
 
 async function start() {
@@ -10,6 +8,8 @@ async function start() {
 
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
+
+
 
   app.use(
     "/trpc",

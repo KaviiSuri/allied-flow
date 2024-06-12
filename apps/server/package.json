@@ -1,0 +1,36 @@
+{
+  "name": "@repo/ts-rest-test",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "./dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node --inspect ./dist/index.js",
+    "dev": "tsx watch ./src/index.ts",
+    "check": "tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@repo/api": "workspace:*",
+    "@t3-oss/env-core": "^0.10.1",
+    "@t3-oss/env-nextjs": "^0.10.1",
+    "@trpc/server": "11.0.0-rc.364",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "swagger-ui-express": "^5.0.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/tsconfig": "workspace:*",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.12.9",
+    "@types/swagger-ui-express": "^4.1.6",
+    "eslint": "^9.2.0",
+    "tsx": "^4.7.2",
+    "typescript": "^5.4.5"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "openapi": "3.0.2",
+  "paths": {
+    "/health/": {
+      "get": {
+        "summary": "Check health of the server",
+        "tags": [
+          "health"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "200"
+          }
+        }
+      }
+    }
+  },
+  "info": {
+    "title": "My API",
+    "version": "1.0.0",
+    "description": "My API description"
+  }
+}

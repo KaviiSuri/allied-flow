@@ -1,8 +1,8 @@
-import { expressRouter } from "./router/routes.js";
+import { authRouter } from "./router/auth.js";
 import { createTRPCRouter } from "./trpc";
 
 export const appRouter = createTRPCRouter({
-  auth: expressRouter,
+  auth: authRouter,
 });
 
 // export type definition of API

@@ -25,6 +25,17 @@ export default function Index() {
           </Text>
         </View>
 
+        <View className="flex flex-col space-y-2">
+          <Text className="text-foreground font-bold">
+            Supbase URL: {process.env.EXPO_PUBLIC_SUPABASE_URL}
+          </Text>
+        </View>
+
+        <View className="flex flex-col space-y-2">
+          <Text className="text-foreground font-bold">
+            Supbase Key: {process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY}
+          </Text>
+        </View>
       </View>
     </SafeAreaView>
   );

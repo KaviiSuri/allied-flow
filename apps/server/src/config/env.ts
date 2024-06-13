@@ -1,5 +1,8 @@
 /* eslint-disable no-restricted-properties */
+import { dotenvLoad } from "dotenv-mono";
 import { z } from "zod";
+
+dotenvLoad();
 
 // Define the Zod schema for the environment variables
 const envSchema = z.object({
@@ -7,7 +10,8 @@ const envSchema = z.object({
     .enum(["development", "production", "test"])
     .default("development"),
   PORT: z.number().default(5000),
-  // Add more environment variables as needed
+  SUPABASE_URL: z.string().url(),
+  SUPABASE_SERVICE_ROLE: z.string(),
 });
 
 // Parse and validate the environment variables

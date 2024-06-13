@@ -1,7 +1,29 @@
 import * as trpcExpress from "@trpc/server/adapters/express";
 import express from "express";
-import { appRouter } from "@repo/api";
+
+import { appRouter, createTRPCContext } from "@repo/api";
+
 import { env } from "./config/env.js";
+import { supabaseServerClient } from "./services/supabase.js";
+
+const createContext = async ({
+  req,
+  res,
+}: trpcExpress.CreateExpressContextOptions) => {
+  const supabase = supabaseServerClient();
+  let user = null;
+  try {
+    const { data } = await supabase.auth.getUser();
+    user = data;
+  } catch {
+    /* empty */
+  }
+
+  return createTRPCContext({
+    headers: req.headers,
+    user,
+  });
+};
 
 async function start() {
   const app = express();
@@ -9,12 +31,11 @@ async function start() {
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
 
-
-
   app.use(
     "/trpc",
     trpcExpress.createExpressMiddleware({
       router: appRouter,
+      createContext,
     }),
   );
 

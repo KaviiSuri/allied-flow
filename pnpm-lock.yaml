@@ -165,6 +165,9 @@ importers:
 
   apps/server:
     dependencies:
+      '@logto/js':
+        specifier: ^4.1.2
+        version: 4.1.2
       '@repo/api':
         specifier: workspace:*
         version: link:../../packages/api
@@ -189,6 +192,9 @@ importers:
       express:
         specifier: ^4.19.2
         version: 4.19.2
+      jose:
+        specifier: ^5.4.0
+        version: 5.4.0
       swagger-ui-express:
         specifier: ^5.0.0
         version: 5.0.1(express@4.19.2)
@@ -226,6 +232,9 @@ importers:
 
   packages/api:
     dependencies:
+      '@logto/js':
+        specifier: ^4.1.2
+        version: 4.1.2
       '@repo/db':
         specifier: workspace:*
         version: link:../db
@@ -3294,7 +3303,7 @@ packages:
   /@logto/client@2.4.0:
     resolution: {integrity: sha512-gdswqI5yuov7H/8SU2GoFDKRrlwTbhhRleq2Pnf5Yphq+Kvggu7j7EsixGE97QzomPfe2x8eeWtWoHyI96Q5qA==}
     dependencies:
-      '@logto/js': 4.0.0
+      '@logto/js': 4.1.2
       '@silverhand/essentials': 2.9.1
       camelcase-keys: 7.0.2
       jose: 5.4.0
@@ -3302,6 +3311,13 @@ packages:
 
   /@logto/js@4.0.0:
     resolution: {integrity: sha512-eKLS0HqFjQyf7imKTf2a7FUmMuNeebxFZ2b5A/1qUWSyO+BIxSu0XYI4JZ9qjtWNPvlGmL+jPOkIUuWQ9DZYZw==}
+    dependencies:
+      '@silverhand/essentials': 2.9.1
+      camelcase-keys: 7.0.2
+    dev: false
+
+  /@logto/js@4.1.2:
+    resolution: {integrity: sha512-TByf71HnjISJwdQb9qpEPy8A91ApHjvV1KQBk+tGSvscbO+uU/QMwNPAWdPtoM9Hd8aBYcp6LW47nQNdnYGMiA==}
     dependencies:
       '@silverhand/essentials': 2.9.1
       camelcase-keys: 7.0.2

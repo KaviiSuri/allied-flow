@@ -6,6 +6,7 @@ import { createTRPCReact } from "@trpc/react-query";
 import superjson from "superjson";
 
 import type { AppRouter } from "@repo/api";
+import { useLogto } from "@logto/rn";
 
 /**
  * A set of typesafe hooks for consuming your API.
@@ -41,6 +42,7 @@ const getBaseUrl = () => {
  */
 export function TRPCProvider(props: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient());
+  const { getAccessToken } = useLogto();
   const [trpcClient] = useState(() =>
     api.createClient({
       links: [
@@ -53,9 +55,10 @@ export function TRPCProvider(props: { children: React.ReactNode }) {
         httpBatchLink({
           transformer: superjson,
           url: `${getBaseUrl()}/api/trpc`,
-          headers() {
+          headers: async function() {
             const headers = new Map<string, string>();
             headers.set("x-trpc-source", "expo-react");
+            headers.set("authorization", `Bearer ${await getAccessToken()}`);
             return Object.fromEntries(headers);
           },
         }),

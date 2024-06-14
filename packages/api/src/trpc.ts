@@ -6,7 +6,7 @@
  * tl;dr - this is where all the tRPC server stuff is created and plugged in.
  * The pieces you will need to use are documented accordingly near the end
  */
-import type { User } from "@supabase/supabase-js";
+import type { IdTokenClaims } from "@logto/js";
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
@@ -27,15 +27,15 @@ import { db } from "@repo/db/client";
  */
 export const createTRPCContext = (opts: {
   headers: Headers;
-  user: User | null;
+  claims: IdTokenClaims | null;
 }) => {
-  const user = opts.user;
+  const claims = opts.claims;
   const source = opts.headers.get("x-trpc-source") ?? "unknown";
 
-  console.log(">>> tRPC Request from", source, "by", user);
+  console.log(">>> tRPC Request from", source, "by", claims);
 
   return {
-    user,
+    claims,
     db,
   };
 };
@@ -94,13 +94,13 @@ export const publicProcedure = t.procedure;
  * @see https://trpc.io/docs/procedures
  */
 export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
-  if (!ctx.user) {
+  if (!ctx.claims) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
   return next({
     ctx: {
       // infers the `session` as non-nullable
-      user: { ...ctx.user },
+      claims: ctx.claims,
     },
   });
 });

@@ -4,6 +4,7 @@ import { Stack } from "expo-router";
 import type { IdTokenClaims } from "@logto/rn";
 import { useLogto } from "@logto/rn";
 import { useEffect, useState } from "react";
+import { api } from "~/utils/api";
 
 
 export default function Index() {
@@ -13,10 +14,13 @@ export default function Index() {
     if (isAuthenticated) {
       getIdTokenClaims().then((claims) => {
         setUser(claims);
-        console.log(claims, isAuthenticated);
       }).catch(console.error);
     }
   }, [isAuthenticated, getIdTokenClaims]);
+
+  const { data: serverUser, error, isLoading } = api.auth.getSession.useQuery(undefined, {
+    enabled: isAuthenticated,
+  });
 
   return (
     <SafeAreaView className="bg-background">
@@ -28,6 +32,15 @@ export default function Index() {
         <Text className="text-center text-white mt-4">
           {isAuthenticated ? `Hello ${user?.email}` : "Please sign in to continue"}
         </Text>
+
+        {isAuthenticated && (
+          <Text className="text-center text-white mt-4">
+            <Text className="font-bold">Server User:</Text>
+            {isLoading && <Text>Loading...</Text>}
+            {error && <Text>Error: {error.message}</Text>}
+            {serverUser && <Text>{JSON.stringify(serverUser)}</Text>}
+          </Text>
+        )}
 
         <Pressable
           className="bg-primary text-white p-2 rounded-md mt-4"

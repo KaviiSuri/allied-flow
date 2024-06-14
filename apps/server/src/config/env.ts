@@ -10,8 +10,8 @@ const envSchema = z.object({
     .enum(["development", "production", "test"])
     .default("development"),
   PORT: z.number().default(5000),
-  SUPABASE_URL: z.string().url(),
-  SUPABASE_SERVICE_ROLE: z.string(),
+  LOGTO_ENDPOINT: z.string(),
+  LOGTO_AUDIENCE: z.string(),
 });
 
 // Parse and validate the environment variables

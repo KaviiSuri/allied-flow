@@ -4,24 +4,23 @@ import express from "express";
 import { appRouter, createTRPCContext } from "@repo/api";
 
 import { env } from "./config/env.js";
-import { supabaseServerClient } from "./services/supabase.js";
+import { extractClaimsFromHeader } from "./services/auth/auth.js";
 
 const createContext = async ({
   req,
   res,
 }: trpcExpress.CreateExpressContextOptions) => {
-  const supabase = supabaseServerClient();
-  let user = null;
+  let claims = null;
   try {
-    const { data } = await supabase.auth.getUser();
-    user = data;
+    const payload = await extractClaimsFromHeader(req.headers);
+    claims = payload;
   } catch {
     /* empty */
   }
 
   return createTRPCContext({
     headers: req.headers,
-    user,
+    claims,
   });
 };
 

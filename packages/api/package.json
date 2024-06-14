@@ -19,10 +19,10 @@
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.43.2",
-    "@trpc/server": "11.0.0-rc.364",
+    "@logto/js": "^4.1.2",
     "@repo/db": "workspace:*",
     "@repo/validators": "workspace:*",
+    "@trpc/server": "11.0.0-rc.364",
     "superjson": "2.2.1",
     "zod": "^3.23.8"
   },

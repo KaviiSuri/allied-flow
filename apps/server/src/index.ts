@@ -1,15 +1,18 @@
 import * as trpcExpress from "@trpc/server/adapters/express";
 import express from "express";
+import { withLogto } from '@logto/express';
 
 import { appRouter, createTRPCContext } from "@repo/api";
 
 import { env } from "./config/env.js";
 import { supabaseServerClient } from "./services/supabase.js";
+import { logtoServiceConfig } from "./services/logtoService.js";
 
 const createContext = async ({
   req,
   res,
 }: trpcExpress.CreateExpressContextOptions) => {
+
   const supabase = supabaseServerClient();
   let user = null;
   try {
@@ -18,6 +21,8 @@ const createContext = async ({
   } catch {
     /* empty */
   }
+
+  user = req.user.userInfo;
 
   return createTRPCContext({
     headers: req.headers,
@@ -30,9 +35,12 @@ async function start() {
 
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
+  app.use(
+    withLogto(logtoServiceConfig)
+  )
 
   app.use(
-    "/trpc",
+    "/api/trpc",
     trpcExpress.createExpressMiddleware({
       router: appRouter,
       createContext,

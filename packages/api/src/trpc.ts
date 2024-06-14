@@ -104,3 +104,16 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
     },
   });
 });
+
+export const logtoProtectedProcedure = t.procedure.use(({ ctx, next }) => {
+  if (!ctx.user.isAuthenticated) {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+  return next({
+    ctx: {
+      // infers the `session` as non-nullable
+      user: { ...ctx.user },
+    },
+  });
+});
+

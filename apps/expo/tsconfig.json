@@ -14,7 +14,8 @@
     "types": [
       "nativewind/types"
     ],
-    "checkJs": false
+    "checkJs": false,
+    "esModuleInterop": true
   },
   "include": [
     "src",

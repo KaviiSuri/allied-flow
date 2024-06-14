@@ -1,41 +1,42 @@
 import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack } from "expo-router";
+import type { IdTokenClaims } from "@logto/rn";
+import { useLogto } from "@logto/rn";
+import { useEffect, useState } from "react";
 
 
 export default function Index() {
+  const { signIn, signOut, isAuthenticated, getIdTokenClaims } = useLogto();
+  const [user, setUser] = useState<IdTokenClaims | null>(null);
+  useEffect(() => {
+    if (isAuthenticated) {
+      getIdTokenClaims().then((claims) => {
+        setUser(claims);
+        console.log(claims, isAuthenticated);
+      }).catch(console.error);
+    }
+  }, [isAuthenticated, getIdTokenClaims]);
+
   return (
-    <SafeAreaView className=" bg-background">
+    <SafeAreaView className="bg-background">
       {/* Changes page title visible on the header */}
       <Stack.Screen options={{ title: "Home Page" }} />
       <View className="h-full w-full bg-background p-4">
-        <Text className="pb-2 text-center text-5xl font-bold text-foreground">
-          Create <Text className="text-primary">T3</Text> Turbo
+        <Text className="text-2xl font-bold text-center text-white">Welcome to Allied Flow</Text>
+
+        <Text className="text-center text-white mt-4">
+          {isAuthenticated ? `Hello ${user?.email}` : "Please sign in to continue"}
         </Text>
 
         <Pressable
-          className="flex items-center rounded-lg bg-primary p-2"
+          className="bg-primary text-white p-2 rounded-md mt-4"
+          onPress={() => (isAuthenticated ? signOut() : signIn("io.allied-flow://callback"))}
         >
-          <Text className="text-foreground"> Refresh posts</Text>
+          <Text className="text-white text-center">
+            {isAuthenticated ? "Sign Out" : "Sign In"}
+          </Text>
         </Pressable>
-
-        <View className="py-2">
-          <Text className="font-semibold italic text-primary">
-            Press on a post
-          </Text>
-        </View>
-
-        <View className="flex flex-col space-y-2">
-          <Text className="text-foreground font-bold">
-            Supbase URL: {process.env.EXPO_PUBLIC_SUPABASE_URL}
-          </Text>
-        </View>
-
-        <View className="flex flex-col space-y-2">
-          <Text className="text-foreground font-bold">
-            Supbase Key: {process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY}
-          </Text>
-        </View>
       </View>
     </SafeAreaView>
   );

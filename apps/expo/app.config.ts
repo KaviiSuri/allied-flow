@@ -1,10 +1,11 @@
+import type { LogtoConfig } from "@logto/rn";
 import type { ConfigContext, ExpoConfig } from "expo/config";
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
-  name: "expo",
-  slug: "expo",
-  scheme: "expo",
+  name: "allied-flow",
+  slug: "allied-flow",
+  scheme: "io.allied-flow://",
   version: "0.1.0",
   orientation: "portrait",
   icon: "./assets/icon.png",
@@ -34,9 +35,17 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   //     projectId: "your-eas-project-id",
   //   },
   // },
+  extra: {
+    logtoConfig: {
+      endpoint: "https://qnd1sc.logto.app/",
+      appId: "1uxzjtcfyjxs5ecwebhu7",
+      resources: ["https://api.allied-flow.com"],
+      scopes: ["email", "profile"],
+    } satisfies LogtoConfig,
+  },
   experiments: {
     tsconfigPaths: true,
     typedRoutes: true,
   },
-  plugins: ["expo-router"],
+  plugins: ["expo-router", "expo-secure-store"],
 });

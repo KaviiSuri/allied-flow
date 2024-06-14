@@ -29,8 +29,5 @@
     "turbo": "^1.13.3",
     "typescript": "^5.4.5"
   },
-  "prettier": "@repo/prettier-config",
-  "dependencies": {
-    "sst": "ion"
-  }
+  "prettier": "@repo/prettier-config"
 }

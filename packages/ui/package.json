@@ -34,16 +34,16 @@
     "@repo/prettier-config": "workspace:*",
     "@repo/tailwind-config": "workspace:*",
     "@repo/tsconfig": "workspace:*",
-    "@types/react": "^18.3.2",
+    "@types/react": "^18.2.0",
     "eslint": "^9.2.0",
     "prettier": "^3.2.5",
-    "react": "18.3.1",
+    "react": "18.2.0",
     "tailwindcss": "^3.4.3",
     "typescript": "^5.4.5",
     "zod": "^3.23.8"
   },
   "peerDependencies": {
-    "react": "18.3.1",
+    "react": "18.2.0",
     "zod": "^3.23.8"
   },
   "prettier": "@repo/prettier-config"

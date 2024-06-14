@@ -1,4 +1,5 @@
 import "@bacons/text-decoder/install";
+import { LogtoProvider, LogtoConfig } from '@logto/rn';
 
 import Constants from "expo-constants";
 import { Stack } from "expo-router";
@@ -14,22 +15,27 @@ import "../styles.css";
 export default function RootLayout() {
   const { colorScheme } = useColorScheme();
   return (
-    <TRPCProvider>
-      {/*
+    <LogtoProvider
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      config={Constants.expoConfig?.extra?.logtoConfig as LogtoConfig}
+    >
+      <TRPCProvider>
+        {/*
           The Stack component displays the current page.
           It also allows you to configure your screens 
         */}
-      <Stack
-        screenOptions={{
-          headerStyle: {
-            backgroundColor: "#f472b6",
-          },
-          contentStyle: {
-            backgroundColor: colorScheme == "dark" ? "#09090B" : "#FFFFFF",
-          },
-        }}
-      />
-      <StatusBar />
-    </TRPCProvider>
+        <Stack
+          screenOptions={{
+            headerStyle: {
+              backgroundColor: "#f472b6",
+            },
+            contentStyle: {
+              backgroundColor: colorScheme == "dark" ? "#09090B" : "#FFFFFF",
+            },
+          }}
+        />
+        <StatusBar />
+      </TRPCProvider>
+    </LogtoProvider>
   );
 }

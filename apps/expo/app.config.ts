@@ -5,7 +5,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: "allied-flow",
   slug: "allied-flow",
-  scheme: "io.allied-flow://",
+  scheme: "io.allied-flow",
   version: "0.1.0",
   orientation: "portrait",
   icon: "./assets/icon.png",
@@ -17,6 +17,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   updates: {
     fallbackToCacheTimeout: 0,
+    url: "https://u.expo.dev/0aaaf26f-31c5-4b15-8019-c50ec1e4d772",
+  },
+  runtimeVersion: {
+    policy: "appVersion",
   },
   assetBundlePatterns: ["**/*"],
   ios: {
@@ -42,6 +46,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       resources: ["https://api.allied-flow.com"],
       scopes: ["email", "profile"],
     } satisfies LogtoConfig,
+    eas: {
+      projectId: "0aaaf26f-31c5-4b15-8019-c50ec1e4d772",
+    },
   },
   experiments: {
     tsconfigPaths: true,

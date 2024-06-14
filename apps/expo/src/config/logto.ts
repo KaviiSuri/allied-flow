@@ -14,7 +14,7 @@ const redirectUri = Platform.select({
   android: "io.allied-flow://callback",
   // @ts-expect-error web is not defined in Platform
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  web: `${window.location.origin}/callback`,
+  web: `${window?.location?.origin}/callback`,
 });
 
 export const logtoService = {

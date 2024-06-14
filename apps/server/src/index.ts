@@ -1,4 +1,5 @@
 import * as trpcExpress from "@trpc/server/adapters/express";
+import cors from "cors";
 import express from "express";
 
 import { appRouter, createTRPCContext } from "@repo/api";
@@ -30,6 +31,7 @@ async function start() {
 
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
+  app.use(cors());
 
   app.use(
     "/trpc",

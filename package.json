@@ -2,7 +2,7 @@
   "name": "create-t3-turbo",
   "private": true,
   "engines": {
-    "node": "\u003e=20.12.0"
+    "node": ">=20.12.0"
   },
   "packageManager": "pnpm@9.1.0",
   "scripts": {
@@ -26,7 +26,7 @@
     "@turbo/gen": "^1.13.3",
     "@types/aws-lambda": "8.10.138",
     "prettier": "^3.2.5",
-    "turbo": "^1.13.3",
+    "turbo": "^2.0.4",
     "typescript": "^5.4.5"
   },
   "prettier": "@repo/prettier-config"

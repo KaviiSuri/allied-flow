@@ -5,6 +5,7 @@ import type { IdTokenClaims } from "@logto/rn";
 import { useLogto } from "@logto/rn";
 import { useEffect, useState } from "react";
 import { api } from "~/utils/api";
+import { logtoService } from "~/config/logto";
 
 
 export default function Index() {
@@ -44,7 +45,7 @@ export default function Index() {
 
         <Pressable
           className="bg-primary text-white p-2 rounded-md mt-4"
-          onPress={() => (isAuthenticated ? signOut() : signIn("io.allied-flow://callback"))}
+          onPress={() => (isAuthenticated ? signOut() : signIn(logtoService.redirectUri))}
         >
           <Text className="text-white text-center">
             {isAuthenticated ? "Sign Out" : "Sign In"}

@@ -9,6 +9,7 @@ import { useColorScheme } from "nativewind";
 import { TRPCProvider } from "~/utils/api";
 
 import "../styles.css";
+import { logtoService } from "~/config/logto";
 
 // This is the main layout of the app
 // It wraps your pages with the providers they need
@@ -17,7 +18,7 @@ export default function RootLayout() {
   return (
     <LogtoProvider
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      config={Constants.expoConfig?.extra?.logtoConfig as LogtoConfig}
+      config={logtoService.config}
     >
       <TRPCProvider>
         {/*

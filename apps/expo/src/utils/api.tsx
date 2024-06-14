@@ -7,6 +7,7 @@ import superjson from "superjson";
 
 import type { AppRouter } from "@repo/api";
 import { useLogto } from "@logto/rn";
+import { logtoService } from "~/config/logto";
 
 /**
  * A set of typesafe hooks for consuming your API.
@@ -58,8 +59,7 @@ export function TRPCProvider(props: { children: React.ReactNode }) {
           headers: async function() {
             const headers = new Map<string, string>();
             headers.set("x-trpc-source", "expo-react");
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
-            const token = `Bearer ${await getAccessToken(Constants.expoConfig?.extra?.logtoConfig.resources[0])}`;
+            const token = `Bearer ${await getAccessToken(logtoService.config.resources[0])}`;
             headers.set("authorization", token);
             return Object.fromEntries(headers);
           },

@@ -14,8 +14,9 @@ const createContext = async ({
   try {
     const payload = await extractClaimsFromHeader(req.headers);
     claims = payload;
-  } catch {
+  } catch (error) {
     /* empty */
+    console.error(">>> Error extracting claims", error);
   }
 
   return createTRPCContext({

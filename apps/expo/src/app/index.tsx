@@ -18,7 +18,7 @@ export default function Index() {
     }
   }, [isAuthenticated, getIdTokenClaims]);
 
-  const { data: serverUser, error, isLoading } = api.auth.getSession.useQuery(undefined, {
+  const { data: serverUser, error, isLoading, refetch, isRefetching } = api.auth.getSession.useQuery(undefined, {
     enabled: isAuthenticated,
   });
 
@@ -36,7 +36,7 @@ export default function Index() {
         {isAuthenticated && (
           <Text className="text-center text-white mt-4">
             <Text className="font-bold">Server User:</Text>
-            {isLoading && <Text>Loading...</Text>}
+            {(isLoading || isRefetching) && <Text>Loading...</Text>}
             {error && <Text>Error: {error.message}</Text>}
             {serverUser && <Text>{JSON.stringify(serverUser)}</Text>}
           </Text>
@@ -48,6 +48,15 @@ export default function Index() {
         >
           <Text className="text-white text-center">
             {isAuthenticated ? "Sign Out" : "Sign In"}
+          </Text>
+        </Pressable>
+
+        <Pressable
+          className="bg-primary text-white p-2 rounded-md mt-4"
+          onPress={() => refetch()}
+        >
+          <Text className="text-white text-center">
+            Refetch
           </Text>
         </Pressable>
       </View>

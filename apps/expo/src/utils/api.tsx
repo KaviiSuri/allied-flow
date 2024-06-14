@@ -54,11 +54,13 @@ export function TRPCProvider(props: { children: React.ReactNode }) {
         }),
         httpBatchLink({
           transformer: superjson,
-          url: `${getBaseUrl()}/api/trpc`,
+          url: `${getBaseUrl()}/trpc`,
           headers: async function() {
             const headers = new Map<string, string>();
             headers.set("x-trpc-source", "expo-react");
-            headers.set("authorization", `Bearer ${await getAccessToken()}`);
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
+            const token = `Bearer ${await getAccessToken(Constants.expoConfig?.extra?.logtoConfig.resources[0])}`;
+            headers.set("authorization", token);
             return Object.fromEntries(headers);
           },
         }),

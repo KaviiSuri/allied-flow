@@ -8,6 +8,7 @@
  */
 import type { IdTokenClaims } from "@logto/js";
 import { initTRPC, TRPCError } from "@trpc/server";
+import { IncomingMessageWithBody } from "@trpc/server/adapters/node-http";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
@@ -26,11 +27,11 @@ import { db } from "@repo/db/client";
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = (opts: {
-  headers: Headers;
+  headers: IncomingMessageWithBody["headers"];
   claims: IdTokenClaims | null;
 }) => {
   const claims = opts.claims;
-  const source = opts.headers.get("x-trpc-source") ?? "unknown";
+  const source = opts.headers["x-trpc-source"] ?? "unknown";
 
   console.log(">>> tRPC Request from", source, "by", claims);
 

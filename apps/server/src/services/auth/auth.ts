@@ -34,7 +34,7 @@ export const extractClaimsFromHeader = async (headers: IncomingHttpHeaders) => {
       // Expected issuer of the token, issued by the Logto server
       issuer: `${env.LOGTO_ENDPOINT}/oidc`,
       // Expected audience token, the resource indicator of the current API
-      audience: `${env.LOGTO_AUDIENCE}/api`,
+      audience: env.LOGTO_AUDIENCE,
     },
   );
 

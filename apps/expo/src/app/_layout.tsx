@@ -1,30 +1,28 @@
 import "@bacons/text-decoder/install";
 import { LogtoProvider, LogtoConfig } from '@logto/rn';
-
+import * as SplashScreen from 'expo-splash-screen';
 import Constants from "expo-constants";
 import { Stack } from "expo-router";
+import 'react-native-reanimated';
 import { StatusBar } from "expo-status-bar";
-import { useColorScheme } from "nativewind";
+import { useColorScheme } from "../hooks/useColorScheme";
 
 import { TRPCProvider } from "~/utils/api";
 
-import "../styles.css";
 import { logtoService } from "~/config/logto";
 
+// Prevent the splash screen from auto-hiding before asset loading is complete.
+SplashScreen.preventAutoHideAsync();
 // This is the main layout of the app
 // It wraps your pages with the providers they need
 export default function RootLayout() {
-  const { colorScheme } = useColorScheme();
+  const  colorScheme  = useColorScheme();
   return (
     <LogtoProvider
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       config={logtoService.config}
     >
       <TRPCProvider>
-        {/*
-          The Stack component displays the current page.
-          It also allows you to configure your screens 
-        */}
         <Stack
           screenOptions={{
             headerStyle: {

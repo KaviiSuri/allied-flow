@@ -5,6 +5,9 @@ node_modules
 .pnp
 .pnp.js
 
+#server
+apps/server/undefined
+
 # testing
 coverage
 

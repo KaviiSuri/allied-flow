@@ -9,7 +9,7 @@ const envSchema = z.object({
   NODE_ENV: z
     .enum(["development", "production", "test"])
     .default("development"),
-  PORT: z.number().default(5000),
+  PORT: z.coerce.number().default(5000),
   LOGTO_ENDPOINT: z.string(),
   LOGTO_AUDIENCE: z.string(),
   LOGTO_ADMIN_APP_SECRET: z.string(),

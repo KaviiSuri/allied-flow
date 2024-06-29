@@ -1,5 +1,13 @@
 {
-  "github": {
-    "silent": true
-  }
+  "buildCommand": "pnpm --filter '@repo/expo' web",
+  "outputDirectory": "./apps/expo/dist",
+  "devCommand": "expo",
+  "cleanUrls": true,
+  "framework": null,
+  "rewrites": [
+    {
+      "source": "/:path*",
+      "destination": "/"
+    }
+  ]
 }

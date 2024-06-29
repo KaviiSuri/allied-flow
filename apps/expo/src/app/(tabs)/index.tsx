@@ -8,7 +8,7 @@ import { api } from "~/utils/api";
 import { logtoService } from "~/config/logto";
 
 
-export default function Index() {
+export default function Home() {
   const { signIn, signOut, isAuthenticated, getIdTokenClaims } = useLogto();
   const [user, setUser] = useState<IdTokenClaims | null>(null);
   useEffect(() => {
@@ -26,7 +26,7 @@ export default function Index() {
   return (
     <SafeAreaView className="bg-background">
       {/* Changes page title visible on the header */}
-      <Stack.Screen options={{ title: "Home Page" }} />
+      <Stack.Screen options={{ title: "Products" }} />
       <View className="h-full w-full bg-background p-4">
         <Text className="text-2xl font-bold text-center text-white">Welcome to Allied Flow</Text>
 

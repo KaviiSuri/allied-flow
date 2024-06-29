@@ -1,4 +1,5 @@
 import Home from "~/app/(tabs)";
+import TeamMembers from "~/app/(tabs)/teamMembers";
 import Dashboard from "~/app/(tabs)/dashboard";
 import Inquiries from "~/app/(tabs)/inquiries";
 import Orders from "~/app/(tabs)/orders";
@@ -39,5 +40,12 @@ export default [
         component: Samples,
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         icon: require('../app/assets/images/samples-icon.png')
-    }
+    },
+    {
+        path:'team-members',
+        name:'Team Members',
+        component: TeamMembers,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        icon: require('../app/assets/images/dashboard-icon.png')
+    },
  ]

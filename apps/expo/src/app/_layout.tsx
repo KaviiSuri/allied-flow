@@ -1,36 +1,37 @@
-import "@bacons/text-decoder/install";
-import { LogtoProvider } from '@logto/rn';
-import * as SplashScreen from 'expo-splash-screen';
+import { useEffect } from "react";
+import { StatusBar } from "react-native";
+import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
-import 'react-native-reanimated';
-import { StatusBar } from "expo-status-bar";
-import { useColorScheme } from "../hooks/useColorScheme";
-
-import { TRPCProvider } from "~/utils/api";
+import * as SplashScreen from "expo-splash-screen";
+import { LogtoProvider } from "@logto/rn";
 
 import { logtoService } from "~/config/logto";
+import { TRPCProvider } from "~/utils/api";
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync().catch(console.warn); 
-// This is the main layout of the app
-// It wraps your pages with the providers they need
+import "react-native-reanimated";
+
+void SplashScreen.preventAutoHideAsync();
+
 export default function RootLayout() {
-  const  colorScheme  = useColorScheme();
+  const [loaded] = useFonts({
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    Avenir: require("./assets/fonts/Avenir-Regular.ttf"),
+  });
+  useEffect(() => {
+    if (loaded) {
+      void SplashScreen.hideAsync();
+    }
+  }, [loaded]);
+
+  if (!loaded) {
+    return null;
+  }
   return (
-    <LogtoProvider
-      config={logtoService.config}
-    >
+    <LogtoProvider config={logtoService.config}>
       <TRPCProvider>
-        <Stack
-          screenOptions={{
-            headerStyle: {
-              backgroundColor: "#f472b6",
-            },
-            contentStyle: {
-              backgroundColor: colorScheme == "dark" ? "#09090B" : "#FFFFFF",
-            },
-          }}
-        />
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        </Stack>
         <StatusBar />
       </TRPCProvider>
     </LogtoProvider>

@@ -1,4 +1,6 @@
 import type { Config } from "drizzle-kit";
+import { dotenvLoad } from "dotenv-mono";
+dotenvLoad();
 
 if (!process.env.DATABASE_URL) {
   throw new Error("Missing DATABASE_URL");

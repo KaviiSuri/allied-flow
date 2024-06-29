@@ -388,9 +388,6 @@ importers:
 
   tooling/prettier:
     dependencies:
-      '@ianvs/prettier-plugin-sort-imports':
-        specifier: ^4.2.1
-        version: 4.2.1(prettier@3.2.5)
       prettier:
         specifier: ^3.2.5
         version: 3.2.5
@@ -1730,15 +1727,6 @@ packages:
   '@humanwhocodes/retry@0.2.4':
     resolution: {integrity: sha512-Ttl/jHpxfS3st5sxwICYfk4pOH0WrLI1SpW283GgQL7sCWU7EHIOhX4b4fkIxr3tkfzwg8+FNojtzsIEE7Ecgg==}
     engines: {node: '>=18.18'}
-
-  '@ianvs/prettier-plugin-sort-imports@4.2.1':
-    resolution: {integrity: sha512-NKN1LVFWUDGDGr3vt+6Ey3qPeN/163uR1pOPAlkWpgvAqgxQ6kSdUf1F0it8aHUtKRUzEGcK38Wxd07O61d7+Q==}
-    peerDependencies:
-      '@vue/compiler-sfc': 2.7.x || 3.x
-      prettier: 2 || 3
-    peerDependenciesMeta:
-      '@vue/compiler-sfc':
-        optional: true
 
   '@isaacs/cliui@8.0.2':
     resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
@@ -8275,18 +8263,6 @@ snapshots:
   '@humanwhocodes/object-schema@2.0.3': {}
 
   '@humanwhocodes/retry@0.2.4': {}
-
-  '@ianvs/prettier-plugin-sort-imports@4.2.1(prettier@3.2.5)':
-    dependencies:
-      '@babel/core': 7.24.5
-      '@babel/generator': 7.24.5
-      '@babel/parser': 7.24.5
-      '@babel/traverse': 7.24.5
-      '@babel/types': 7.24.5
-      prettier: 3.2.5
-      semver: 7.6.2
-    transitivePeerDependencies:
-      - supports-color
 
   '@isaacs/cliui@8.0.2':
     dependencies:

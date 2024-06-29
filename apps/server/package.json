@@ -8,7 +8,8 @@
     "build": "tsc",
     "start": "node --inspect ./dist/index.js",
     "dev": "tsx watch ./src/index.ts",
-    "check": "tsc --noEmit"
+    "check": "tsc --noEmit",
+    "gen:logto": "tsx ./src/scripts/generate-logto-admin-sdk.ts && npx fix-esm-import-path ./src/services/logto/sdk/index.ts"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +20,7 @@
     "@t3-oss/env-core": "^0.10.1",
     "@t3-oss/env-nextjs": "^0.10.1",
     "@trpc/server": "11.0.0-rc.364",
+    "axios": "^1.7.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "dotenv-mono": "^1.3.14",
@@ -28,6 +30,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@openapitools/openapi-generator-cli": "^2.13.4",
     "@repo/eslint-config": "workspace:*",
     "@repo/tsconfig": "workspace:*",
     "@types/cors": "^2.8.17",

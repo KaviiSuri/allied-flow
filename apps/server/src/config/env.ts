@@ -12,6 +12,9 @@ const envSchema = z.object({
   PORT: z.number().default(5000),
   LOGTO_ENDPOINT: z.string(),
   LOGTO_AUDIENCE: z.string(),
+  LOGTO_ADMIN_APP_SECRET: z.string(),
+  LOGTO_ADMIN_APP_ID: z.string(),
+  LOGTO_TENANT_ID: z.string(),
 });
 
 // Parse and validate the environment variables

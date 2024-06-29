@@ -2,10 +2,10 @@ import * as trpcExpress from "@trpc/server/adapters/express";
 import cors from "cors";
 import express from "express";
 
-import { appRouter, createTRPCContext } from "@repo/api";
-
 import { env } from "./config/env.js";
 import { extractClaimsFromHeader } from "./services/auth/auth.js";
+
+import { appRouter, createTRPCContext } from "@repo/api";
 
 const createContext = async ({
   req,

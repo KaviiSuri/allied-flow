@@ -11,60 +11,8 @@ const Drawer = createDrawerNavigator();
 
 export default function TabLayout() {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-  const isWeb = useMediaQuery({
-    minDeviceWidth: 1200,
-  });
 
-  return isWeb ? (
-    <NavigationContainer independent={true}>
-      <Drawer.Navigator
-        initialRouteName="index"
-        screenOptions={{
-          drawerType: "permanent",
-          headerShown: false,
-          drawerStyle: {
-            width: 200,
-          },
-        }}
-      >
-        {DrawerItems.map((drawer) => (
-          <Drawer.Screen
-            key={drawer.name}
-            name={drawer.name}
-            component={drawer.component}
-            options={{
-              drawerIcon: ({ focused }) => (
-                <Image
-                  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                  source={drawer.icon}
-                  style={{
-                    resizeMode: "contain",
-                    width: 20,
-                    height: 20,
-                    tintColor: focused ? "#2F80F5" : "#475569",
-                  }}
-                />
-              ),
-              title: drawer.name,
-              drawerLabel: ({ focused }) => (
-                <Text
-                  style={{
-                    fontFamily: "Avenir",
-                    fontSize: 16,
-                    lineHeight: 24,
-                    fontWeight: focused ? "800" : "500",
-                    color: focused ? "#2F80F5" : "#475569",
-                  }}
-                >
-                  {drawer.name}
-                </Text>
-              ),
-            }}
-          />
-        ))}
-      </Drawer.Navigator>
-    </NavigationContainer>
-  ) : (
+  return (
     <Tabs
       screenOptions={{
         headerShown: false,
@@ -103,5 +51,5 @@ export default function TabLayout() {
         />
       ))}
     </Tabs>
-  );
+  )
 }

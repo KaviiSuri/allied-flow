@@ -12,4 +12,5 @@ const turso = createClient({
 
 export const db = drizzle(turso, {
   schema,
+  logger: true,
 });

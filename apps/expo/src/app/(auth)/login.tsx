@@ -30,7 +30,7 @@ export default function Home() {
   }
 
   return (
-    <SafeAreaView className="bg-background" style={styles.pageBackground} >
+    <SafeAreaView style={styles.pageBackground} >
       <Text style={styles.header}> Welcome to Allied Flow</Text>
       {/* Changes page title visible on the header */}
       <View style={styles.loginContainer}>
@@ -81,9 +81,9 @@ export default function Home() {
 const styles = StyleSheet.create({
   header: {
     color: "#142454",
-    fontFamily: 'Avenir',
+    fontFamily: 'AvenirHeavy',
     fontSize: 24,
-    lineHeight: 24,
+    lineHeight: 40,
     fontWeight: 800,
     marginBottom: 56
   },
@@ -149,21 +149,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   loginButtonText: {
-    fontFamily: 'Avenir',
+    fontFamily: 'AvenirHeavy',
     fontSize: 16,
     lineHeight: 24,
     fontWeight: 800,
     color: "#fff"
   },
   loginButtonsTextSecondary: {
-    fontFamily: 'Avenir',
+    fontFamily: 'AvenirHeavy',
     fontSize: 16,
     lineHeight: 24,
     fontWeight: 800,
     color: "#344054"
   },
   textPrimary: {
-    fontFamily: 'Avenir',
+    fontFamily: 'AvenirHeavy',
     fontSize: 24,
     fontWeight: 800,
     color: Colors.text,

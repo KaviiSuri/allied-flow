@@ -1,21 +1,31 @@
-import React from "react";
-import { Image, Text } from "react-native";
-import { Tabs } from "expo-router";
+import React, { useState } from "react";
+import { Image, Pressable, StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { Redirect, Tabs } from "expo-router";
 import { createDrawerNavigator } from "@react-navigation/drawer";
+import ClientIcon from '../assets/images/client-icon.png'
 import { NavigationContainer } from "@react-navigation/native";
 import { useMediaQuery } from "react-responsive";
 
 import DrawerItems from "~/constants/DrawerItems";
+import { useLogto } from "@logto/rn";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Colors } from "../../constants/Color";
+
 
 const Drawer = createDrawerNavigator();
 
 export default function TabLayout() {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
 
+  const { isAuthenticated, signOut } = useLogto()
+
+  if (!isAuthenticated) {
+    return <Redirect href={'/login'} />
+  }
   return (
     <Tabs
       screenOptions={{
-        headerShown: false,
+        headerShown: true,
         tabBarStyle: {
           height: 105,
         },
@@ -47,9 +57,63 @@ export default function TabLayout() {
                 }}
               />
             ),
+            header: () => (
+              <SafeAreaView>
+                <View style={styles.container}>
+                  <Image
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                    source={ClientIcon}
+                    style={styles.navImage}
+                  />
+                  <Text>
+                    ABC Chemicals
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => signOut()}
+                    style={styles.logout}>
+                    <Text style={styles.logoutText}>
+                      Logout
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </SafeAreaView>
+            )
           }}
         />
       ))}
     </Tabs>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    display: "flex",
+    alignItems: "center",
+    flexDirection: "row",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    columnGap: 8,
+  },
+  navImage: {
+    height: 16,
+    width: 16,
+    resizeMode: "contain",
+    tintColor: "#000",
+  },
+  logout: {
+    borderWidth: 1,
+    borderStyle: 'solid',
+    borderColor: Colors.error,
+    borderRadius: 8,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    marginLeft: '45%'
+  },
+  logoutText: {
+    fontFamily: "AvenirHeavy",
+    fontSize: 16,
+    fontWeight: 800,
+    color: Colors.error,
+
+  }
+})

@@ -26,7 +26,6 @@ export default function Home() {
   return (
     <SafeAreaView className="bg-background">
       {/* Changes page title visible on the header */}
-      <Stack.Screen options={{ title: "Products" }} />
       <View className="h-full w-full bg-background p-4">
         <Text className="text-2xl font-bold text-center text-white">Welcome to Allied Flow</Text>
 

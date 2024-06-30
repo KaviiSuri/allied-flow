@@ -1,21 +1,16 @@
 import { SafeAreaView, Text, View } from "react-native";
 
 
-export default function Inquiries(){
-    return (
-          <SafeAreaView style={{
-            backgroundColor: '#F9F9F9',
-          }}>
-            <View style={{
-              padding: 20,
-            }}>
-                <Text style={{
-                  fontFamily:'Avenir',
-                  fontWeight: 800,
-                  fontSize: 18,
-                }}>Inquiries
-                </Text>
-            </View>
-          </SafeAreaView>
-      );
+export default function Inquiries() {
+  return (
+    <SafeAreaView style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      width: '100%',
+      height: '100%'
+    }}>
+      Inquiries
+    </SafeAreaView>
+  );
 }

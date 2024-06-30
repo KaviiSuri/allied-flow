@@ -23,8 +23,11 @@ export default function TabLayout() {
           drawerType: "permanent",
           headerShown: false,
           drawerStyle: {
-            width: 200,
+            padding: 16,
           },
+          drawerItemStyle: {
+            marginBottom: 8,
+          }
         }}
       >
         {DrawerItems.map((drawer) => (

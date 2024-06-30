@@ -24,10 +24,15 @@ export default function TabLayout() {
           headerShown: false,
           drawerStyle: {
             padding: 16,
+            maxWidth: 230,
           },
           drawerItemStyle: {
+            margin: 0,
             marginBottom: 8,
-          }
+          },
+          drawerContentContainerStyle: {
+            margin: 0
+          },
         }}
       >
         {DrawerItems.map((drawer) => (

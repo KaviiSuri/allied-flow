@@ -1,4 +1,4 @@
-import { SafeAreaView } from "react-native";
+import { SafeAreaView, Text } from "react-native";
 
 
 export default function Dashboard() {
@@ -10,7 +10,9 @@ export default function Dashboard() {
       width: '100%',
       height: '100%'
     }}>
-      Dashboard
+      <Text>
+        Dashboard
+      </Text>
     </SafeAreaView>
   );
 }

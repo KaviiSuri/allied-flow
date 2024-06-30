@@ -10,7 +10,9 @@ export default function Samples() {
       width: '100%',
       height: '100%'
     }}>
-      Samples
+      <Text>
+        Samples
+      </Text>
     </SafeAreaView>
   );
 }

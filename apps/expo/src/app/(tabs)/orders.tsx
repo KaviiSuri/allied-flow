@@ -10,7 +10,9 @@ export default function Orders() {
       width: '100%',
       height: '100%'
     }}>
-      Orders
+      <Text>
+        Orders
+      </Text>
     </SafeAreaView>
   );
 }

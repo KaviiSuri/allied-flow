@@ -29,7 +29,11 @@ export default function RootLayout() {
   return (
     <LogtoProvider config={logtoService.config}>
       <TRPCProvider>
-        <Stack>
+        <Stack
+          screenOptions={{
+            headerShown: false
+          }}
+        >
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         </Stack>
         <StatusBar />

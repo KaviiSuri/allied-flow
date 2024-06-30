@@ -15,6 +15,8 @@ const envSchema = z.object({
   LOGTO_ADMIN_APP_SECRET: z.string(),
   LOGTO_ADMIN_APP_ID: z.string(),
   LOGTO_TENANT_ID: z.string(),
+  DATABASE_URL: z.string(),
+  DATABASE_TOKEN: z.string().optional(),
 });
 
 // Parse and validate the environment variables

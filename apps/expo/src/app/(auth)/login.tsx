@@ -1,6 +1,6 @@
 import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Stack, useRouter } from "expo-router";
+import { Redirect } from "expo-router";
 import type { IdTokenClaims } from "@logto/rn";
 import { useLogto } from "@logto/rn";
 import { useEffect, useState } from "react";
@@ -23,11 +23,10 @@ export default function Home() {
     enabled: isAuthenticated,
   });
 
-  const router = useRouter()
 
-  useEffect(() => {
-    if (isAuthenticated) router.push('/')
-  }, [isAuthenticated, router])
+  if (isAuthenticated) {
+    return <Redirect href={'/'} />
+  }
 
   return (
     <SafeAreaView className="bg-background">

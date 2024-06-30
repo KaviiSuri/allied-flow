@@ -1,13 +1,12 @@
 import { createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
+import { env } from "@repo/server-config";
 
 import * as schema from "./schema.js";
 
 const turso = createClient({
-  // eslint-disable-next-line no-restricted-properties, @typescript-eslint/no-non-null-assertion
-  url: process.env.DATABASE_URL!,
-  // eslint-disable-next-line no-restricted-properties
-  authToken: process.env.DATABASE_TOKEN,
+  url: env.DATABASE_URL,
+  authToken: env.DATABASE_TOKEN,
 });
 
 export const db = drizzle(turso, {

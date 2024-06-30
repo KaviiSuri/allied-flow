@@ -2,7 +2,7 @@ import { IncomingHttpHeaders } from "http";
 import type { IdTokenClaims } from "@logto/js";
 import { createRemoteJWKSet, jwtVerify } from "jose";
 
-import { env } from "../../config/env.js";
+import { env } from "@repo/server-config";
 
 const extractBearerTokenFromHeaders = ({
   authorization,

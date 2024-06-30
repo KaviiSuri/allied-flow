@@ -27,10 +27,10 @@
     "express": "^4.19.2",
     "jose": "^5.4.0",
     "swagger-ui-express": "^5.0.0",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "@repo/server-config": "workspace:*"
   },
   "devDependencies": {
-    "@openapitools/openapi-generator-cli": "^2.13.4",
     "@repo/eslint-config": "workspace:*",
     "@repo/tsconfig": "workspace:*",
     "@types/cors": "^2.8.17",

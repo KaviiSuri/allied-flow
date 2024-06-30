@@ -2,7 +2,7 @@ import * as trpcExpress from "@trpc/server/adapters/express";
 import cors from "cors";
 import express from "express";
 
-import { env } from "./config/env.js";
+import { env } from "@repo/server-config";
 import { extractClaimsFromHeader } from "./services/auth/auth.js";
 
 import { appRouter, createTRPCContext } from "@repo/api";

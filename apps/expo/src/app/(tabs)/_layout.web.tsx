@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Drawer } from 'expo-router/drawer'
 import 'react-native-gesture-handler'
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -10,7 +10,7 @@ import {
   DrawerItemList,
 } from '@react-navigation/drawer';
 import { useLogto } from "@logto/rn";
-import { useRouter } from "expo-router";
+import { Redirect } from "expo-router";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function CustomDrawerContent(props: any) {
@@ -40,12 +40,9 @@ function CustomDrawerContent(props: any) {
 export default function WebLayout() {
   const { isAuthenticated } = useLogto()
 
-  const router = useRouter()
-  useEffect(() => {
-    if (!isAuthenticated) {
-      router.push('/login')
-    }
-  }, [isAuthenticated, router])
+  if (!isAuthenticated) {
+    return <Redirect href={'/login'} />
+  }
 
   return (
     <GestureHandlerRootView>

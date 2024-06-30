@@ -95,7 +95,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   loginContainer: {
-    maxWidth: 472,
+    maxWidth: '90%',
+    width: 472,
     rowGap: 60,
     alignItems: "center",
     justifyContent: "space-between",

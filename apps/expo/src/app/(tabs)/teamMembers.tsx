@@ -4,7 +4,8 @@ import { api } from "~/utils/api";
 const windowHeight = Dimensions.get('window').height;
 
 export default function TeamMembers() {
-  const { data, isLoading, isError } = api.users.readUsers.useQuery()
+
+  const { data, isLoading, isError } = api.users.readUsers.useQuery();
   console.log(data)
   // const slideAnim = useRef(new Animated.Value(-100)).current;
   // useEffect(() => {

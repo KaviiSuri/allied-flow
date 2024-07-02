@@ -1,5 +1,6 @@
 import { relations } from "drizzle-orm";
 import { text, sqliteTable } from "drizzle-orm/sqlite-core";
+import { createInsertSchema } from "drizzle-zod";
 
 export const users = sqliteTable('users', {
   id: text('id').primaryKey().unique(),
@@ -11,6 +12,8 @@ export const users = sqliteTable('users', {
   createdAt: text('created_at').notNull(),
   updatedAt: text('updated_at').notNull(),
 });
+
+export const insertUserSchema = createInsertSchema(users)
 
 export const usersRelations = relations(users, ({ one }) => ({
     teamId: one(teams, {

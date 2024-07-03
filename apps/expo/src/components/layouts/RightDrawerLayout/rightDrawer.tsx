@@ -1,11 +1,11 @@
 import React from 'react'
 
-function TeamMembers() {
+function rightDrawer() {
   return (
     <div>
-      tean
+      
     </div>
   )
 }
 
-export default TeamMembers
+export default rightDrawer

@@ -1,7 +1,8 @@
 import { Button, SafeAreaView, Text, View, TextInput, Animated, Dimensions, Pressable, Image } from "react-native";
+import { Table, TableHeading, TableRow, TableData } from "~/components/shared/table";
 import { useState } from "react";
 import { api } from "~/utils/api";
-const windowHeight = Dimensions.get('window').height;
+const windowHeight = Dimensions.get('window').height - 64;
 
 export default function TeamMembers() {
 
@@ -104,33 +105,33 @@ export default function TeamMembers() {
         </Pressable>
       </View>
       <View style={{ padding: 16 }}>
-        <View style={{ borderColor: '#EAECF0', borderRadius: 12, borderWidth: 1 }}>
-          <View style={{ flexDirection: 'row' }}>
-            <Text style={{ paddingHorizontal: 16, paddingVertical: 14, fontSize: 12, fontWeight: 500, flex: 1 }}>Name</Text>
-            <Text style={{ paddingHorizontal: 16, paddingVertical: 14, fontSize: 12, fontWeight: 500, flex: 1 }}>Email</Text>
-            <Text style={{ paddingHorizontal: 16, paddingVertical: 14, fontSize: 12, fontWeight: 500, flex: 1 }}>Phone Number</Text>
-            <Text style={{ paddingHorizontal: 16, paddingVertical: 14, fontSize: 12, fontWeight: 500, flex: 1 }}>Role</Text>
-            <Text style={{ paddingHorizontal: 16, paddingVertical: 14, fontSize: 12, fontWeight: 500, flex: 1 }}>Clients</Text>
-            <Text style={{ paddingHorizontal: 16, paddingVertical: 14, fontSize: 12, fontWeight: 500, flex: 1 }}>Actions</Text>
-          </View>
+        <Table>
+          <TableHeading>
+            <TableData>Name</TableData>
+            <TableData>Email</TableData>
+            <TableData>Phone Number</TableData>
+            <TableData>Role</TableData>
+            <TableData>Clients</TableData>
+            <TableData>Actions</TableData>
+          </TableHeading>
           {data?.map(user => (
-            <View style={{ flexDirection: 'row', borderTopWidth: 1, borderColor: '#EAECF0' }}>
-              <Text style={{ paddingHorizontal: 16, paddingVertical: 14, fontSize: 12, fontWeight: 500, flex: 1 }}>{user.id}</Text>
-              <Text style={{ paddingHorizontal: 16, paddingVertical: 14, fontSize: 12, fontWeight: 500, flex: 1 }}>{user.email}</Text>
-              <Text style={{ paddingHorizontal: 16, paddingVertical: 14, fontSize: 12, fontWeight: 500, flex: 1 }}>{user.phone}</Text>
-              <Text style={{ paddingHorizontal: 16, paddingVertical: 14, fontSize: 12, fontWeight: 500, flex: 1 }}>{user.role}</Text>
-              <Text style={{ paddingHorizontal: 16, paddingVertical: 14, fontSize: 12, fontWeight: 500, flex: 1 }}>John Doe</Text>
-              <View style={{ paddingHorizontal: 16, paddingVertical: 7, flexDirection: "row", gap: 16, flex: 1 }}>
-                <Pressable style={{borderColor: '#E2E8F0', borderWidth: 1, borderRadius: 8, padding: 8}}>
+            <TableRow id={user.id}>
+              <TableData>{user.id}</TableData>
+              <TableData>{user.email}</TableData>
+              <TableData>{user.phone}</TableData>
+              <TableData>{user.role}</TableData>
+              <TableData>John Doe</TableData>
+              <TableData style={{ paddingHorizontal: 16, paddingVertical: 7, flexDirection: "row", gap: 16, flex: 1 }}>
+                <Pressable style={{ borderColor: '#E2E8F0', borderWidth: 1, borderRadius: 8, padding: 8 }}>
                   <Image source={require("../../app/assets/images/edit-icon.svg")} />
                 </Pressable>
-                <Pressable style={{borderColor: '#E2E8F0', borderWidth: 1, borderRadius: 8, padding: 8}}>
-                <Image source={require("../../app/assets/images/trash-icon.svg")} />
+                <Pressable style={{ borderColor: '#E2E8F0', borderWidth: 1, borderRadius: 8, padding: 8 }}>
+                  <Image source={require("../../app/assets/images/trash-icon.svg")} />
                 </Pressable>
-              </View>
-            </View>
+              </TableData>
+            </TableRow>
           ))}
-        </View>
+        </Table>
       </View>
     </SafeAreaView>
   );

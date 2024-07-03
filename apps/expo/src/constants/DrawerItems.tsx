@@ -20,13 +20,7 @@ export default [
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         icon: require('../app/assets/images/inquiries-icon.png')
     },
-    {
-        path:'index',
-        name:'Products',
-        component: Home,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        icon: require('../app/assets/images/home-icon.png')
-    },
+
     {
         path:'orders',
         name:'Orders',
@@ -42,7 +36,7 @@ export default [
         icon: require('../app/assets/images/samples-icon.png')
     },
     {
-      path:'team-members',
+      path:'admin/teamMembers',
       name:'Team Members',
       component: TeamMembers,
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment

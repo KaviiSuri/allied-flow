@@ -75,8 +75,8 @@ export default function TeamMembers() {
         />
         </View>
         <View style={{flexDirection: "row", gap: 16, backgroundColor: '#FFF'}}>
-            <SecondaryButton text="Upload Products" />
-            <PrimaryButton text="Add Products" />
+            <SecondaryButton text="Upload members" />
+            <PrimaryButton text="Add members" onPress={handleClick}/>
         </View>
         </View>
 

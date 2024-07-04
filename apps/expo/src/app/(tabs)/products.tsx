@@ -18,7 +18,7 @@ export default function Products() {
   //     useNativeDriver: true,
   //   }).start();
   // }, [slideAnim]);
-  const [drawerVisible, setDrawerVisible] = useState(true);
+  const [drawerVisible, setDrawerVisible] = useState(false);
   const handleClick = () => {
     setDrawerVisible(!drawerVisible);
 
@@ -77,8 +77,8 @@ export default function Products() {
         />
         </View>
         <View style={{flexDirection: "row", gap: 16}}>
-            <SecondaryButton text="Upload Products" onPress={handleClick} />
-            <PrimaryButton text="Add Products" />
+            <SecondaryButton text="Upload Products" />
+            <PrimaryButton text="Add Products"  onPress={handleClick}/>
         </View>
         </View>
 

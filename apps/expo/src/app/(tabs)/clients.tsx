@@ -81,8 +81,8 @@ export default function Clients() {
         />
         </View>
         <View style={{flexDirection: "row", gap: 16}}>
-            <SecondaryButton text="Upload Products" onPress={handleClick} />
-            <PrimaryButton text="Add Products" />
+            <SecondaryButton text="Upload clients" />
+            <PrimaryButton text="Add clients" onPress={handleClick}/>
         </View>
         </View>
 

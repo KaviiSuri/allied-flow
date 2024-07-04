@@ -1,11 +1,7 @@
-import React from 'react'
+import React from "react";
 
 function rightDrawer() {
-  return (
-    <div>
-      
-    </div>
-  )
+  return <div></div>;
 }
 
-export default rightDrawer
+export default rightDrawer;

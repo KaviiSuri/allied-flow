@@ -3,4 +3,4 @@ import TableData from "./tableData";
 import TableHeading from "./tableHeading";
 import Table from "./table";
 
-export { TableRow, TableData, TableHeading, Table }
+export { TableRow, TableData, TableHeading, Table };

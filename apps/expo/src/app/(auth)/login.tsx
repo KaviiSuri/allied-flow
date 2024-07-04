@@ -5,56 +5,60 @@ import type { IdTokenClaims } from "@logto/rn";
 import { useLogto } from "@logto/rn";
 import { useEffect, useState } from "react";
 import { api } from "~/utils/api";
-import { logtoService } from "~/config/logto";
-import { Colors } from "../../constants/Color"
-
+import { Colors } from "../../constants/Color";
 
 export default function Home() {
-  const { signIn, signOut, isAuthenticated, getIdTokenClaims } = useLogto();
+  const { signOut, isAuthenticated, getIdTokenClaims } = useLogto();
   const [user, setUser] = useState<IdTokenClaims | null>(null);
   useEffect(() => {
     if (isAuthenticated) {
-      getIdTokenClaims().then((claims) => {
-        setUser(claims);
-      }).catch(console.error);
+      getIdTokenClaims()
+        .then((claims) => {
+          setUser(claims);
+        })
+        .catch(console.error);
     }
   }, [isAuthenticated, getIdTokenClaims]);
 
-  const { data: serverUser, error, isLoading, refetch, isRefetching } = api.auth.getSession.useQuery(undefined, {
+  const {
+    data: serverUser,
+    error,
+    isLoading,
+    refetch,
+    isRefetching,
+  } = api.auth.getSession.useQuery(undefined, {
     enabled: isAuthenticated,
   });
 
-
   if (isAuthenticated) {
-    return <Redirect href={'/'} />
+    return <Redirect href={"/"} />;
   }
 
   return (
-    <SafeAreaView style={styles.pageBackground} >
+    <SafeAreaView style={styles.pageBackground}>
       <Text style={styles.header}> Welcome to Allied Flow</Text>
       {/* Changes page title visible on the header */}
       <View style={styles.loginContainer}>
-        <View style={styles.loginWindow} >
-
-          <Text style={styles.textPrimary} >
-            {isAuthenticated ? `Hello ${user?.email}` : "Log in to your account"}
+        <View style={styles.loginWindow}>
+          <Text style={styles.textPrimary}>
+            `Hello ${user?.email}`
           </Text>
 
-          {isAuthenticated && (
-            <Text style={styles.textPrimary} >
-              <Text style={styles.textPrimary} >Server User:</Text>
-              {(isLoading || isRefetching) && <Text style={styles.textPrimary}>Loading...</Text>}
-              {error && <Text>Error: {error.message}</Text>}
-              {serverUser && <Text>{JSON.stringify(serverUser)}</Text>}
-            </Text>
-          )}
+          <Text style={styles.textPrimary}>
+            <Text style={styles.textPrimary}>Server User:</Text>
+            {(isLoading || isRefetching) && (
+              <Text style={styles.textPrimary}>Loading...</Text>
+            )}
+            {error && <Text>Error: {error.message}</Text>}
+            {serverUser && <Text>{JSON.stringify(serverUser)}</Text>}
+          </Text>
 
           <Pressable
             style={styles.loginButtons}
-            onPress={() => (isAuthenticated ? signOut() : signIn(logtoService.redirectUri))}
+            onPress={() => signOut()}
           >
-            <Text style={styles.loginButtonText} >
-              {isAuthenticated ? "Sign Out" : "Sign In"}
+            <Text style={styles.loginButtonText}>
+              Sign Out
             </Text>
           </Pressable>
 
@@ -62,51 +66,47 @@ export default function Home() {
             style={styles.loginButtonsSecondary}
             onPress={() => refetch()}
           >
-            <Text style={styles.loginButtonsTextSecondary}>
-              Refetch
-            </Text>
+            <Text style={styles.loginButtonsTextSecondary}>Refetch</Text>
           </Pressable>
         </View>
         <Text style={styles.bottomText}>
-          By Proceeding, you confirm that you have reviewed and agree to Spot Privacy Policy and Terms of Service
+          By Proceeding, you confirm that you have reviewed and agree to Spot
+          Privacy Policy and Terms of Service
         </Text>
       </View>
-    </SafeAreaView >
+    </SafeAreaView>
   );
 }
-
-
-
 
 const styles = StyleSheet.create({
   header: {
     color: "#142454",
-    fontFamily: 'AvenirHeavy',
+    fontFamily: "AvenirHeavy",
     fontSize: 24,
     lineHeight: 40,
     fontWeight: 800,
-    marginBottom: 56
+    marginBottom: 56,
   },
   pageBackground: {
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: Colors.loginScreenBg,
-    width: '100%',
+    width: "100%",
     flex: 1,
   },
   loginContainer: {
-    maxWidth: '90%',
+    maxWidth: "90%",
     width: 472,
     rowGap: 60,
     alignItems: "center",
     justifyContent: "space-between",
   },
   loginWindow: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     rowGap: 24,
     backgroundColor: Colors.background,
-    width: '100%',
+    width: "100%",
     borderRadius: 16,
     shadowColor: "#0E3EAE",
     padding: 56,
@@ -121,53 +121,53 @@ const styles = StyleSheet.create({
   bottomText: {
     fontSize: 12,
     lineHeight: 20,
-    textAlign: 'center',
+    textAlign: "center",
     width: 360,
     color: Colors.tandcTextColor,
   },
   loginButtons: {
     backgroundColor: Colors.buttonPrimary,
-    width: '100%',
+    width: "100%",
     borderWidth: 1,
-    borderStyle: 'solid',
+    borderStyle: "solid",
     borderColor: "#0284c7",
     borderRadius: 8,
     paddingVertical: 10,
     paddingHorizontal: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   loginButtonsSecondary: {
-    width: '100%',
+    width: "100%",
     borderWidth: 1,
-    borderStyle: 'solid',
+    borderStyle: "solid",
     borderColor: "#D0D5DD",
     borderRadius: 8,
     paddingVertical: 10,
     paddingHorizontal: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   loginButtonText: {
-    fontFamily: 'AvenirHeavy',
+    fontFamily: "AvenirHeavy",
     fontSize: 16,
     lineHeight: 24,
     fontWeight: 800,
-    color: "#fff"
+    color: "#fff",
   },
   loginButtonsTextSecondary: {
-    fontFamily: 'AvenirHeavy',
+    fontFamily: "AvenirHeavy",
     fontSize: 16,
     lineHeight: 24,
     fontWeight: 800,
-    color: "#344054"
+    color: "#344054",
   },
   textPrimary: {
-    fontFamily: 'AvenirHeavy',
+    fontFamily: "AvenirHeavy",
     fontSize: 24,
     fontWeight: 800,
     color: Colors.text,
     lineHeight: 32,
-    textAlign: 'center',
-  }
-})
+    textAlign: "center",
+  },
+});

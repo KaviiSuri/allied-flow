@@ -1,11 +1,7 @@
-import { Pressable } from "react-native"
+import { Pressable } from "react-native";
 
 function Form() {
-  return (
-    <Pressable>
-      
-    </Pressable>
-  )
+  return <Pressable></Pressable>;
 }
 
-export default Form
+export default Form;

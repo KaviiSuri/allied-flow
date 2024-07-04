@@ -8,7 +8,7 @@
  */
 import type { IdTokenClaims } from "@logto/js";
 import { initTRPC, TRPCError } from "@trpc/server";
-import { IncomingMessageWithBody } from "@trpc/server/adapters/node-http";
+import type { IncomingMessageWithBody } from "@trpc/server/adapters/node-http";
 import superjson from "superjson";
 import { ZodError } from "zod";
 

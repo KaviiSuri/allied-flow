@@ -3,7 +3,7 @@ import { env } from "@repo/server-config";
 
 export default {
   schema: "./src/schema.ts",
-  out: './src/migrations',
+  out: "./src/migrations",
   dialect: "sqlite",
   driver: "turso",
   dbCredentials: {

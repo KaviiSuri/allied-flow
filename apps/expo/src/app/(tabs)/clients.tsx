@@ -36,7 +36,7 @@ export default function Clients() {
         </View>
         <View style={{ flex: 1, height: '100%', flexDirection: 'column', backgroundColor: '#FFF' }}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 20, borderBottomWidth: 1, borderBottomColor: '#E2E8F0' }}>
-            <Text style={{ fontSize: 18, fontWeight: 800 }}>Add Product</Text>
+            <Text style={{ fontSize: 18, fontWeight: 800, fontFamily: 'Avenir' }}>Add clients</Text>
             <Pressable onPress={handleClick}><Image source={require('../../app/assets/images/close-icon.png')}/></Pressable>
           </View>
           <View style={{ flex: 1, padding: 20, flexDirection: 'column', gap: 16 }}>
@@ -61,15 +61,20 @@ export default function Clients() {
         <View style={{paddingHorizontal: 24, paddingVertical: 8, flexDirection: 'row', justifyContent: "space-between"}}>
         <View>
         <TextInput
-          placeholder="Search by product"
+          placeholder="Search by client name"
           style={{
             width: 320,
             paddingHorizontal: 14,
             paddingVertical: 10,
             borderWidth: 1,
             borderRadius: 8,
-            borderColor: '#E2E8F0'
+            borderColor: '#E2E8F0',
+            fontFamily: 'Avenir',
+            fontWeight: 400,
+            fontSize: 16,
+            shadowOffset : { height: 1, width: 0}, shadowOpacity: 0.05, shadowColor: '#101828'
           }}
+          placeholderTextColor='#94A3B8'
         // You can adjust the number of lines
         // onChangeText={(text) => setText(text)}
         // value={text}
@@ -96,14 +101,14 @@ export default function Clients() {
               <TableData>{user.email}</TableData>
               <TableData>{user.phone}</TableData>
               <TableData>John Doe</TableData>
-              <TableData style={{ paddingHorizontal: 16, paddingVertical: 7, flexDirection: "row", gap: 16, flex: 1 }}>
-                <Pressable style={{ borderColor: '#E2E8F0', borderWidth: 1, borderRadius: 8, padding: 8 }}>
+              <View style={{ paddingHorizontal: 16, paddingVertical: 7, flexDirection: "row", gap: 16, flex: 1 }}>
+                <Pressable style={{ borderColor: '#E2E8F0', borderWidth: 1, borderRadius: 8, padding: 8, shadowOffset : { height: 1, width: 0}, shadowOpacity: 0.05, shadowColor: '#101828' }}>
                   <Image source={require("../../app/assets/images/edit-icon.svg")} />
                 </Pressable>
-                <Pressable style={{ borderColor: '#E2E8F0', borderWidth: 1, borderRadius: 8, padding: 8 }}>
+                <Pressable style={{ borderColor: '#E2E8F0', borderWidth: 1, borderRadius: 8, padding: 8, shadowOffset : { height: 1, width: 0}, shadowOpacity: 0.05, shadowColor: '#101828' }}>
                   <Image source={require("../../app/assets/images/trash-icon.svg")} />
                 </Pressable>
-              </TableData>
+              </View>
             </TableRow>
           ))}
         </Table>

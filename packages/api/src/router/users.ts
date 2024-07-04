@@ -10,24 +10,20 @@ const createUserInput = z.object({
   phone: z.string(),
   role: z.enum(["ADMIN", "MANAGEMENT", "LOGISTICS", "SALES"]),
   teamId: z.string(),
-})
+});
 
-const upatedUserInput = createUserInput.partial().extend({id: z.string()});
+const upatedUserInput = createUserInput.partial().extend({ id: z.string() });
 
 export const usersRouter = {
   createUser: publicProcedure
-    .input(
-      createUserInput
-    )
+    .input(createUserInput)
     .mutation(async ({ ctx, input }) => {
-      const insertedUserId = await ctx.db.insert(users).values(
-        {
-          ...input, 
-          id: '123', // gen id
-          createdAt: new Date().toUTCString(),
-          updatedAt: new Date().toUTCString(),
-        },
-      );
+      const insertedUserId = await ctx.db.insert(users).values({
+        ...input,
+        id: "123", // gen id
+        createdAt: new Date().toUTCString(),
+        updatedAt: new Date().toUTCString(),
+      });
       return insertedUserId;
     }),
   readUsers: publicProcedure.query(async ({ ctx }) => {
@@ -35,21 +31,25 @@ export const usersRouter = {
     return res;
   }),
 
-  updateUser: publicProcedure.input(upatedUserInput).mutation(async ({ctx, input}) => {
-    const upatedUserId = await ctx.db
-      .update(users)
-      .set({
-        ...input,
-        updatedAt: new Date().toUTCString()
-      })
-      .where(eq(users.id, input.id));
-    return upatedUserId;
-  }),
+  updateUser: publicProcedure
+    .input(upatedUserInput)
+    .mutation(async ({ ctx, input }) => {
+      const upatedUserId = await ctx.db
+        .update(users)
+        .set({
+          ...input,
+          updatedAt: new Date().toUTCString(),
+        })
+        .where(eq(users.id, input.id));
+      return upatedUserId;
+    }),
 
-  deleteUser: publicProcedure.input(z.string()).mutation(async ({ctx, input}) => {
-    const deletedUserId = await ctx.db
-      .delete(users)
-      .where(eq(users.id, input));
-    return deletedUserId;
-  }),
+  deleteUser: publicProcedure
+    .input(z.string())
+    .mutation(async ({ ctx, input }) => {
+      const deletedUserId = await ctx.db
+        .delete(users)
+        .where(eq(users.id, input));
+      return deletedUserId;
+    }),
 } satisfies TRPCRouterRecord;

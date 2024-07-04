@@ -1,21 +1,18 @@
 import React from "react";
 import { Image, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { Redirect, Tabs } from "expo-router";
-import ClientIcon from '../assets/images/client-icon.png'
+import ClientIcon from "../assets/images/client-icon.png";
 
 import DrawerItems from "~/constants/DrawerItems";
 import { useLogto } from "@logto/rn";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "../../constants/Color";
 
-
 export default function TabLayout() {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-
-  const { isAuthenticated, signOut } = useLogto()
+  const { isAuthenticated, signOut } = useLogto();
 
   if (!isAuthenticated) {
-    return <Redirect href={'/login'} />
+    return <Redirect href={"/login"} />;
   }
   return (
     <Tabs
@@ -60,24 +57,21 @@ export default function TabLayout() {
                     source={ClientIcon}
                     style={styles.navImage}
                   />
-                  <Text>
-                    ABC Chemicals
-                  </Text>
+                  <Text>ABC Chemicals</Text>
                   <TouchableOpacity
                     onPress={() => signOut()}
-                    style={styles.logout}>
-                    <Text style={styles.logoutText}>
-                      Logout
-                    </Text>
+                    style={styles.logout}
+                  >
+                    <Text style={styles.logoutText}>Logout</Text>
                   </TouchableOpacity>
                 </View>
               </SafeAreaView>
-            )
+            ),
           }}
         />
       ))}
     </Tabs>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -97,18 +91,17 @@ const styles = StyleSheet.create({
   },
   logout: {
     borderWidth: 1,
-    borderStyle: 'solid',
+    borderStyle: "solid",
     borderColor: Colors.error,
     borderRadius: 8,
     paddingVertical: 4,
     paddingHorizontal: 8,
-    marginLeft: '45%'
+    marginLeft: "45%",
   },
   logoutText: {
     fontFamily: "AvenirHeavy",
     fontSize: 16,
     fontWeight: 800,
     color: Colors.error,
-
-  }
-})
+  },
+});

@@ -1,4 +1,3 @@
-
 /** @typedef {import("prettier").Config} PrettierConfig */
 
 /** @type { PrettierConfig } */

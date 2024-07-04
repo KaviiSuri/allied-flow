@@ -1,3 +1,3 @@
 import FormTextInput from "./formTextInput";
 
-export { FormTextInput }
+export { FormTextInput };

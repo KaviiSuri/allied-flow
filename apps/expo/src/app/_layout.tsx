@@ -16,7 +16,8 @@ export default function RootLayout() {
   const [loaded, error] = useFonts({
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     Avenir: require("./assets/fonts/Avenir-Regular.ttf"),
-    AvenirHeavy: require("./assets/fonts/Avenir-Heavy.ttf")
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    AvenirHeavy: require("./assets/fonts/Avenir-Heavy.ttf"),
   });
   useEffect(() => {
     if (loaded) {
@@ -25,8 +26,8 @@ export default function RootLayout() {
   }, [loaded]);
 
   useEffect(() => {
-    console.log(error)
-  }, [error])
+    console.log(error);
+  }, [error]);
 
   if (!loaded) {
     return null;
@@ -36,7 +37,7 @@ export default function RootLayout() {
       <TRPCProvider>
         <Stack
           screenOptions={{
-            headerShown: false
+            headerShown: false,
           }}
         >
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />

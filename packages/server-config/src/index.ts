@@ -1,4 +1,4 @@
-/* eslint-disable no-restricted-properties */
+ 
 import { dotenvLoad } from "dotenv-mono";
 import { z } from "zod";
 

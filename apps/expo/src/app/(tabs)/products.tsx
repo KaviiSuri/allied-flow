@@ -6,7 +6,7 @@ import {PrimaryButton, SecondaryButton} from "~/components/core/button";
 import {FormTextInput} from "~/components/shared/form/";
 const windowHeight = Dimensions.get('window').height - 64;
 
-export default function TeamMembers() {
+export default function Products() {
 
   const { data, isLoading, isError } = api.users.readUsers.useQuery();
   console.log(data)
@@ -21,6 +21,7 @@ export default function TeamMembers() {
   const [drawerVisible, setDrawerVisible] = useState(false);
   const handleClick = () => {
     setDrawerVisible(!drawerVisible);
+
   }
 
   return (
@@ -40,14 +41,10 @@ export default function TeamMembers() {
           </View>
           <View style={{ flex: 1, padding: 20, flexDirection: 'column', gap: 16 }}>
             <View style={{ width: '100%', padding: 16, borderRadius: 12, borderColor: '#E2E8F0', borderWidth: 1, flexDirection: "column", gap: 16 }}>
-                <FormTextInput label="Company Name" placeholder="Type company name" />
-                <FormTextInput label="Company Address" placeholder="Type company address" />
-                <View style={{flexDirection: "row", gap: 16}}>
-                    <FormTextInput label="POC" placeholder="Type POC" style={{flex: 1}}/>
-                    <FormTextInput label="GST Number" placeholder="Type GST Number" style={{flex: 1}}/>
-                </View>
-                <FormTextInput label="Phone Number" placeholder="Type phone number" />
-                <FormTextInput label="Email" placeholder="Type email" />
+                <FormTextInput label="Product Name" placeholder="Type product name" />
+                <FormTextInput label="Make" placeholder="Type product make" />
+                <FormTextInput label="CAS" placeholder="Type product CAS" />
+                <FormTextInput label="Description" placeholder="Type description of the product" numberOfLines={4}/>
             </View>
           </View>
           <View style={{ padding: 16, borderTopWidth: 1, borderTopColor: '#E2E8F0', flexDirection: 'row', justifyContent: 'flex-end', gap: 16 }}>
@@ -75,19 +72,19 @@ export default function TeamMembers() {
         />
         </View>
         <View style={{flexDirection: "row", gap: 16}}>
-            <SecondaryButton text="Upload Products" />
+            <SecondaryButton text="Upload Products" onPress={handleClick} />
             <PrimaryButton text="Add Products" />
         </View>
         </View>
 
-      <View style={{ padding: 16, height: windowHeight }}>
+        <View style={{ padding: 16, height: windowHeight }}>
         <Table style={{backgroundColor: '#fff'}}>
           <TableHeading>
-          <TableData style={{fontSize: 12, color: '#475467'}}>Name</TableData>
-            <TableData style={{fontSize: 12, color: '#475467'}}>Email</TableData>
-            <TableData style={{fontSize: 12, color: '#475467'}}>Phone Number</TableData>
-            <TableData style={{fontSize: 12, color: '#475467'}}>Role</TableData>
-            <TableData style={{fontSize: 12, color: '#475467'}}>Clients</TableData>
+            <TableData style={{fontSize: 12, color: '#475467'}}>Product ID</TableData>
+            <TableData style={{fontSize: 12, color: '#475467'}}>Product Name</TableData>
+            <TableData style={{fontSize: 12, color: '#475467'}}>Make</TableData>
+            <TableData style={{fontSize: 12, color: '#475467'}}>CAS</TableData>
+            <TableData style={{fontSize: 12, color: '#475467'}}>Description</TableData>
             <TableData style={{fontSize: 12, color: '#475467'}}>Actions</TableData>
           </TableHeading>
           {data?.map(user => (

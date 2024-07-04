@@ -7,7 +7,7 @@ function TableData(props : PropsWithChildren<{style?: TextStyle}>) {
     const defaultStyles: TextStyle = {
         paddingHorizontal: 16,
         paddingVertical: 14,
-        fontSize: 12,
+        fontSize: 14,
         fontWeight: 500,
         flex: 1,
     }

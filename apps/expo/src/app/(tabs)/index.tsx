@@ -8,7 +8,7 @@ import { api } from "~/utils/api";
 import { logtoService } from "~/config/logto";
 
 
-export default function Home() {
+export default function Products() {
   const { signIn, signOut, isAuthenticated, getIdTokenClaims } = useLogto();
   const [user, setUser] = useState<IdTokenClaims | null>(null);
   useEffect(() => {

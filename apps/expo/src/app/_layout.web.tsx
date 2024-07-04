@@ -11,6 +11,7 @@ import type {StatusBarStyle} from 'react-native';
 
 import "react-native-reanimated";
 import Dropdown from "./components/Dropdown";
+import { useMediaQuery } from "react-responsive";
 import { Colors } from "~/constants/Color";
 
 void SplashScreen.preventAutoHideAsync();
@@ -22,7 +23,9 @@ export default function RootLayout() {
     AvenirHeavy: require("./assets/fonts/Avenir-Heavy.ttf")
   });
 
-  
+  const isWeb = useMediaQuery({
+    minDeviceWidth: 1200,
+  });
 
   const data = [
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -53,25 +56,6 @@ export default function RootLayout() {
   return (
     <LogtoProvider config={logtoService.config}>
       <TRPCProvider>
-        <SafeAreaView style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          backgroundColor: Colors.background,
-        }}>
-        <View style ={{width: 250,}}><Dropdown label="ABC Chemicals" data={data} onSelect={setSelected} /></View>   
-        
-        <Image
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            source={require('./assets/images/bell-icon.png')}
-            style={{
-                resizeMode: "contain",
-                width: 20,
-                height: 20,
-                marginRight: 20,
-            }}
-        />
-        </SafeAreaView>
       
         <Stack
           screenOptions={{
@@ -80,8 +64,6 @@ export default function RootLayout() {
         >
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         </Stack>
-        <StatusBar
-        barStyle={statusBarStyle} />
       </TRPCProvider>
     </LogtoProvider>
   );

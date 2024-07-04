@@ -1,4 +1,4 @@
-import Home from "~/app/(tabs)";
+import Products from "~/app/(tabs)";
 import Dashboard from "~/app/(tabs)/dashboard";
 import Inquiries from "~/app/(tabs)/inquiries";
 import Orders from "~/app/(tabs)/orders";
@@ -21,8 +21,8 @@ export default [
   },
   {
     path: 'index',
-    name: 'Home',
-    component: Home,
+    name: 'Products',
+    component: Products,
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     icon: require('../app/assets/images/home-icon.png')
   },

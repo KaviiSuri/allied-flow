@@ -1,18 +1,13 @@
-import React, { useState } from "react";
-import { Image, Pressable, StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import React from "react";
+import { Image, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { Redirect, Tabs } from "expo-router";
-import { createDrawerNavigator } from "@react-navigation/drawer";
 import ClientIcon from '../assets/images/client-icon.png'
-import { NavigationContainer } from "@react-navigation/native";
-import { useMediaQuery } from "react-responsive";
 
 import DrawerItems from "~/constants/DrawerItems";
 import { useLogto } from "@logto/rn";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "../../constants/Color";
 
-
-const Drawer = createDrawerNavigator();
 
 export default function TabLayout() {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call

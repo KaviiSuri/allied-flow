@@ -11,4 +11,7 @@ const turso = createClient({
 
 export const db = drizzle(turso, {
   schema,
+  logger: true,
 });
+
+console.log(env.DATABASE_URL, env.DATABASE_TOKEN);

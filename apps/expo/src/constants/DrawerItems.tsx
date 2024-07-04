@@ -36,10 +36,24 @@ export default [
         icon: require('../app/assets/images/samples-icon.png')
     },
     {
-      path:'admin/teamMembers',
+        path:'products',
+        name:'Products',
+        component: TeamMembers,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        icon: require('../app/assets/images/home-icon.png')
+    },
+    {
+        path:'clients',
+        name:'Clients',
+        component: TeamMembers,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        icon: require('../app/assets/images/client-icon.png')
+    },
+    {
+      path:'teamMembers',
       name:'Team Members',
       component: TeamMembers,
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      icon: require('../app/assets/images/dashboard-icon.png')
+      icon: require('../app/assets/images/user-icon.svg')
   },
- ]
+]

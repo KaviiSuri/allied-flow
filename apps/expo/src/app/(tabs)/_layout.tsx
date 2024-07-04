@@ -1,81 +1,26 @@
 import React from "react";
-import { Image, Text } from "react-native";
-import { Tabs } from "expo-router";
-import { createDrawerNavigator } from "@react-navigation/drawer";
-import { NavigationContainer } from "@react-navigation/native";
-import { useMediaQuery } from "react-responsive";
+import { Image, StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { Redirect, Tabs } from "expo-router";
+import ClientIcon from '../assets/images/client-icon.png'
 
 import DrawerItems from "~/constants/DrawerItems";
+import { useLogto } from "@logto/rn";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Colors } from "../../constants/Color";
 
-const Drawer = createDrawerNavigator();
 
 export default function TabLayout() {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-  const isWeb = useMediaQuery({
-    minDeviceWidth: 1200,
-  });
 
-  return isWeb ? (
-    <NavigationContainer independent={true}>
-      <Drawer.Navigator
-        initialRouteName="index"
-        screenOptions={{
-          drawerType: "permanent",
-          headerShown: false,
-          drawerStyle: {
-            padding: 16,
-            maxWidth: 230,
-          },
-          drawerItemStyle: {
-            margin: 0,
-            marginBottom: 8,
-          },
-          drawerContentContainerStyle: {
-            margin: 0
-          },
-        }}
-      >
-        {DrawerItems.map((drawer) => (
-          <Drawer.Screen
-            key={drawer.name}
-            name={drawer.name}
-            component={drawer.component}
-            options={{
-              drawerIcon: ({ focused }) => (
-                <Image
-                  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                  source={drawer.icon}
-                  style={{
-                    resizeMode: "contain",
-                    width: 20,
-                    height: 20,
-                    tintColor: focused ? "#2F80F5" : "#475569",
-                  }}
-                />
-              ),
-              title: drawer.name,
-              drawerLabel: ({ focused }) => (
-                <Text
-                  style={{
-                    fontFamily: "Avenir",
-                    fontSize: 16,
-                    lineHeight: 24,
-                    fontWeight: focused ? "800" : "500",
-                    color: focused ? "#2F80F5" : "#475569",
-                  }}
-                >
-                  {drawer.name}
-                </Text>
-              ),
-            }}
-          />
-        ))}
-      </Drawer.Navigator>
-    </NavigationContainer>
-  ) : (
+  const { isAuthenticated, signOut } = useLogto()
+
+  if (!isAuthenticated) {
+    return <Redirect href={'/login'} />
+  }
+  return (
     <Tabs
       screenOptions={{
-        headerShown: false,
+        headerShown: true,
         tabBarStyle: {
           height: 105,
         },
@@ -107,9 +52,63 @@ export default function TabLayout() {
                 }}
               />
             ),
+            header: () => (
+              <SafeAreaView>
+                <View style={styles.container}>
+                  <Image
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                    source={ClientIcon}
+                    style={styles.navImage}
+                  />
+                  <Text>
+                    ABC Chemicals
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => signOut()}
+                    style={styles.logout}>
+                    <Text style={styles.logoutText}>
+                      Logout
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </SafeAreaView>
+            )
           }}
         />
       ))}
     </Tabs>
-  );
+  )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    display: "flex",
+    alignItems: "center",
+    flexDirection: "row",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    columnGap: 8,
+  },
+  navImage: {
+    height: 16,
+    width: 16,
+    resizeMode: "contain",
+    tintColor: "#000",
+  },
+  logout: {
+    borderWidth: 1,
+    borderStyle: 'solid',
+    borderColor: Colors.error,
+    borderRadius: 8,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    marginLeft: '45%'
+  },
+  logoutText: {
+    fontFamily: "AvenirHeavy",
+    fontSize: 16,
+    fontWeight: 800,
+    color: Colors.error,
+
+  }
+})

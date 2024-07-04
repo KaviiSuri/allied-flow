@@ -13,15 +13,20 @@ import "react-native-reanimated";
 void SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const [loaded] = useFonts({
+  const [loaded, error] = useFonts({
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     Avenir: require("./assets/fonts/Avenir-Regular.ttf"),
+    AvenirHeavy: require("./assets/fonts/Avenir-Heavy.ttf")
   });
   useEffect(() => {
     if (loaded) {
       void SplashScreen.hideAsync();
     }
   }, [loaded]);
+
+  useEffect(() => {
+    console.log(error)
+  }, [error])
 
   if (!loaded) {
     return null;

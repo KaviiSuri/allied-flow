@@ -1,10 +1,9 @@
-import { Button, SafeAreaView, Text, View, TextInput, Animated, Dimensions, Pressable, Image } from "react-native";
+import { SafeAreaView, Text, View, TextInput, Animated, Dimensions, Pressable, Image } from "react-native";
 import { Table, TableHeading, TableRow, TableData } from "~/components/shared/table";
 import { useState } from "react";
 import { api } from "~/utils/api";
-import PrimaryButton from "~/components/core/button/primaryButton";
-import SecondaryButton from "~/components/core/button/secondaryButton";
-import FormTextInput from "~/components/shared/form/formTextInput";
+import {PrimaryButton, SecondaryButton} from "~/components/core/button";
+import {FormTextInput} from "~/components/shared/form/";
 const windowHeight = Dimensions.get('window').height - 64;
 
 export default function Clients() {
@@ -82,22 +81,20 @@ export default function Clients() {
         </View>
         </View>
 
-      <View style={{ padding: 16 }}>
-        <Table>
+        <View style={{ padding: 16, height: windowHeight }}>
+        <Table style={{backgroundColor: '#fff'}}>
           <TableHeading>
-            <TableData>Product ID</TableData>
-            <TableData>Product Name</TableData>
-            <TableData>Make</TableData>
-            <TableData>CAS</TableData>
-            <TableData>Description</TableData>
-            <TableData>Actions</TableData>
+            <TableData style={{fontSize: 12, color: '#475467'}}>Company Name</TableData>
+            <TableData style={{fontSize: 12, color: '#475467'}}>POC Name</TableData>
+            <TableData style={{fontSize: 12, color: '#475467'}}>Phone Number</TableData>
+            <TableData style={{fontSize: 12, color: '#475467'}}>Email</TableData>
+            <TableData style={{fontSize: 12, color: '#475467'}}>Actions</TableData>
           </TableHeading>
           {data?.map(user => (
             <TableRow id={user.id}>
               <TableData>{user.id}</TableData>
               <TableData>{user.email}</TableData>
               <TableData>{user.phone}</TableData>
-              <TableData>{user.role}</TableData>
               <TableData>John Doe</TableData>
               <TableData style={{ paddingHorizontal: 16, paddingVertical: 7, flexDirection: "row", gap: 16, flex: 1 }}>
                 <Pressable style={{ borderColor: '#E2E8F0', borderWidth: 1, borderRadius: 8, padding: 8 }}>

@@ -1,10 +1,9 @@
-import { Button, SafeAreaView, Text, View, TextInput, Animated, Dimensions, Pressable, Image } from "react-native";
+import { SafeAreaView, Text, View, TextInput, Animated, Dimensions, Pressable, Image } from "react-native";
 import { Table, TableHeading, TableRow, TableData } from "~/components/shared/table";
 import { useState } from "react";
 import { api } from "~/utils/api";
-import PrimaryButton from "~/components/core/button/primaryButton";
-import SecondaryButton from "~/components/core/button/secondaryButton";
-import FormTextInput from "~/components/shared/form/formTextInput";
+import {PrimaryButton, SecondaryButton} from "~/components/core/button";
+import {FormTextInput} from "~/components/shared/form/";
 const windowHeight = Dimensions.get('window').height - 64;
 
 export default function Products() {
@@ -78,15 +77,15 @@ export default function Products() {
         </View>
         </View>
 
-      <View style={{ padding: 16 }}>
-        <Table>
+        <View style={{ padding: 16, height: windowHeight }}>
+        <Table style={{backgroundColor: '#fff'}}>
           <TableHeading>
-            <TableData>Product ID</TableData>
-            <TableData>Product Name</TableData>
-            <TableData>Make</TableData>
-            <TableData>CAS</TableData>
-            <TableData>Description</TableData>
-            <TableData>Actions</TableData>
+            <TableData style={{fontSize: 12, color: '#475467'}}>Product ID</TableData>
+            <TableData style={{fontSize: 12, color: '#475467'}}>Product Name</TableData>
+            <TableData style={{fontSize: 12, color: '#475467'}}>Make</TableData>
+            <TableData style={{fontSize: 12, color: '#475467'}}>CAS</TableData>
+            <TableData style={{fontSize: 12, color: '#475467'}}>Description</TableData>
+            <TableData style={{fontSize: 12, color: '#475467'}}>Actions</TableData>
           </TableHeading>
           {data?.map(user => (
             <TableRow id={user.id}>

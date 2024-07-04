@@ -1,7 +1,9 @@
-import { Button, SafeAreaView, Text, View, TextInput, Animated, Dimensions, Pressable, Image } from "react-native";
+import { SafeAreaView, Text, View, TextInput, Animated, Dimensions, Pressable, Image } from "react-native";
 import { Table, TableHeading, TableRow, TableData } from "~/components/shared/table";
 import { useState } from "react";
 import { api } from "~/utils/api";
+import {PrimaryButton, SecondaryButton} from "~/components/core/button";
+import {FormTextInput} from "~/components/shared/form/";
 const windowHeight = Dimensions.get('window').height - 64;
 
 export default function TeamMembers() {
@@ -19,7 +21,6 @@ export default function TeamMembers() {
   const [drawerVisible, setDrawerVisible] = useState(false);
   const handleClick = () => {
     setDrawerVisible(!drawerVisible);
-
   }
 
   return (
@@ -34,58 +35,32 @@ export default function TeamMembers() {
         </View>
         <View style={{ flex: 1, height: '100%', flexDirection: 'column', backgroundColor: '#FFF' }}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 20, borderBottomWidth: 1, borderBottomColor: '#E2E8F0' }}>
-            <Text style={{ fontSize: 18, fontWeight: 800 }}>Add Member</Text>
+            <Text style={{ fontSize: 18, fontWeight: 800 }}>Add Product</Text>
+            <Pressable onPress={handleClick}><Image source={require('../../app/assets/images/close-icon.png')}/></Pressable>
           </View>
           <View style={{ flex: 1, padding: 20, flexDirection: 'column', gap: 16 }}>
-            <View style={{ width: '100%', padding: 16, borderRadius: 12, borderColor: '#E2E8F0', borderWidth: 1 }}>
-
-              <View>
-                <Text style={{ fontSize: 14, fontWeight: 400, paddingBottom: 8 }}>Name</Text>
-                <TextInput style={{ borderWidth: 1, borderColor: '#E2E8F0', borderRadius: 8, paddingHorizontal: 14, paddingVertical: 12 }} placeholder="Type member name" />
-              </View>
-              <View>
-                <Text style={{ fontSize: 14, fontWeight: 400, paddingBottom: 8 }}>Email</Text>
-                <TextInput style={{ borderWidth: 1, borderColor: '#E2E8F0', borderRadius: 8, paddingHorizontal: 14, paddingVertical: 12 }} placeholder="Type email address" />
-              </View>
-              <View>
-                <Text style={{ fontSize: 14, fontWeight: 400, paddingBottom: 8 }}>Phone Number</Text>
-                <TextInput style={{ borderWidth: 1, borderColor: '#E2E8F0', borderRadius: 8, paddingHorizontal: 14, paddingVertical: 12 }} placeholder="Type phone number" />
-              </View>
-              <View>
-                <Text style={{ fontSize: 14, fontWeight: 400, paddingBottom: 8 }}>Assigned Clients</Text>
-                <TextInput style={{ borderWidth: 1, borderColor: '#E2E8F0', borderRadius: 8, paddingHorizontal: 14, paddingVertical: 12 }} placeholder="Select Clients" />
-              </View>
-              <View>
-                <Text style={{ fontSize: 14, fontWeight: 400, paddingBottom: 8 }}>Role</Text>
-                <TextInput style={{ borderWidth: 1, borderColor: '#E2E8F0', borderRadius: 8, paddingHorizontal: 14, paddingVertical: 12 }} placeholder="Select Role" />
-              </View>
+            <View style={{ width: '100%', padding: 16, borderRadius: 12, borderColor: '#E2E8F0', borderWidth: 1, flexDirection: "column", gap: 16 }}>
+                <FormTextInput label="Company Name" placeholder="Type company name" />
+                <FormTextInput label="Company Address" placeholder="Type company address" />
+                <View style={{flexDirection: "row", gap: 16}}>
+                    <FormTextInput label="POC" placeholder="Type POC" style={{flex: 1}}/>
+                    <FormTextInput label="GST Number" placeholder="Type GST Number" style={{flex: 1}}/>
+                </View>
+                <FormTextInput label="Phone Number" placeholder="Type phone number" />
+                <FormTextInput label="Email" placeholder="Type email" />
             </View>
           </View>
           <View style={{ padding: 16, borderTopWidth: 1, borderTopColor: '#E2E8F0', flexDirection: 'row', justifyContent: 'flex-end', gap: 16 }}>
-            <Button title="Cancel" onPress={handleClick} />
-            <Button title="Save" onPress={handleClick} />
+            <SecondaryButton text="Cancel" />
+            <PrimaryButton text="Save"/>
           </View>
         </View>
       </Animated.View>
-      <View style={{
-        padding: 20,
-      }}>
-        <Text style={{
-          fontFamily: 'Avenir',
-          fontWeight: 800,
-          fontSize: 18,
-        }}>
-          Team members
-        </Text>
-      </View>
-      <View style={{
-        paddingHorizontal: 24,
-        paddingVertical: 8,
-        flexDirection: 'row',
-        justifyContent: 'space-between'
-      }}>
+
+        <View style={{paddingHorizontal: 24, paddingVertical: 8, flexDirection: 'row', justifyContent: "space-between"}}>
+        <View>
         <TextInput
-          placeholder="Search by member name"
+          placeholder="Search by product"
           style={{
             width: 320,
             paddingHorizontal: 14,
@@ -98,21 +73,22 @@ export default function TeamMembers() {
         // onChangeText={(text) => setText(text)}
         // value={text}
         />
-        <Pressable onPress={handleClick} style={{paddingHorizontal: 12, paddingVertical: 8, backgroundColor: '#2F80F5', borderRadius: 8}}>
-          <Text style={{fontWeight: 600, fontSize: 14, color: 'white'}}>
-          Add Member
-          </Text>
-        </Pressable>
-      </View>
-      <View style={{ padding: 16 }}>
-        <Table>
+        </View>
+        <View style={{flexDirection: "row", gap: 16}}>
+            <SecondaryButton text="Upload Products" />
+            <PrimaryButton text="Add Products" />
+        </View>
+        </View>
+
+      <View style={{ padding: 16, height: windowHeight }}>
+        <Table style={{backgroundColor: '#fff'}}>
           <TableHeading>
-            <TableData>Name</TableData>
-            <TableData>Email</TableData>
-            <TableData>Phone Number</TableData>
-            <TableData>Role</TableData>
-            <TableData>Clients</TableData>
-            <TableData>Actions</TableData>
+          <TableData style={{fontSize: 12, color: '#475467'}}>Name</TableData>
+            <TableData style={{fontSize: 12, color: '#475467'}}>Email</TableData>
+            <TableData style={{fontSize: 12, color: '#475467'}}>Phone Number</TableData>
+            <TableData style={{fontSize: 12, color: '#475467'}}>Role</TableData>
+            <TableData style={{fontSize: 12, color: '#475467'}}>Clients</TableData>
+            <TableData style={{fontSize: 12, color: '#475467'}}>Actions</TableData>
           </TableHeading>
           {data?.map(user => (
             <TableRow id={user.id}>

@@ -14,12 +14,13 @@ import { Redirect } from "expo-router";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function CustomDrawerContent(props: any) {
+  const { signOut } = useLogto()
   return (
     <View style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}>
       <DrawerContentScrollView {...props}>
         <DrawerItemList {...props} />
       </DrawerContentScrollView>
-      <DrawerItem label="Logout" onPress={() => console.log('logout')}
+      <DrawerItem label="Logout" onPress={() => signOut()}
         icon={({ focused }) => (
           <Image
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment

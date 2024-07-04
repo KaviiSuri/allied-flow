@@ -10,7 +10,9 @@ export default function Inquiries() {
       width: '100%',
       height: '100%'
     }}>
-      Inquiries
+      <Text>
+        Inquiries
+      </Text>
     </SafeAreaView>
   );
 }

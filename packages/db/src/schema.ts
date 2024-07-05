@@ -20,7 +20,7 @@ export const users = sqliteTable("users", {
 export const insertUserSchema = createInsertSchema(users);
 
 export const usersRelations = relations(users, ({ one }) => ({
-  teamId: one(teams, {
+  team: one(teams, {
     fields: [users.teamId],
     references: [teams.id],
   }),
@@ -32,10 +32,10 @@ export const teams = sqliteTable("teams", {
   type: text("type", { enum: ["CLIENT", "SELLER"] }).notNull(),
   createdAt: text("created_at").notNull(),
   updatedAt: text("updated_at").notNull(),
-  gstNo: text("gst_no").notNull().unique(),
+  gstNo: text("gst_no").unique(),
   address: text("address").notNull(),
 });
 
 export const teamsRelations = relations(teams, ({ many }) => ({
-  pocId: many(users),
+  poc: many(users),
 }));

@@ -12,7 +12,7 @@ function TableRow(
     borderColor: "#EAECF0",
   };
   return (
-    <View style={{ ...defaultStyles, ...props.style }} id={props.id}>
+    <View style={{ ...defaultStyles, ...props.style }} key={props.id}>
       {props.children}
     </View>
   );

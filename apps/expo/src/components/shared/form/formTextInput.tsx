@@ -1,17 +1,17 @@
 import React from "react";
 import { View, Text, TextInput } from "react-native";
-import type { ViewStyle } from "react-native";
+import type { TextInputProps, ViewStyle } from "react-native";
 
-interface FormTextInputProps {
+interface FormTextInputProps extends TextInputProps {
   label: string;
   placeholder: string;
   numberOfLines?: number;
   style?: ViewStyle;
 }
 
-function FormTextInput(props: FormTextInputProps) {
+function FormTextInput({ style, numberOfLines, label, ...props }: FormTextInputProps) {
   return (
-    <View style={props.style}>
+    <View style={style}>
       <Text
         style={{
           fontSize: 14,
@@ -21,7 +21,7 @@ function FormTextInput(props: FormTextInputProps) {
           color: "#475467",
         }}
       >
-        {props.label}
+        {label}
       </Text>
       <TextInput
         style={{
@@ -36,10 +36,10 @@ function FormTextInput(props: FormTextInputProps) {
           shadowOpacity: 0.05,
           shadowColor: "#101828",
         }}
-        placeholder={props.placeholder}
         placeholderTextColor="#94A3B8"
         multiline
-        numberOfLines={props.numberOfLines ? props.numberOfLines : 1}
+        numberOfLines={numberOfLines ? numberOfLines : 1}
+        {...props}
       />
     </View>
   );

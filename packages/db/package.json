@@ -24,6 +24,9 @@
     "clean": "rm -rf .turbo node_modules",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
+    "migrate": "pnpm drizzle-kit migrate",
+    "migrate:rollback": "pnpm drizzle-kit migrate:rollback",
+    "generate": "pnpm drizzle-kit generate",
     "push": "pnpm drizzle-kit push",
     "studio": "pnpm drizzle-kit studio",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"

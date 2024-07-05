@@ -38,6 +38,9 @@ async function start() {
     trpcExpress.createExpressMiddleware({
       router: appRouter,
       createContext,
+      onError({ error }) {
+        console.error("TRPC error", error);
+      },
     }),
   );
 

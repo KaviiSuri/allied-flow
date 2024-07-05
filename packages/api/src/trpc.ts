@@ -33,7 +33,7 @@ export const createTRPCContext = (opts: {
   const claims = opts.claims;
   const source = opts.headers["x-trpc-source"] ?? "unknown";
 
-  console.log(">>> tRPC Request from", source, "by", claims);
+  console.log(">>> tRPC Request from", source, "by", claims?.sub);
 
   return {
     claims,

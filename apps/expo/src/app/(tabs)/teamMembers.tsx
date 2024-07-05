@@ -15,14 +15,196 @@ import {
   TableData,
 } from "~/components/shared/table";
 import { useState } from "react";
+import type { RouterInputs, RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
 import { PrimaryButton, SecondaryButton } from "~/components/core/button";
 import { FormTextInput } from "~/components/shared/form/";
 const windowHeight = Dimensions.get("window").height - 64;
 
+type User = RouterOutputs["users"]['readUsers'][0];
+type CreateUser = RouterInputs["users"]["createUser"];
+type UpdateUser = RouterInputs["users"]["updateUser"];
+
+type MemberProps = {
+  open: boolean;
+  toggleOpen: () => void;
+} & (
+    | { handleSave: (_user: CreateUser) => Promise<void> }
+    | { user: User; handleSave: (_user: UpdateUser) => Promise<void> }
+  );
+
+function isUpdateUserProps(props: MemberProps): props is {
+  user: User; handleSave: (_user: UpdateUser) => Promise<void>, open: boolean;
+  toggleOpen: () => void;
+} {
+  return 'user' in props;
+}
+
+function MemberForm(props: {
+  open: boolean,
+  toggleOpen: () => void
+} & ({
+  handleSave: (_user: CreateUser) => Promise<void>
+} | {
+  user: User,
+  handleSave: (_user: UpdateUser) => Promise<void>
+})) {
+  const [email, setEmail] = useState<string>(isUpdateUserProps(props) ? props.user.email : '');
+  const [name, setName] = useState<string>(isUpdateUserProps(props) ? props.user.name : '');
+  const [phone, setPhone] = useState<string>(isUpdateUserProps(props) ? props.user.phone : '');
+
+  async function handleSave() {
+    if (isUpdateUserProps(props)) {
+      await props.handleSave({ id: props.user.id, email, name, phone, role: "ADMIN", teamId: "ADMIN" });
+    } else {
+      await props.handleSave({ email, name, phone, role: "ADMIN", teamId: "ADMIN" });
+    }
+    props.toggleOpen();
+  }
+
+  return (
+    <Animated.View
+      style={{
+        zIndex: 1,
+        position: "absolute",
+        right: props.open ? 0 : "-100%",
+        width: "100%",
+        height: windowHeight,
+        flexDirection: "row",
+      }}
+    >
+      <View style={{ flex: 1 }}>
+        <Pressable
+          style={{
+            width: "100%",
+            height: "100%",
+            backgroundColor: "#000",
+            opacity: 0.1,
+          }}
+          onPress={props.toggleOpen}
+        ></Pressable>
+      </View>
+      <View
+        style={{
+          flex: 1,
+          height: "100%",
+          flexDirection: "column",
+          backgroundColor: "#F9F9F9",
+        }}
+      >
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            padding: 20,
+            borderBottomWidth: 1,
+            borderBottomColor: "#E2E8F0",
+            backgroundColor: "#FFF",
+          }}
+        >
+          <Text
+            style={{ fontSize: 18, fontWeight: 800, fontFamily: "Avenir" }}
+          >
+            Add member
+          </Text>
+          <Pressable onPress={props.toggleOpen}>
+            <Image
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+              source={require("../../app/assets/images/close-icon.png")}
+            />
+          </Pressable>
+        </View>
+        <View style={{ flex: 1, padding: 20 }}>
+          <View
+            style={{
+              width: "100%",
+              padding: 16,
+              borderRadius: 12,
+              borderColor: "#E2E8F0",
+              borderWidth: 1,
+              flexDirection: "column",
+              gap: 16,
+              backgroundColor: "#FFF",
+            }}
+          >
+            <FormTextInput label="Name" placeholder="Type member name" value={name}
+              onChangeText={(t) => setName(t)}
+            />
+            <FormTextInput label="Email" placeholder="Type email address" value={email}
+              onChangeText={(t) => setEmail(t)}
+            />
+            <FormTextInput
+              label="Phone Number"
+              placeholder="Type phone number"
+              value={phone}
+              onChangeText={(t) => setPhone(t)}
+            />
+          </View>
+        </View>
+        <View
+          style={{
+            padding: 16,
+            borderTopWidth: 1,
+            borderTopColor: "#E2E8F0",
+            flexDirection: "row",
+            justifyContent: "flex-end",
+            gap: 16,
+          }}
+        >
+          <SecondaryButton text="Cancel" onPress={props.toggleOpen} />
+          <PrimaryButton text="Save" onPress={handleSave} />
+        </View>
+      </View>
+    </Animated.View>
+  )
+}
+
+function UpdateMemberForm(props: {
+  open: boolean,
+  user: User,
+  toggleOpen: () => void
+}) {
+  const utils = api.useUtils();
+  const { mutateAsync: updateUser } = api.users.updateUser.useMutation({
+    onSuccess: () => {
+      utils.users.readUsers.refetch().catch(console.error);
+    },
+  });
+
+  async function handleSave(user: RouterInputs["users"]["updateUser"]) {
+    await updateUser(user);
+    props.toggleOpen();
+  }
+
+  return (
+    <MemberForm open={props.open} user={props.user} toggleOpen={props.toggleOpen} handleSave={handleSave} />
+  )
+}
+
+function CreateMemberForm(props: {
+  open: boolean,
+  toggleOpen: () => void
+}) {
+  const utils = api.useUtils();
+  const { mutateAsync: createUser } = api.users.createUser.useMutation({
+    onSuccess: () => {
+      utils.users.readUsers.refetch().catch(console.error);
+    },
+  });
+
+  async function handleSave(user: CreateUser) {
+    await createUser(user);
+    props.toggleOpen();
+  }
+
+  return (
+    <MemberForm open={props.open} toggleOpen={props.toggleOpen} handleSave={handleSave} />
+  )
+}
+
 export default function TeamMembers() {
   const { data } = api.users.readUsers.useQuery();
-  console.log(data);
+  const [userToUpdate, setUserToUpdate] = useState<User | null>(null);
   // const slideAnim = useRef(new Animated.Value(-100)).current;
   // useEffect(() => {
   //   Animated.timing(slideAnim, {
@@ -32,7 +214,7 @@ export default function TeamMembers() {
   //   }).start();
   // }, [slideAnim]);
   const [drawerVisible, setDrawerVisible] = useState(false);
-  const handleClick = () => {
+  const toggleDrawer = () => {
     setDrawerVisible(!drawerVisible);
   };
 
@@ -43,93 +225,9 @@ export default function TeamMembers() {
         position: "relative",
       }}
     >
-      <Animated.View
-        style={{
-          zIndex: 1,
-          position: "absolute",
-          right: drawerVisible ? 0 : "-100%",
-          width: "100%",
-          height: windowHeight,
-          flexDirection: "row",
-        }}
-      >
-        <View style={{ flex: 1 }}>
-          <Pressable
-            style={{
-              width: "100%",
-              height: "100%",
-              backgroundColor: "#000",
-              opacity: 0.1,
-            }}
-            onPress={handleClick}
-          ></Pressable>
-        </View>
-        <View
-          style={{
-            flex: 1,
-            height: "100%",
-            flexDirection: "column",
-            backgroundColor: "#F9F9F9",
-          }}
-        >
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              padding: 20,
-              borderBottomWidth: 1,
-              borderBottomColor: "#E2E8F0",
-              backgroundColor: "#FFF",
-            }}
-          >
-            <Text
-              style={{ fontSize: 18, fontWeight: 800, fontFamily: "Avenir" }}
-            >
-              Add member
-            </Text>
-            <Pressable onPress={handleClick}>
-              <Image
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                source={require("../../app/assets/images/close-icon.png")}
-              />
-            </Pressable>
-          </View>
-          <View style={{ flex: 1, padding: 20 }}>
-            <View
-              style={{
-                width: "100%",
-                padding: 16,
-                borderRadius: 12,
-                borderColor: "#E2E8F0",
-                borderWidth: 1,
-                flexDirection: "column",
-                gap: 16,
-                backgroundColor: "#FFF",
-              }}
-            >
-              <FormTextInput label="Name" placeholder="Type member name" />
-              <FormTextInput label="Email" placeholder="Type email address" />
-              <FormTextInput
-                label="Phone Number"
-                placeholder="Type phone number"
-              />
-            </View>
-          </View>
-          <View
-            style={{
-              padding: 16,
-              borderTopWidth: 1,
-              borderTopColor: "#E2E8F0",
-              flexDirection: "row",
-              justifyContent: "flex-end",
-              gap: 16,
-            }}
-          >
-            <SecondaryButton text="Cancel" />
-            <PrimaryButton text="Save" />
-          </View>
-        </View>
-      </Animated.View>
+
+      <CreateMemberForm open={drawerVisible} toggleOpen={toggleDrawer} />
+      {userToUpdate && <UpdateMemberForm open={!!userToUpdate} user={userToUpdate} toggleOpen={() => setUserToUpdate(null)} />}
 
       <View
         style={{
@@ -167,7 +265,7 @@ export default function TeamMembers() {
           style={{ flexDirection: "row", gap: 16, backgroundColor: "#FFF" }}
         >
           <SecondaryButton text="Upload members" />
-          <PrimaryButton text="Add members" onPress={handleClick} />
+          <PrimaryButton text="Add members" onPress={toggleDrawer} />
         </View>
       </View>
 
@@ -194,8 +292,8 @@ export default function TeamMembers() {
             </TableData>
           </TableHeading>
           {data?.map((user) => (
-            <TableRow id={user.id}>
-              <TableData>{user.id}</TableData>
+            <TableRow id={user.id} key={user.id}>
+              <TableData>{user.name}</TableData>
               <TableData>{user.email}</TableData>
               <TableData>{user.phone}</TableData>
               <TableData>{user.role}</TableData>
@@ -219,6 +317,7 @@ export default function TeamMembers() {
                     shadowOpacity: 0.05,
                     shadowColor: "#101828",
                   }}
+                  onPress={() => setUserToUpdate(user)}
                 >
                   <Image
                     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment

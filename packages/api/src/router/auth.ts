@@ -9,6 +9,9 @@ export const authRouter = {
     const uid = ctx.claims.sub;
     const user = await ctx.db.query.users.findFirst({
       where: (users, { eq }) => eq(users.id, uid),
+      with: {
+        team: true,
+      },
     });
     const { status } = await usersApi.apiUsersUserIdGet(uid, "true");
     if (status !== 200) {
@@ -17,7 +20,7 @@ export const authRouter = {
         message: "Failed to fetch user",
       });
     }
-    return user;
+    return user ?? null;
   }),
   getSecretMessage: protectedProcedure.query(() => {
     return "you can see this secret message!";

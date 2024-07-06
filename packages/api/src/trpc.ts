@@ -101,6 +101,9 @@ export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
   }
   const user = await db.query.users.findFirst({
     where: (users, { eq }) => eq(users.id, claims.sub),
+    with: {
+      team: true,
+    },
   });
   if (!user) {
     throw new TRPCError({ code: "UNAUTHORIZED" });

@@ -7,6 +7,7 @@ import DrawerItems from "~/constants/DrawerItems";
 import { useLogto } from "@logto/rn";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "../../constants/Color";
+import AuthProvider from "~/providers/auth";
 
 export default function TabLayout() {
   const { isAuthenticated, signOut } = useLogto();
@@ -15,62 +16,64 @@ export default function TabLayout() {
     return <Redirect href={"/login"} />;
   }
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: true,
-        tabBarStyle: {
-          height: 105,
-        },
-      }}
-    >
-      {DrawerItems.map((drawer) => (
-        <Tabs.Screen
-          key={drawer.path}
-          name={drawer.path}
-          options={{
-            tabBarLabelPosition: "below-icon",
-            tabBarLabelStyle: {
-              fontFamily: "Avenir",
-              fontSize: 12,
-              fontWeight: "800",
-              lineHeight: 18,
-            },
-            title: drawer.name,
-            tabBarIcon: ({ color }) => (
-              <Image
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                source={drawer.icon}
-                style={{
-                  width: 20,
-                  height: 20,
-                  resizeMode: "contain",
-                  tintColor: color,
-                  marginBottom: -10,
-                }}
-              />
-            ),
-            header: () => (
-              <SafeAreaView>
-                <View style={styles.container}>
-                  <Image
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                    source={ClientIcon}
-                    style={styles.navImage}
-                  />
-                  <Text>ABC Chemicals</Text>
-                  <TouchableOpacity
-                    onPress={() => signOut()}
-                    style={styles.logout}
-                  >
-                    <Text style={styles.logoutText}>Logout</Text>
-                  </TouchableOpacity>
-                </View>
-              </SafeAreaView>
-            ),
-          }}
-        />
-      ))}
-    </Tabs>
+    <AuthProvider>
+      <Tabs
+        screenOptions={{
+          headerShown: true,
+          tabBarStyle: {
+            height: 105,
+          },
+        }}
+      >
+        {DrawerItems.map((drawer) => (
+          <Tabs.Screen
+            key={drawer.path}
+            name={drawer.path}
+            options={{
+              tabBarLabelPosition: "below-icon",
+              tabBarLabelStyle: {
+                fontFamily: "Avenir",
+                fontSize: 12,
+                fontWeight: "800",
+                lineHeight: 18,
+              },
+              title: drawer.name,
+              tabBarIcon: ({ color }) => (
+                <Image
+                  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                  source={drawer.icon}
+                  style={{
+                    width: 20,
+                    height: 20,
+                    resizeMode: "contain",
+                    tintColor: color,
+                    marginBottom: -10,
+                  }}
+                />
+              ),
+              header: () => (
+                <SafeAreaView>
+                  <View style={styles.container}>
+                    <Image
+                      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                      source={ClientIcon}
+                      style={styles.navImage}
+                    />
+                    <Text>ABC Chemicals</Text>
+                    <TouchableOpacity
+                      onPress={() => signOut()}
+                      style={styles.logout}
+                    >
+                      <Text style={styles.logoutText}>Logout</Text>
+                    </TouchableOpacity>
+                  </View>
+                </SafeAreaView>
+              ),
+            }}
+          />
+        ))}
+      </Tabs>
+    </AuthProvider>
   );
 }
 

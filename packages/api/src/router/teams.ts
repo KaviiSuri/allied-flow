@@ -15,7 +15,7 @@ const updatedTeamInput = insertTeamSchema
     updatedAt: true,
   });
 
-export const usersRouter = {
+export const teamsRouter = {
   createTeam: protectedProcedure
     .input(
       insertTeamSchema.omit({

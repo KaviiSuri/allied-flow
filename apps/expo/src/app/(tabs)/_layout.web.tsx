@@ -11,6 +11,8 @@ import {
 } from "@react-navigation/drawer";
 import { useLogto } from "@logto/rn";
 import { Redirect } from "expo-router";
+import { logtoService } from "~/config/logto";
+import AuthProvider from "~/providers/auth";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function CustomDrawerContent(props: any) {
@@ -29,7 +31,7 @@ function CustomDrawerContent(props: any) {
       </DrawerContentScrollView>
       <DrawerItem
         label="Logout"
-        onPress={() => signOut()}
+        onPress={() => signOut(logtoService.redirectUri)}
         icon={({ focused }) => (
           <Image
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -55,64 +57,66 @@ export default function WebLayout() {
   }
 
   return (
-    <GestureHandlerRootView>
-      <Drawer
-        initialRouteName="index"
-        screenOptions={{
-          drawerType: "permanent",
-          headerStyle: {
-            backgroundColor: "#F9F9F9",
-          },
-          headerTitleStyle: {
-            fontFamily: "Avenir",
-            fontWeight: 800,
-            fontSize: 18,
-          },
-          headerLeft: () => null,
-        }}
-        drawerContent={CustomDrawerContent}
-      >
-        {DrawerItems.map((drawer) => (
-          <Drawer.Screen
-            key={drawer.path}
-            name={drawer.path}
-            options={{
-              title: drawer.name,
-              headerTitle: drawer.name,
-              headerTitleStyle: {
-                fontFamily: "Avenir",
-                fontWeight: 800,
-                fontSize: 18,
-              },
-              drawerLabel: ({ focused }) => (
-                <Text
-                  style={{
-                    fontFamily: "Avenir",
-                    fontSize: 16,
-                    lineHeight: 24,
-                    fontWeight: focused ? "800" : "500",
-                    color: focused ? "#2F80F5" : "#475569",
-                  }}
-                >
-                  {drawer.name}
-                </Text>
-              ),
-              drawerIcon: ({ focused }) => (
-                <Image
-                  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                  source={drawer.icon}
-                  style={{
-                    resizeMode: "contain",
-                    width: 20,
-                    height: 20,
-                    tintColor: focused ? "#2F80F5" : "#475569",
-                  }}
-                />
-              ),
-            }}
-          />
-        ))}
-      </Drawer>
-    </GestureHandlerRootView>
+    <AuthProvider>
+      <GestureHandlerRootView>
+        <Drawer
+          initialRouteName="index"
+          screenOptions={{
+            drawerType: "permanent",
+            headerStyle: {
+              backgroundColor: "#F9F9F9",
+            },
+            headerTitleStyle: {
+              fontFamily: "Avenir",
+              fontWeight: 800,
+              fontSize: 18,
+            },
+            headerLeft: () => null,
+          }}
+          drawerContent={CustomDrawerContent}
+        >
+          {DrawerItems.map((drawer) => (
+            <Drawer.Screen
+              key={drawer.path}
+              name={drawer.path}
+              options={{
+                title: drawer.name,
+                headerTitle: drawer.name,
+                headerTitleStyle: {
+                  fontFamily: "Avenir",
+                  fontWeight: 800,
+                  fontSize: 18,
+                },
+                drawerLabel: ({ focused }) => (
+                  <Text
+                    style={{
+                      fontFamily: "Avenir",
+                      fontSize: 16,
+                      lineHeight: 24,
+                      fontWeight: focused ? "800" : "500",
+                      color: focused ? "#2F80F5" : "#475569",
+                    }}
+                  >
+                    {drawer.name}
+                  </Text>
+                ),
+                drawerIcon: ({ focused }) => (
+                  <Image
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                    source={drawer.icon}
+                    style={{
+                      resizeMode: "contain",
+                      width: 20,
+                      height: 20,
+                      tintColor: focused ? "#2F80F5" : "#475569",
+                    }}
+                  />
+                ),
+              }}
+            />
+          ))}
+        </Drawer>
+      </GestureHandlerRootView>
+    </AuthProvider>
   );
 }

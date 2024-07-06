@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import type { TRPCRouterRecord } from "@trpc/server";
 import { usersApi } from "@repo/logto-admin";
 
@@ -9,12 +10,14 @@ export const authRouter = {
     const user = await ctx.db.query.users.findFirst({
       where: (users, { eq }) => eq(users.id, uid),
     });
-    const { data: logtoUser } = await usersApi.apiUsersUserIdGet(uid, "true");
-    return {
-      claims: ctx.claims,
-      logtoUser,
-      user,
-    };
+    const { status } = await usersApi.apiUsersUserIdGet(uid, "true");
+    if (status !== 200) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Failed to fetch user",
+      });
+    }
+    return user;
   }),
   getSecretMessage: protectedProcedure.query(() => {
     return "you can see this secret message!";

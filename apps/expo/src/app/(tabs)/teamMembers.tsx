@@ -226,7 +226,7 @@ export default function TeamMembers() {
       }}
     >
 
-      <CreateMemberForm open={drawerVisible} toggleOpen={toggleDrawer} />
+      {!userToUpdate && <CreateMemberForm open={drawerVisible} toggleOpen={toggleDrawer} />}
       {userToUpdate && <UpdateMemberForm open={!!userToUpdate} user={userToUpdate} toggleOpen={() => setUserToUpdate(null)} />}
 
       <View

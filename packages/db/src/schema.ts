@@ -36,6 +36,8 @@ export const teams = sqliteTable("teams", {
   address: text("address").notNull(),
 });
 
+export const insertTeamSchema = createInsertSchema(teams);
+
 export const teamsRelations = relations(teams, ({ many }) => ({
   poc: many(users),
 }));

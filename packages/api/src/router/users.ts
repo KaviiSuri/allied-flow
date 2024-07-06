@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import type { TRPCRouterRecord } from "@trpc/server";
 import { users } from "@repo/db/schema";
-import { publicProcedure } from "../trpc.js";
+import { protectedProcedure } from "../trpc.js";
 import { eq } from "@repo/db";
 import { z } from "zod";
 import { usersApi } from "@repo/logto-admin";
@@ -17,7 +17,7 @@ const createUserInput = z.object({
 const updatedUserInput = createUserInput.partial().extend({ id: z.string() });
 
 export const usersRouter = {
-  createUser: publicProcedure
+  createUser: protectedProcedure
     .input(createUserInput)
     .mutation(async ({ ctx, input }) => {
       const user = await usersApi.apiUsersPost({
@@ -51,7 +51,7 @@ export const usersRouter = {
       }
       return insertedUserId[0];
     }),
-  readUsers: publicProcedure.query(async ({ ctx }) => {
+  readUsers: protectedProcedure.query(async ({ ctx }) => {
     const res = await ctx.db.query.users.findMany({
       with: {
         team: true,
@@ -60,7 +60,7 @@ export const usersRouter = {
     return res;
   }),
 
-  updateUser: publicProcedure
+  updateUser: protectedProcedure
     .input(updatedUserInput)
     .mutation(async ({ ctx, input }) => {
       const updatedUser = await ctx.db
@@ -88,7 +88,7 @@ export const usersRouter = {
       return updatedUser[0];
     }),
 
-  deleteUser: publicProcedure
+  deleteUser: protectedProcedure
     .input(z.string())
     .mutation(async ({ ctx, input }) => {
       const deletedUser = await ctx.db

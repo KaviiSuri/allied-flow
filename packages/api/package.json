@@ -21,9 +21,10 @@
   "dependencies": {
     "@logto/js": "^4.1.2",
     "@repo/db": "workspace:*",
+    "@repo/logto-admin": "workspace:*",
     "@repo/validators": "workspace:*",
     "@trpc/server": "11.0.0-rc.364",
-    "@repo/logto-admin": "workspace:*",
+    "nanoid": "^5.0.7",
     "superjson": "2.2.1",
     "zod": "^3.23.8"
   },

@@ -1,6 +1,17 @@
 import { SafeAreaView, Text } from "react-native";
+import { SingleSelectDropdown } from "~/components/shared/dropdown";
 
 export default function Dashboard() {
+
+  interface Option {
+    label: string;
+    value: string | number;
+  }
+  const options: Option[] = [
+    { label: 'Option 1', value: 1 },
+    { label: 'Option 2', value: 2 },
+    { label: 'Option 3', value: 3 },
+  ];
   return (
     <SafeAreaView
       style={{
@@ -12,6 +23,11 @@ export default function Dashboard() {
       }}
     >
       <Text>Dashboard</Text>
+
+      <SingleSelectDropdown
+        options={options}
+        onSelect={(item) => console.log('Selected:', item)}
+      />
     </SafeAreaView>
   );
 }

@@ -32,7 +32,7 @@ export default function Home() {
   });
 
   if (isAuthenticated) {
-    return <Redirect href={"/"} />;
+    return <Redirect href={"/dashboard"} />;
   }
 
   return (
@@ -41,17 +41,14 @@ export default function Home() {
       {/* Changes page title visible on the header */}
       <View style={styles.loginContainer}>
         <View style={styles.loginWindow}>
-          <Text style={styles.textPrimary}>
-            Hello {user?.email}
-          </Text>
 
           <Text style={styles.textPrimary}>
-            <Text style={styles.textPrimary}>Server User:</Text>
-            {(isLoading || isRefetching) && (
-              <Text style={styles.textPrimary}>Loading...</Text>
-            )}
-            {error && <Text>Error: {error.message}</Text>}
-            {serverUser && <Text>{JSON.stringify(serverUser)}</Text>}
+            Log in to your account
+            {/* {(isLoading || isRefetching) && ( */}
+            {/*   <Text style={styles.textPrimary}>Loading...</Text> */}
+            {/* )} */}
+            {/* {error && <Text>Error: {error.message}</Text>} */}
+            {/* {serverUser && <Text>{JSON.stringify(serverUser)}</Text>} */}
           </Text>
 
           <Pressable

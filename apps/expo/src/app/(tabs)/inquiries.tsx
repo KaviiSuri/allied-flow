@@ -1,4 +1,5 @@
 import { SafeAreaView, Text } from "react-native";
+import { MultiSelectExample } from "~/components/layouts/multiSelectExample";
 
 export default function Inquiries() {
   return (
@@ -12,6 +13,7 @@ export default function Inquiries() {
       }}
     >
       <Text>Inquiries</Text>
+      <MultiSelectExample />
     </SafeAreaView>
   );
 }

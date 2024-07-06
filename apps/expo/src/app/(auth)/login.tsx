@@ -6,9 +6,10 @@ import { useLogto } from "@logto/rn";
 import { useEffect, useState } from "react";
 import { api } from "~/utils/api";
 import { Colors } from "../../constants/Color";
+import { logtoService } from "~/config/logto";
 
 export default function Home() {
-  const { signOut, isAuthenticated, getIdTokenClaims } = useLogto();
+  const { signIn, isAuthenticated, getIdTokenClaims } = useLogto();
   const [user, setUser] = useState<IdTokenClaims | null>(null);
   useEffect(() => {
     if (isAuthenticated) {
@@ -41,7 +42,7 @@ export default function Home() {
       <View style={styles.loginContainer}>
         <View style={styles.loginWindow}>
           <Text style={styles.textPrimary}>
-            `Hello ${user?.email}`
+            Hello {user?.email}
           </Text>
 
           <Text style={styles.textPrimary}>
@@ -55,10 +56,10 @@ export default function Home() {
 
           <Pressable
             style={styles.loginButtons}
-            onPress={() => signOut()}
+            onPress={() => signIn(logtoService.redirectUri)}
           >
             <Text style={styles.loginButtonText}>
-              Sign Out
+              Sign In
             </Text>
           </Pressable>
 

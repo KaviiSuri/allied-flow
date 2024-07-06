@@ -60,3 +60,27 @@ export default function AuthProvider(props: { children: React.ReactNode }) {
     </authContext.Provider>
   );
 }
+
+export function AuthConsumer(props: {
+  children: (
+    value: AuthContext,
+    ability: Abilities,
+  ) => React.ReactNode
+}) {
+  return (
+    <authContext.Consumer>
+      {(value) => {
+        return (
+          <abilityContext.Consumer>
+            {(ability) => {
+              if (!value.user) {
+                return null;
+              }
+              return props.children(value, ability);
+            }}
+          </abilityContext.Consumer>
+        );
+      }}
+    </authContext.Consumer>
+  );
+}

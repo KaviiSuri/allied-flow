@@ -14,7 +14,7 @@ import {
   TableRow,
   TableData,
 } from "~/components/shared/table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { RouterInputs, RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
 import { PrimaryButton, SecondaryButton } from "~/components/core/button";
@@ -219,6 +219,9 @@ export default function TeamMembers() {
   const toggleDrawer = () => {
     setDrawerVisible(!drawerVisible);
   };
+  useEffect(() => {
+    console.log('===', ability.can("read", "User"))
+  }, [ability]);
 
   return (
     <Can I="read" a="User">

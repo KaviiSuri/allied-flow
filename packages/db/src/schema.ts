@@ -48,3 +48,17 @@ export const insertTeamSchema = createInsertSchema(teams);
 export const teamsRelations = relations(teams, ({ many }) => ({
   poc: many(users),
 }));
+
+export const products = sqliteTable("products", {
+  id: text("id").primaryKey().unique(),
+  name: text("name").notNull(),
+  make: text("make").notNull(),
+  cas: text("cas").notNull(),
+  desc: text("desc").notNull(),
+  createdAt: text("created_at").notNull(),
+  updatedAt: text("updated_at").notNull(),
+});
+
+export type Product = InferSelectModel<typeof products>;
+
+export const insertProductSchema = createInsertSchema(products);

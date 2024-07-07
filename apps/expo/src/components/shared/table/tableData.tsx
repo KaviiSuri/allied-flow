@@ -10,12 +10,9 @@ function TableData(props: PropsWithChildren<{ style?: TextStyle }>) {
     fontSize: 14,
     fontWeight: 500,
     flex: 1,
+    width: "16.66%",
   };
-  return (
-    <Text style={[defaultStyles, props.style]}>
-      {props.children}
-    </Text>
-  );
+  return <Text style={[defaultStyles, props.style]}>{props.children}</Text>;
 }
 
 export default TableData;

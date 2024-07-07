@@ -17,6 +17,10 @@ const updatedTeamInput = insertTeamSchema
 
 export const teamsRouter = {
   createTeam: protectedProcedure
+    .meta({
+      action: "create",
+      subject: "Team",
+    })
     .input(
       insertTeamSchema.omit({
         id: true,
@@ -45,6 +49,10 @@ export const teamsRouter = {
       return insertedTeamId[0];
     }),
   readTeams: protectedProcedure
+    .meta({
+      action: "read",
+      subject: "Team",
+    })
     .input(
       z.object({
         type: z.enum(["SELLER", "CLIENT"]).optional(),
@@ -65,6 +73,10 @@ export const teamsRouter = {
     }),
 
   updateTeam: protectedProcedure
+    .meta({
+      action: "update",
+      subject: "Team",
+    })
     .input(updatedTeamInput)
     .mutation(async ({ ctx, input }) => {
       const updatedTeam = await ctx.db
@@ -88,6 +100,10 @@ export const teamsRouter = {
     }),
 
   deleteTeam: protectedProcedure
+    .meta({
+      action: "delete",
+      subject: "Team",
+    })
     .input(z.string())
     .mutation(async ({ ctx, input }) => {
       const deletedTeam = await ctx.db

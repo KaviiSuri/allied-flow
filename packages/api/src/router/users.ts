@@ -18,6 +18,10 @@ const updatedUserInput = createUserInput.partial().extend({ id: z.string() });
 
 export const usersRouter = {
   createUser: protectedProcedure
+    .meta({
+      action: "create",
+      subject: "User",
+    })
     .input(
       insertUserSchema.omit({
         id: true,
@@ -90,6 +94,10 @@ export const usersRouter = {
     }),
 
   updateUser: protectedProcedure
+    .meta({
+      action: "update",
+      subject: "User",
+    })
     .input(updatedUserInput)
     .mutation(async ({ ctx, input }) => {
       const updatedUser = await ctx.db
@@ -118,6 +126,10 @@ export const usersRouter = {
     }),
 
   deleteUser: protectedProcedure
+    .meta({
+      action: "delete",
+      subject: "User",
+    })
     .input(z.string())
     .mutation(async ({ ctx, input }) => {
       const deletedUser = await ctx.db

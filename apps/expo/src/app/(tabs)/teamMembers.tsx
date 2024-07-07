@@ -164,6 +164,7 @@ function MemberForm(props: {
               onValueChange={(e) => setRole(e)}
               rightIcon={
                 <Image
+                      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                   source={require('../assets/images/down-arrow-icon.png')}
                   style={{
                     resizeMode: "contain",
@@ -172,7 +173,6 @@ function MemberForm(props: {
                     tintColor: 'black'
                   }}
                 />
-
               }
             />
           </View>

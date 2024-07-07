@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { View, StyleSheet, StyleProp, ViewStyle, Dimensions } from 'react-native';
-import LinearGradient from 'expo-linear-gradient';
+import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { Easing, useSharedValue, useAnimatedStyle, withRepeat, withTiming } from 'react-native-reanimated';
 
 interface SkeletonLoaderProps {
@@ -67,21 +67,21 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-  } as StyleProp<ViewStyle>,
+  },
   skeletonRow: {
     flexDirection: 'row',
     marginBottom: 16,
-  } as StyleProp<ViewStyle>,
+  },
   skeletonItem: {
     backgroundColor: '#e0e0e0',
     marginRight: 16,
     borderRadius: 4,
     overflow: 'hidden',
-  } as StyleProp<ViewStyle>,
+  },
   shimmerEffect: {
     ...StyleSheet.absoluteFillObject,
     zIndex: 1,
-  } as StyleProp<ViewStyle>,
+  },
 });
 
 export default SkeletonLoader;

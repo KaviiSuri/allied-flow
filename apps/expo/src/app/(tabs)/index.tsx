@@ -14,7 +14,7 @@ export default function Dashboard() {
       }}
     >
       <Text>Dashboard</Text>
-      <SkeletonLoader rows={1} columns={1} itemHeight={700} itemWidth={700} />
+      {/* <SkeletonLoader rows={1} columns={1} itemHeight={700} itemWidth={700} /> */}
     </SafeAreaView>
   );
 }

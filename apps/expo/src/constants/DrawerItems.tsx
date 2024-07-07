@@ -37,8 +37,8 @@ export default [
     name: "Products",
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     icon: require("../app/assets/images/home-icon.png"),
-    action: undefined,
-    subject: undefined,
+    action: "read",
+    subject: "Product",
   },
   {
     path: "clients",

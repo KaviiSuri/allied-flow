@@ -21,6 +21,7 @@ import { PrimaryButton, SecondaryButton } from "~/components/core/button";
 import { FormTextInput } from "~/components/shared/form/";
 import { FormDropDown } from "~/components/shared/form/formDropDown";
 import { Can, useAbility } from "~/providers/auth";
+import { Role } from "@repo/permissions";
 const windowHeight = Dimensions.get("window").height - 64;
 
 type User = RouterOutputs["users"]['readUsers'][0];
@@ -54,7 +55,7 @@ function MemberForm(props: {
   const [email, setEmail] = useState<string>(isUpdateUserProps(props) ? props.user.email : '');
   const [name, setName] = useState<string>(isUpdateUserProps(props) ? props.user.name : '');
   const [phone, setPhone] = useState<string>(isUpdateUserProps(props) ? props.user.phone : '');
-  const [role, setRole] = useState<string>(isUpdateUserProps(props) ? props.user.role : 'MANAGEMENT')
+  const [role, setRole] = useState<Role>(isUpdateUserProps(props) ? props.user.role : 'MANAGEMENT')
 
   const RoleOptions = [{
     label: "ADMIN",
@@ -73,9 +74,9 @@ function MemberForm(props: {
 
   async function handleSave() {
     if (isUpdateUserProps(props)) {
-      await props.handleSave({ id: props.user.id, email, name, phone, role: "ADMIN", teamId: "ADMIN" });
+      await props.handleSave({ id: props.user.id, email, name, phone, role });
     } else {
-      await props.handleSave({ email, name, phone, role: "ADMIN", teamId: "ADMIN" });
+      await props.handleSave({ email, name, phone, role });
     }
     props.toggleOpen();
   }

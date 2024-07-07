@@ -1,4 +1,4 @@
-import type { Team, UserWithTeam } from "@repo/db/schema";
+import type { Team, UserWithTeam, Product } from "@repo/db/schema";
 import { AbilityBuilder, PureAbility, MatchConditions } from "@casl/ability";
 
 const crudActions = ["read", "create", "update", "delete"] as const;
@@ -10,6 +10,10 @@ export type SubjectsWithTypes = {
   };
   Team: {
     type: Team;
+    actions: (typeof crudActions)[number];
+  };
+  Product: {
+    type: Product;
     actions: (typeof crudActions)[number];
   };
 };

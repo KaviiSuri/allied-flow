@@ -1,4 +1,4 @@
-import { an, defineAbilityFor } from "@repo/permissions";
+import { defineAbilityFor } from "@repo/permissions";
 import { authRouter } from "./router/auth.js";
 import { teamsRouter } from "./router/teams.js";
 import { usersRouter } from "./router/users.js";

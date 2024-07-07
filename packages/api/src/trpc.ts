@@ -13,6 +13,8 @@ import superjson from "superjson";
 import { ZodError } from "zod";
 
 import { db } from "@repo/db/client";
+import type { SubjectsWithTypes } from "@repo/permissions";
+import { defineAbilityFor } from "@repo/permissions";
 
 /**
  * 1. CONTEXT
@@ -41,22 +43,34 @@ export const createTRPCContext = (opts: {
   };
 };
 
+type Meta = {
+  [S in keyof SubjectsWithTypes]: {
+    action: SubjectsWithTypes[S]["actions"];
+    subject: S;
+  };
+}[keyof SubjectsWithTypes];
+
 /**
  * 2. INITIALIZATION
  *
  * This is where the trpc api is initialized, connecting the context and
  * transformer
  */
-const t = initTRPC.context<typeof createTRPCContext>().create({
-  transformer: superjson,
-  errorFormatter: ({ shape, error }) => ({
-    ...shape,
-    data: {
-      ...shape.data,
-      zodError: error.cause instanceof ZodError ? error.cause.flatten() : null,
-    },
-  }),
-});
+const t = initTRPC
+  .context<typeof createTRPCContext>()
+  .meta<Meta>()
+  .create({
+    transformer: superjson,
+    defaultMeta: undefined,
+    errorFormatter: ({ shape, error }) => ({
+      ...shape,
+      data: {
+        ...shape.data,
+        zodError:
+          error.cause instanceof ZodError ? error.cause.flatten() : null,
+      },
+    }),
+  });
 
 /**
  * Create a server-side caller
@@ -94,24 +108,37 @@ export const publicProcedure = t.procedure;
  *
  * @see https://trpc.io/docs/procedures
  */
-export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
-  const { claims } = ctx;
-  if (!claims) {
-    throw new TRPCError({ code: "UNAUTHORIZED" });
-  }
-  const user = await db.query.users.findFirst({
-    where: (users, { eq }) => eq(users.id, claims.sub),
-    with: {
-      team: true,
-    },
-  });
-  if (!user) {
-    throw new TRPCError({ code: "UNAUTHORIZED" });
-  }
-  return next({
-    ctx: {
-      claims,
-      user,
-    },
-  });
-});
+export const protectedProcedure = t.procedure.use(
+  async ({ ctx, next, meta }) => {
+    const { claims } = ctx;
+    if (!claims) {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+    const user = await db.query.users.findFirst({
+      where: (users, { eq }) => eq(users.id, claims.sub),
+      with: {
+        team: true,
+      },
+    });
+    if (!user) {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+    const ability = defineAbilityFor(user);
+    // @ts-expect-error - this is a hack to get around the fact that the type of meta is not inferred
+    if (meta && ability.cannot(meta.action, meta.subject)) {
+      // @ts-expect-error - this is a hack to get around the fact that the type of meta is not inferred
+      const rule = ability.relevantRuleFor(meta.action, meta.subject);
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: rule?.reason ?? "Permission denied",
+      });
+    }
+    return next({
+      ctx: {
+        claims,
+        user,
+        ability,
+      },
+    });
+  },
+);

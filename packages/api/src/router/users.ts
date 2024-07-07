@@ -51,14 +51,19 @@ export const usersRouter = {
       }
       return insertedUserId[0];
     }),
-  readUsers: protectedProcedure.query(async ({ ctx }) => {
-    const res = await ctx.db.query.users.findMany({
-      with: {
-        team: true,
-      },
-    });
-    return res;
-  }),
+  readUsers: protectedProcedure
+    .meta({
+      action: "read",
+      subject: "User",
+    })
+    .query(async ({ ctx }) => {
+      const res = await ctx.db.query.users.findMany({
+        with: {
+          team: true,
+        },
+      });
+      return res;
+    }),
 
   updateUser: protectedProcedure
     .input(updatedUserInput)

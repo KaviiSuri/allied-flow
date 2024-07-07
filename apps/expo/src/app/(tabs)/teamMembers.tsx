@@ -205,7 +205,9 @@ function CreateMemberForm(props: {
 
 export default function TeamMembers() {
   const ability = useAbility();
-  const { data } = api.users.readUsers.useQuery();
+  const { data } = api.users.readUsers.useQuery({
+    scope: "TEAM",
+  });
   const [userToUpdate, setUserToUpdate] = useState<User | null>(null);
   // const slideAnim = useRef(new Animated.Value(-100)).current;
   // useEffect(() => {
@@ -313,23 +315,25 @@ export default function TeamMembers() {
                     flex: 1,
                   }}
                 >
-                  <Pressable
-                    style={{
-                      borderColor: "#E2E8F0",
-                      borderWidth: 1,
-                      borderRadius: 8,
-                      padding: 8,
-                      shadowOffset: { height: 1, width: 0 },
-                      shadowOpacity: 0.05,
-                      shadowColor: "#101828",
-                    }}
-                    onPress={() => setUserToUpdate(user)}
-                  >
-                    <Image
-                      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                      source={require("../../app/assets/images/edit-icon.svg")}
-                    />
-                  </Pressable>
+                  <Can I="update" a="Team">
+                    <Pressable
+                      style={{
+                        borderColor: "#E2E8F0",
+                        borderWidth: 1,
+                        borderRadius: 8,
+                        padding: 8,
+                        shadowOffset: { height: 1, width: 0 },
+                        shadowOpacity: 0.05,
+                        shadowColor: "#101828",
+                      }}
+                      onPress={() => setUserToUpdate(user)}
+                    >
+                      <Image
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                        source={require("../../app/assets/images/edit-icon.svg")}
+                      />
+                    </Pressable>
+                  </Can>
                   {ability.can("delete", "User") && (
                     <Pressable
                       style={{

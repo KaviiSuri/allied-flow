@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import type { TRPCRouterRecord } from "@trpc/server";
-import { users } from "@repo/db/schema";
+import { insertUserSchema, users } from "@repo/db/schema";
 import { protectedProcedure } from "../trpc.js";
 import { eq } from "@repo/db";
 import { z } from "zod";
@@ -18,7 +18,14 @@ const updatedUserInput = createUserInput.partial().extend({ id: z.string() });
 
 export const usersRouter = {
   createUser: protectedProcedure
-    .input(createUserInput)
+    .input(
+      insertUserSchema.omit({
+        id: true,
+        createdAt: true,
+        updatedAt: true,
+        teamId: true,
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       const user = await usersApi.apiUsersPost({
         primaryEmail: input.email,
@@ -38,6 +45,7 @@ export const usersRouter = {
         .values({
           ...input,
           id: user.data.id,
+          teamId: ctx.user.teamId,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         })
@@ -56,10 +64,26 @@ export const usersRouter = {
       action: "read",
       subject: "User",
     })
-    .query(async ({ ctx }) => {
+    .input(
+      z.object({
+        scope: z.enum(["ALL", "TEAM"]).optional().default("TEAM"),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      if (ctx.user.team.type !== "SELLER" && input.scope === "TEAM") {
+        throw new TRPCError({
+          message: "You are not authorized to view all members",
+          code: "FORBIDDEN",
+        });
+      }
       const res = await ctx.db.query.users.findMany({
         with: {
           team: true,
+        },
+        where: (users, { eq }) => {
+          if (input.scope === "TEAM") {
+            return eq(users.teamId, ctx.user.teamId);
+          }
         },
       });
       return res;

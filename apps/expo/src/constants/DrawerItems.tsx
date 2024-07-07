@@ -45,8 +45,8 @@ export default [
     name: "Clients",
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     icon: require("../app/assets/images/client-icon.png"),
-    action: undefined,
-    subject: undefined,
+    action: "read",
+    subject: "Team",
   },
   {
     path: "teamMembers",

@@ -26,7 +26,7 @@ export const teamsRouter = {
     )
     .mutation(async ({ ctx, input }) => {
       // TODO: Create a POC user
-      const insertedUserId = await ctx.db
+      const insertedTeamId = await ctx.db
         .insert(teams)
         .values({
           ...input,
@@ -36,22 +36,33 @@ export const teamsRouter = {
         })
         .returning();
 
-      if (!insertedUserId[0]) {
+      if (!insertedTeamId[0]) {
         throw new TRPCError({
           message: "Failed to create user",
           code: "INTERNAL_SERVER_ERROR",
         });
       }
-      return insertedUserId[0];
+      return insertedTeamId[0];
     }),
-  readTeams: protectedProcedure.query(async ({ ctx }) => {
-    const res = await ctx.db.query.teams.findMany({
-      with: {
-        poc: true,
-      },
-    });
-    return res;
-  }),
+  readTeams: protectedProcedure
+    .input(
+      z.object({
+        type: z.enum(["SELLER", "CLIENT"]).optional(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const res = await ctx.db.query.teams.findMany({
+        with: {
+          poc: true,
+        },
+        where: (teams, { eq }) => {
+          if (input.type) {
+            return eq(teams.type, input.type);
+          }
+        },
+      });
+      return res;
+    }),
 
   updateTeam: protectedProcedure
     .input(updatedTeamInput)

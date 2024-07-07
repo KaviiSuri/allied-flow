@@ -1,3 +1,4 @@
+import type { InferSelectModel } from "drizzle-orm";
 import { relations } from "drizzle-orm";
 import { text, sqliteTable } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
@@ -19,6 +20,10 @@ export const users = sqliteTable("users", {
 
 export const insertUserSchema = createInsertSchema(users);
 
+export type UserWithTeam = InferSelectModel<typeof users> & {
+  team: InferSelectModel<typeof teams>;
+};
+
 export const usersRelations = relations(users, ({ one }) => ({
   team: one(teams, {
     fields: [users.teamId],
@@ -35,6 +40,10 @@ export const teams = sqliteTable("teams", {
   gstNo: text("gst_no").unique(),
   address: text("address").notNull(),
 });
+
+export type Team = InferSelectModel<typeof teams>;
+
+export const insertTeamSchema = createInsertSchema(teams);
 
 export const teamsRelations = relations(teams, ({ many }) => ({
   poc: many(users),

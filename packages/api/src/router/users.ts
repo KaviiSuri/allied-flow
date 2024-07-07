@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import type { TRPCRouterRecord } from "@trpc/server";
-import { users } from "@repo/db/schema";
-import { publicProcedure } from "../trpc.js";
+import { insertUserSchema, users } from "@repo/db/schema";
+import { protectedProcedure } from "../trpc.js";
 import { eq } from "@repo/db";
 import { z } from "zod";
 import { usersApi } from "@repo/logto-admin";
@@ -17,8 +17,19 @@ const createUserInput = z.object({
 const updatedUserInput = createUserInput.partial().extend({ id: z.string() });
 
 export const usersRouter = {
-  createUser: publicProcedure
-    .input(createUserInput)
+  createUser: protectedProcedure
+    .meta({
+      action: "create",
+      subject: "User",
+    })
+    .input(
+      insertUserSchema.omit({
+        id: true,
+        createdAt: true,
+        updatedAt: true,
+        teamId: true,
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       const user = await usersApi.apiUsersPost({
         primaryEmail: input.email,
@@ -38,6 +49,7 @@ export const usersRouter = {
         .values({
           ...input,
           id: user.data.id,
+          teamId: ctx.user.teamId,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         })
@@ -51,16 +63,41 @@ export const usersRouter = {
       }
       return insertedUserId[0];
     }),
-  readUsers: publicProcedure.query(async ({ ctx }) => {
-    const res = await ctx.db.query.users.findMany({
-      with: {
-        team: true,
-      },
-    });
-    return res;
-  }),
+  readUsers: protectedProcedure
+    .meta({
+      action: "read",
+      subject: "User",
+    })
+    .input(
+      z.object({
+        scope: z.enum(["ALL", "TEAM"]).optional().default("TEAM"),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      if (ctx.user.team.type !== "SELLER" && input.scope === "TEAM") {
+        throw new TRPCError({
+          message: "You are not authorized to view all members",
+          code: "FORBIDDEN",
+        });
+      }
+      const res = await ctx.db.query.users.findMany({
+        with: {
+          team: true,
+        },
+        where: (users, { eq }) => {
+          if (input.scope === "TEAM") {
+            return eq(users.teamId, ctx.user.teamId);
+          }
+        },
+      });
+      return res;
+    }),
 
-  updateUser: publicProcedure
+  updateUser: protectedProcedure
+    .meta({
+      action: "update",
+      subject: "User",
+    })
     .input(updatedUserInput)
     .mutation(async ({ ctx, input }) => {
       const updatedUser = await ctx.db
@@ -88,7 +125,11 @@ export const usersRouter = {
       return updatedUser[0];
     }),
 
-  deleteUser: publicProcedure
+  deleteUser: protectedProcedure
+    .meta({
+      action: "delete",
+      subject: "User",
+    })
     .input(z.string())
     .mutation(async ({ ctx, input }) => {
       const deletedUser = await ctx.db

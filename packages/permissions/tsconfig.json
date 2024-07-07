@@ -9,6 +9,5 @@
   ],
   "exclude": [
     "node_modules"
-  ],
-  "noErrorTruncation": true
+  ]
 }

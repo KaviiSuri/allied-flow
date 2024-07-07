@@ -20,6 +20,7 @@ import { api } from "~/utils/api";
 import { PrimaryButton, SecondaryButton } from "~/components/core/button";
 import { FormTextInput } from "~/components/shared/form/";
 import { FormDropDown } from "~/components/shared/form/formDropDown";
+import { Can, useAbility } from "~/providers/auth";
 const windowHeight = Dimensions.get("window").height - 64;
 
 type User = RouterOutputs["users"]['readUsers'][0];
@@ -237,7 +238,10 @@ function CreateMemberForm(props: {
 }
 
 export default function TeamMembers() {
-  const { data } = api.users.readUsers.useQuery();
+  const ability = useAbility();
+  const { data } = api.users.readUsers.useQuery({
+    scope: "TEAM",
+  });
   const [userToUpdate, setUserToUpdate] = useState<User | null>(null);
   // const slideAnim = useRef(new Animated.Value(-100)).current;
   // useEffect(() => {
@@ -251,136 +255,146 @@ export default function TeamMembers() {
   const toggleDrawer = () => {
     setDrawerVisible(!drawerVisible);
   };
+  useEffect(() => {
+    console.log('===', ability.can("read", "User"))
+  }, [ability]);
 
   return (
-    <SafeAreaView
-      style={{
-        backgroundColor: "#F9F9F9",
-        position: "relative",
-      }}
-    >
-
-      <CreateMemberForm open={drawerVisible} toggleOpen={toggleDrawer} />
-      {userToUpdate && <UpdateMemberForm open={!!userToUpdate} user={userToUpdate} toggleOpen={() => setUserToUpdate(null)} />}
-
-      <View
+    <Can I="read" a="User">
+      <SafeAreaView
         style={{
-          paddingHorizontal: 24,
-          paddingVertical: 8,
-          flexDirection: "row",
-          justifyContent: "space-between",
-          backgroundColor: "#FFF",
+          backgroundColor: "#F9F9F9",
+          position: "relative",
         }}
       >
-        <View>
-          <TextInput
-            placeholder="Search by member name"
-            style={{
-              width: 320,
-              paddingHorizontal: 14,
-              paddingVertical: 10,
-              borderWidth: 1,
-              borderRadius: 8,
-              borderColor: "#E2E8F0",
-              fontFamily: "Avenir",
-              fontWeight: 400,
-              fontSize: 16,
-              shadowOffset: { height: 1, width: 0 },
-              shadowOpacity: 0.05,
-              shadowColor: "#101828",
-            }}
-            placeholderTextColor="#94A3B8"
-          // You can adjust the number of lines
-          // onChangeText={(text) => setText(text)}
-          // value={text}
-          />
-        </View>
-        <View
-          style={{ flexDirection: "row", gap: 16, backgroundColor: "#FFF" }}
-        >
-          <SecondaryButton text="Upload members" />
-          <PrimaryButton text="Add members" onPress={toggleDrawer} />
-        </View>
-      </View>
 
-      <View style={{ padding: 16, height: windowHeight }}>
-        <Table style={{ backgroundColor: "#fff" }}>
-          <TableHeading>
-            <TableData style={{ fontSize: 12, color: "#475467" }}>
-              Name
-            </TableData>
-            <TableData style={{ fontSize: 12, color: "#475467" }}>
-              Email
-            </TableData>
-            <TableData style={{ fontSize: 12, color: "#475467" }}>
-              Phone Number
-            </TableData>
-            <TableData style={{ fontSize: 12, color: "#475467" }}>
-              Role
-            </TableData>
-            <TableData style={{ fontSize: 12, color: "#475467" }}>
-              Clients
-            </TableData>
-            <TableData style={{ fontSize: 12, color: "#475467" }}>
-              Actions
-            </TableData>
-          </TableHeading>
-          {data?.map((user) => (
-            <TableRow id={user.id} key={user.id}>
-              <TableData>{user.name}</TableData>
-              <TableData>{user.email}</TableData>
-              <TableData>{user.phone}</TableData>
-              <TableData>{user.role}</TableData>
-              <TableData>John Doe</TableData>
-              <View
-                style={{
-                  paddingHorizontal: 16,
-                  paddingVertical: 7,
-                  flexDirection: "row",
-                  gap: 16,
-                  flex: 1,
-                }}
-              >
-                <Pressable
+        {!userToUpdate && <CreateMemberForm open={drawerVisible} toggleOpen={toggleDrawer} />}
+        {userToUpdate && <UpdateMemberForm open={!!userToUpdate} user={userToUpdate} toggleOpen={() => setUserToUpdate(null)} />}
+
+        <View
+          style={{
+            paddingHorizontal: 24,
+            paddingVertical: 8,
+            flexDirection: "row",
+            justifyContent: "space-between",
+            backgroundColor: "#FFF",
+          }}
+        >
+          <View>
+            <TextInput
+              placeholder="Search by member name"
+              style={{
+                width: 320,
+                paddingHorizontal: 14,
+                paddingVertical: 10,
+                borderWidth: 1,
+                borderRadius: 8,
+                borderColor: "#E2E8F0",
+                fontFamily: "Avenir",
+                fontWeight: 400,
+                fontSize: 16,
+                shadowOffset: { height: 1, width: 0 },
+                shadowOpacity: 0.05,
+                shadowColor: "#101828",
+              }}
+              placeholderTextColor="#94A3B8"
+            // You can adjust the number of lines
+            // onChangeText={(text) => setText(text)}
+            // value={text}
+            />
+          </View>
+          <View
+            style={{ flexDirection: "row", gap: 16, backgroundColor: "#FFF" }}
+          >
+            <SecondaryButton text="Upload members" />
+            <PrimaryButton text="Add members" onPress={toggleDrawer} />
+          </View>
+        </View>
+
+        <View style={{ padding: 16, height: windowHeight }}>
+          <Table style={{ backgroundColor: "#fff" }}>
+            <TableHeading>
+              <TableData style={{ fontSize: 12, color: "#475467" }}>
+                Name
+              </TableData>
+              <TableData style={{ fontSize: 12, color: "#475467" }}>
+                Email
+              </TableData>
+              <TableData style={{ fontSize: 12, color: "#475467" }}>
+                Phone Number
+              </TableData>
+              <TableData style={{ fontSize: 12, color: "#475467" }}>
+                Role
+              </TableData>
+              <TableData style={{ fontSize: 12, color: "#475467" }}>
+                Clients
+              </TableData>
+              <TableData style={{ fontSize: 12, color: "#475467" }}>
+                Actions
+              </TableData>
+            </TableHeading>
+            {data?.map((user) => (
+              <TableRow id={user.id} key={user.id}>
+                <TableData>{user.name}</TableData>
+                <TableData>{user.email}</TableData>
+                <TableData>{user.phone}</TableData>
+                <TableData>{user.role}</TableData>
+                <TableData>John Doe</TableData>
+                <View
                   style={{
-                    borderColor: "#E2E8F0",
-                    borderWidth: 1,
-                    borderRadius: 8,
-                    padding: 8,
-                    shadowOffset: { height: 1, width: 0 },
-                    shadowOpacity: 0.05,
-                    shadowColor: "#101828",
-                  }}
-                  onPress={() => setUserToUpdate(user)}
-                >
-                  <Image
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                    source={require("../../app/assets/images/edit-icon.svg")}
-                  />
-                </Pressable>
-                <Pressable
-                  style={{
-                    borderColor: "#E2E8F0",
-                    borderWidth: 1,
-                    borderRadius: 8,
-                    padding: 8,
-                    shadowOffset: { height: 1, width: 0 },
-                    shadowOpacity: 0.05,
-                    shadowColor: "#101828",
+                    paddingHorizontal: 16,
+                    paddingVertical: 7,
+                    flexDirection: "row",
+                    gap: 16,
+                    flex: 1,
                   }}
                 >
-                  <Image
-                    source={
-                      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                      require("../../app/assets/images/trash-icon.svg")
-                    }
-                  />
-                </Pressable>
-              </View>
-            </TableRow>
-          ))}
-        </Table>
-      </View>
-    </SafeAreaView>
+                  <Can I="update" a="Team">
+                    <Pressable
+                      style={{
+                        borderColor: "#E2E8F0",
+                        borderWidth: 1,
+                        borderRadius: 8,
+                        padding: 8,
+                        shadowOffset: { height: 1, width: 0 },
+                        shadowOpacity: 0.05,
+                        shadowColor: "#101828",
+                      }}
+                      onPress={() => setUserToUpdate(user)}
+                    >
+                      <Image
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                        source={require("../../app/assets/images/edit-icon.svg")}
+                      />
+                    </Pressable>
+                  </Can>
+                  {ability.can("delete", "User") && (
+                    <Pressable
+                      style={{
+                        borderColor: "#E2E8F0",
+                        borderWidth: 1,
+                        borderRadius: 8,
+                        padding: 8,
+                        shadowOffset: { height: 1, width: 0 },
+                        shadowOpacity: 0.05,
+                        shadowColor: "#101828",
+                      }}
+                    >
+                      <Image
+                        source={
+                          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                          require("../../app/assets/images/trash-icon.svg")
+                        }
+                      />
+                    </Pressable>
+                  )
+                  }
+                </View>
+              </TableRow>
+            ))}
+          </Table>
+        </View>
+      </SafeAreaView>
+    </Can>
   );
 }

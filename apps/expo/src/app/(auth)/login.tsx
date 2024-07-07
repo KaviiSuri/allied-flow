@@ -4,13 +4,12 @@ import { Redirect } from "expo-router";
 import type { IdTokenClaims } from "@logto/rn";
 import { useLogto } from "@logto/rn";
 import { useEffect, useState } from "react";
-import { api } from "~/utils/api";
 import { Colors } from "../../constants/Color";
 import { logtoService } from "~/config/logto";
 
 export default function Home() {
   const { signIn, isAuthenticated, getIdTokenClaims } = useLogto();
-  const [user, setUser] = useState<IdTokenClaims | null>(null);
+  const [_user, setUser] = useState<IdTokenClaims | null>(null);
   useEffect(() => {
     if (isAuthenticated) {
       getIdTokenClaims()
@@ -21,18 +20,8 @@ export default function Home() {
     }
   }, [isAuthenticated, getIdTokenClaims]);
 
-  const {
-    data: serverUser,
-    error,
-    isLoading,
-    refetch,
-    isRefetching,
-  } = api.auth.getSession.useQuery(undefined, {
-    enabled: isAuthenticated,
-  });
-
   if (isAuthenticated) {
-    return <Redirect href={"/dashboard"} />;
+    return <Redirect href={"/"} />;
   }
 
   return (
@@ -58,13 +47,6 @@ export default function Home() {
             <Text style={styles.loginButtonText}>
               Sign In
             </Text>
-          </Pressable>
-
-          <Pressable
-            style={styles.loginButtonsSecondary}
-            onPress={() => refetch()}
-          >
-            <Text style={styles.loginButtonsTextSecondary}>Refetch</Text>
           </Pressable>
         </View>
         <Text style={styles.bottomText}>

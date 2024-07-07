@@ -1,58 +1,59 @@
-import TeamMembers from "~/app/(tabs)/teamMembers";
-import Dashboard from "~/app/(tabs)/dashboard";
-import Inquiries from "~/app/(tabs)/inquiries";
-import Orders from "~/app/(tabs)/orders";
-import Samples from "~/app/(tabs)/samples";
-
 export default [
   {
-    path: "dashboard",
+    path: "index",
     name: "Dashboard",
-    component: Dashboard,
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     icon: require("../app/assets/images/dashboard-icon.png"),
+    action: undefined,
+    subject: undefined,
   },
   {
     path: "inquiries",
     name: "Inquiries",
-    component: Inquiries,
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     icon: require("../app/assets/images/inquiries-icon.png"),
+    action: undefined,
+    subject: undefined,
   },
 
   {
     path: "orders",
     name: "Orders",
-    component: Orders,
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     icon: require("../app/assets/images/orders-icon.png"),
+    action: undefined,
+    subject: undefined,
   },
   {
     path: "samples",
     name: "Samples",
-    component: Samples,
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     icon: require("../app/assets/images/samples-icon.png"),
+    action: undefined,
+    subject: undefined,
   },
   {
     path: "products",
     name: "Products",
-    component: TeamMembers,
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     icon: require("../app/assets/images/home-icon.png"),
+    action: undefined,
+    subject: undefined,
   },
   {
     path: "clients",
     name: "Clients",
-    component: TeamMembers,
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     icon: require("../app/assets/images/client-icon.png"),
+    action: "read",
+    subject: "Team",
   },
   {
     path: "teamMembers",
     name: "Team Members",
-    component: TeamMembers,
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     icon: require("../app/assets/images/user-icon.svg"),
+    action: "read",
+    subject: "User",
   },
-];
+] as const;

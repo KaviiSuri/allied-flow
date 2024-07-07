@@ -1,5 +1,4 @@
-import { Image, SafeAreaView, Text, View } from "react-native";
-import { SingleSelectExample } from "~/components/layouts/singleSelectExample";
+import { SafeAreaView, Text } from "react-native";
 
 export default function Dashboard() {
 
@@ -14,18 +13,6 @@ export default function Dashboard() {
       }}
     >
       <Text>Dashboard</Text>
-      <View
-      >
-        <Image source={"../assets/images/down-arrow-icon.png"}
-          style={{
-            resizeMode: "contain",
-            width: 20,
-            height: 20,
-            tintColor: "#475569",
-          }}
-        />
-
-      </View>
     </SafeAreaView>
   );
 }

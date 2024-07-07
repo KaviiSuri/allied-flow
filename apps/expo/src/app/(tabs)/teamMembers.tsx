@@ -14,7 +14,7 @@ import {
   TableRow,
   TableData,
 } from "~/components/shared/table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { RouterInputs, RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
 import { PrimaryButton, SecondaryButton } from "~/components/core/button";
@@ -53,6 +53,22 @@ function MemberForm(props: {
   const [email, setEmail] = useState<string>(isUpdateUserProps(props) ? props.user.email : '');
   const [name, setName] = useState<string>(isUpdateUserProps(props) ? props.user.name : '');
   const [phone, setPhone] = useState<string>(isUpdateUserProps(props) ? props.user.phone : '');
+  const [role, setRole] = useState<string>(isUpdateUserProps(props) ? props.user.role : 'MANAGEMENT')
+
+  const RoleOptions = [{
+    label: "ADMIN",
+    value: "ADMIN"
+  }, {
+    label: "MANAGEMENT",
+    value: "MANAGEMENT",
+  }, {
+    label: "LOGISTICS",
+    value: "LOGISTICS",
+  },
+  {
+    label: "SALES",
+    value: "SALES",
+  }]
 
   async function handleSave() {
     if (isUpdateUserProps(props)) {
@@ -142,18 +158,11 @@ function MemberForm(props: {
             />
             <FormDropDown
               label="Role"
-              options={
-                [{
-                  label: "ADMIN",
-                  value: "ADMIN"
-                }, {
-                  label: "MANAGEMENT",
-                  value: "MANAGEMENT",
-                }]
-              }
+              options={RoleOptions}
+              onValueChange={(e) => setRole(e)}
               rightIcon={
                 <Image
-                  src="../assets/images/down-arrow-icon.png"
+                  source={require('../assets/images/down-arrow-icon.png')}
                   style={{
                     resizeMode: "contain",
                     width: 20,
@@ -161,6 +170,7 @@ function MemberForm(props: {
                     tintColor: 'black'
                   }}
                 />
+
               }
             />
           </View>

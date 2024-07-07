@@ -1,6 +1,6 @@
 
 import { View, Text, StyleSheet, Image } from "react-native"
-import { useState } from "react"
+import { ReactNode, useState } from "react"
 import { SingleSelectDropdown } from "../dropdown"
 import { MenuItem, SingleSelect } from "../dropdown/singleSelect"
 
@@ -12,9 +12,10 @@ interface FormDropDownProps {
   }[],
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
+  onValueChange: (e: any) => void;
 }
 
-export const FormDropDown: React.FC<FormDropDownProps> = ({ label, options, leftIcon, rightIcon }) => {
+export const FormDropDown: React.FC<FormDropDownProps> = ({ label, options, leftIcon, rightIcon, onValueChange }) => {
   const [selectedValue, setSelectedValue] = useState("ADMIN")
 
   return (
@@ -34,7 +35,7 @@ export const FormDropDown: React.FC<FormDropDownProps> = ({ label, options, left
         <SingleSelect
           value={selectedValue}
           defaultValue={selectedValue}
-          onChange={(e) => console.log(e)}
+          onChange={(e) => onValueChange(e)}
           changeLabel={true}
           rightIcon={rightIcon}
         >

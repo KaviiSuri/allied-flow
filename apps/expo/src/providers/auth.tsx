@@ -19,7 +19,7 @@ const authContext = createContext<AuthContext>({
   user: null,
 });
 
-type Abilities = ReturnType<typeof defineAbilityFor>
+export type Abilities = ReturnType<typeof defineAbilityFor>
 const abilityContext = createContext<Abilities>(defaultAbility);
 
 export const Can = createContextualCan<Abilities>(abilityContext.Consumer);

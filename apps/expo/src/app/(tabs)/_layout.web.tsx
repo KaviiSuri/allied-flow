@@ -95,6 +95,7 @@ export default function WebLayout() {
                       fontSize: 18,
                     },
                     drawerItemStyle: {
+                      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
                       ...((drawer.action && drawer.subject && !ability.can(drawer.action, drawer.subject)) && {
                         display: "none",
                       }),

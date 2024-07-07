@@ -19,6 +19,7 @@ import type { RouterInputs, RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
 import { PrimaryButton, SecondaryButton } from "~/components/core/button";
 import { FormTextInput } from "~/components/shared/form/";
+import { FormDropDown } from "~/components/shared/form/formDropDown";
 const windowHeight = Dimensions.get("window").height - 64;
 
 type User = RouterOutputs["users"]['readUsers'][0];
@@ -138,6 +139,18 @@ function MemberForm(props: {
               placeholder="Type phone number"
               value={phone}
               onChangeText={(t) => setPhone(t)}
+            />
+            <FormDropDown
+              label="Role"
+              options={
+                [{
+                  label: "ADMIN",
+                  value: "ADMIN"
+                }, {
+                  label: "MANAGEMENT",
+                  value: "MANAGEMENT",
+                }]
+              }
             />
           </View>
         </View>

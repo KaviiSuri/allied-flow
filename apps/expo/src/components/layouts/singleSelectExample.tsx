@@ -28,7 +28,7 @@ export const SingleSelectExample: React.FC = () => {
         <DropDownLabel id='1' style={styles.label}>Age</DropDownLabel>
         <SingleSelect
           value={selectedAge}
-          label="Select age"
+          defaultValue="Select age"
           onChange={handleAgeChange}
           style={styles.select}
         >

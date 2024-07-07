@@ -20,10 +20,11 @@ interface DropDownLabelProps {
 
 interface SingleSelectProps {
   value: string | number;
-  label: string;
+  defaultValue: string;
   onChange: (value: string | number) => void;
   children: ReactNode;
   style?: ViewStyle;
+  changeLabel?: boolean;
 }
 
 interface MenuItemProps {
@@ -73,7 +74,7 @@ export const DropDownLabel: React.FC<DropDownLabelProps> = ({ children, style })
   return <Text style={[styles.label, style]}>{children}</Text>;
 };
 
-export const SingleSelect: React.FC<SingleSelectProps> = ({ value, label, onChange, children, style }) => {
+export const SingleSelect: React.FC<SingleSelectProps> = ({ value, defaultValue, onChange, children, style, changeLabel }) => {
   const { open, setOpen, setDropdownPosition, dropdownPosition } = useContext(SingleSelectDropdownContext);
   const selectRef = useRef<View>(null);
   const [internalValue, setInternalValue] = useState<string | number | null>(value);
@@ -111,10 +112,10 @@ export const SingleSelect: React.FC<SingleSelectProps> = ({ value, label, onChan
         onPress={() => setOpen(true)}
         onLayout={handleLayout}
       >
-        <Text>{selectedChild ? selectedChild.props.children : label}</Text>
+        <Text>{(selectedChild && changeLabel) ? selectedChild.props.children : defaultValue}</Text>
       </TouchableOpacity>
       <Modal
-        animationType="none"
+        animationType="fade"
         transparent={true}
         visible={open}
         onRequestClose={() => setOpen(false)}
@@ -137,15 +138,17 @@ export const SingleSelect: React.FC<SingleSelectProps> = ({ value, label, onChan
 };
 
 export const MenuItem: React.FC<MenuItemProps & { onPress?: () => void }> = ({ value, children, style, onPress }) => {
+  const { value: selectedValue, onChange } = useContext(SingleSelectDropdownContext);
   const handlePress = () => {
     if (onPress) {
       onPress();
+      onChange(value);
     }
   };
 
   return (
     <TouchableOpacity style={[styles.menuItem, style]} onPress={handlePress}>
-      <Text>{children}</Text>
+      <Text>{selectedValue === value ? '🔘' : '⚪️'} {children}</Text>
     </TouchableOpacity>
   );
 };
@@ -168,7 +171,7 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0)',
   },
   modalContent: {
     backgroundColor: 'white',

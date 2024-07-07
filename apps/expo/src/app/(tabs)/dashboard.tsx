@@ -14,8 +14,6 @@ export default function Dashboard() {
       }}
     >
       <Text>Dashboard</Text>
-      <SingleSelectExample />
-
     </SafeAreaView>
   );
 }

@@ -11,6 +11,7 @@ import {
 } from "@react-navigation/drawer";
 import { useLogto } from "@logto/rn";
 import { Redirect } from "expo-router";
+import { Logout } from "~/components/Logout";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function CustomDrawerContent(props: any) {
@@ -24,25 +25,11 @@ function CustomDrawerContent(props: any) {
         height: "100%",
       }}
     >
+      <Logout />
+
       <DrawerContentScrollView {...props}>
         <DrawerItemList {...props} />
       </DrawerContentScrollView>
-      <DrawerItem
-        label="Logout"
-        onPress={() => signOut()}
-        icon={({ focused }) => (
-          <Image
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            source={require("../../app/assets/images/dashboard-icon.png")}
-            style={{
-              resizeMode: "contain",
-              width: 20,
-              height: 20,
-              tintColor: focused ? "#2F80F5" : "#475569",
-            }}
-          />
-        )}
-      />
     </View>
   );
 }

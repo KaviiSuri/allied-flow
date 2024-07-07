@@ -4,6 +4,7 @@ import { protectedProcedure } from "../trpc";
 import { insertProductSchema, products } from "@repo/db/schema";
 import { z } from "zod";
 import { eq } from "@repo/db";
+import { nanoid } from "nanoid";
 
 export const productsRotuer = {
   create: protectedProcedure
@@ -13,6 +14,7 @@ export const productsRotuer = {
     })
     .input(
       insertProductSchema.omit({
+        id: true,
         createdAt: true,
         updatedAt: true,
       }),
@@ -22,6 +24,7 @@ export const productsRotuer = {
         .insert(products)
         .values({
           ...input,
+          id: nanoid(),
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         })

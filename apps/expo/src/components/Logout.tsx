@@ -1,7 +1,8 @@
-import { Text, View } from "react-native"
+import { Pressable, Text, View } from "react-native"
 import { SingleSelectDropdown } from "./shared/dropdown"
 import { DropDownLabel, MenuItem, SingleSelect } from "./shared/dropdown/singleSelect"
 import { useState } from "react"
+import { useLogto } from "@logto/rn"
 
 
 export const Logout: React.FC = () => {
@@ -10,6 +11,7 @@ export const Logout: React.FC = () => {
   const handleClick = () => {
 
   }
+
   return (
     <View >
       <SingleSelectDropdown >
@@ -19,6 +21,12 @@ export const Logout: React.FC = () => {
           onChange={handleClick}
           changeLabel={false}
         >
+          <Pressable
+
+          // onPress={()=> signOut()}
+          >
+            Invite Pressable
+          </Pressable>
           <MenuItem key={"invite"} value={"invite"}>
             Invite Members
           </MenuItem>

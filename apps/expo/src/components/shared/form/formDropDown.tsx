@@ -1,5 +1,5 @@
 
-import { View, Text, StyleSheet } from "react-native"
+import { View, Text, StyleSheet, Image } from "react-native"
 import { useState } from "react"
 import { SingleSelectDropdown } from "../dropdown"
 import { MenuItem, SingleSelect } from "../dropdown/singleSelect"
@@ -20,7 +20,6 @@ export const FormDropDown: React.FC<FormDropDownProps> = ({ label, options, left
   return (
     <View >
       <SingleSelectDropdown >
-        {leftIcon && <View style={styles.icon}>{leftIcon}</View>}
         <Text
           style={{
             fontSize: 14,
@@ -32,12 +31,12 @@ export const FormDropDown: React.FC<FormDropDownProps> = ({ label, options, left
         >
           {label}
         </Text>
-        {rightIcon && <View style={styles.icon}>{rightIcon}</View>}
         <SingleSelect
           value={selectedValue}
           defaultValue={selectedValue}
           onChange={(e) => console.log(e)}
           changeLabel={true}
+          rightIcon={rightIcon}
         >
           {options.map((option) => (
             <MenuItem key={option.value} value={option.value}>
@@ -53,5 +52,7 @@ export const FormDropDown: React.FC<FormDropDownProps> = ({ label, options, left
 const styles = StyleSheet.create({
   icon: {
     marginHorizontal: 8, // Adjust spacing as needed
+    width: 20,
+    height: 20
   },
 })

@@ -25,6 +25,8 @@ interface SingleSelectProps {
   children: ReactNode;
   style?: ViewStyle;
   changeLabel?: boolean;
+  rightIcon?: ReactNode;
+  leftIcon?: ReactNode;
 }
 
 interface MenuItemProps {
@@ -74,7 +76,7 @@ export const DropDownLabel: React.FC<DropDownLabelProps> = ({ children, style })
   return <Text style={[styles.label, style]}>{children}</Text>;
 };
 
-export const SingleSelect: React.FC<SingleSelectProps> = ({ value, defaultValue, onChange, children, style, changeLabel }) => {
+export const SingleSelect: React.FC<SingleSelectProps> = ({ value, defaultValue, onChange, children, style, changeLabel, rightIcon, leftIcon }) => {
   const { open, setOpen, setDropdownPosition, dropdownPosition } = useContext(SingleSelectDropdownContext);
   const selectRef = useRef<View>(null);
   const [internalValue, setInternalValue] = useState<string | number | null>(value);
@@ -112,7 +114,9 @@ export const SingleSelect: React.FC<SingleSelectProps> = ({ value, defaultValue,
         onPress={() => setOpen(true)}
         onLayout={handleLayout}
       >
+        {leftIcon && <View>{leftIcon}</View>}
         <Text>{(selectedChild && changeLabel) ? selectedChild.props.children : defaultValue}</Text>
+        {rightIcon && <View >{rightIcon}</View>}
       </TouchableOpacity>
       <Modal
         animationType="fade"

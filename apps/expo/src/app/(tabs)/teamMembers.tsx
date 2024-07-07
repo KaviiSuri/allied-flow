@@ -151,6 +151,17 @@ function MemberForm(props: {
                   value: "MANAGEMENT",
                 }]
               }
+              rightIcon={
+                <Image
+                  src="../assets/images/down-arrow-icon.png"
+                  style={{
+                    resizeMode: "contain",
+                    width: 20,
+                    height: 20,
+                    tintColor: 'black'
+                  }}
+                />
+              }
             />
           </View>
         </View>

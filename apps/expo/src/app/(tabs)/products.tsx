@@ -254,10 +254,12 @@ export default function Products() {
             // value={text}
             />
           </View>
-          <View style={{ flexDirection: "row", gap: 16 }}>
-            <SecondaryButton text="Upload Products" />
-            <PrimaryButton text="Add Products" onPress={toggleDrawer} />
-          </View>
+          <Can I='create' a='Product'>
+            <View style={{ flexDirection: "row", gap: 16 }}>
+              <SecondaryButton text="Upload Products" />
+              <PrimaryButton text="Add Products" onPress={toggleDrawer} />
+            </View>
+          </Can>
         </View>
 
         <View style={{ padding: 16, height: windowHeight }}>

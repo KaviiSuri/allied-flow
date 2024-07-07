@@ -275,10 +275,12 @@ export default function Clients() {
             // value={text}
             />
           </View>
-          <View style={{ flexDirection: "row", gap: 16 }}>
-            <SecondaryButton text="Upload clients" />
-            <PrimaryButton text="Add clients" onPress={toggleDrawer} />
-          </View>
+          <Can I="create" a="Team">
+            <View style={{ flexDirection: "row", gap: 16 }}>
+              <SecondaryButton text="Upload clients" />
+              <PrimaryButton text="Add clients" onPress={toggleDrawer} />
+            </View>
+          </Can>
         </View>
 
         <View style={{ padding: 16, height: windowHeight }}>

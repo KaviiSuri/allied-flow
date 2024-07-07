@@ -305,12 +305,14 @@ export default function TeamMembers() {
             // value={text}
             />
           </View>
-          <View
-            style={{ flexDirection: "row", gap: 16, backgroundColor: "#FFF" }}
-          >
-            <SecondaryButton text="Upload members" />
-            <PrimaryButton text="Add members" onPress={toggleDrawer} />
-          </View>
+          <Can I='create' a='User'>
+            <View
+              style={{ flexDirection: "row", gap: 16, backgroundColor: "#FFF" }}
+            >
+              <SecondaryButton text="Upload members" />
+              <PrimaryButton text="Add members" onPress={toggleDrawer} />
+            </View>
+          </Can>
         </View>
 
         <View style={{ padding: 16, height: windowHeight }}>

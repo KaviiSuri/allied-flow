@@ -1,17 +1,19 @@
 import React from "react";
-import { Pressable, Text } from "react-native";
-import type { PressableProps } from "react-native";
+import { Text } from "react-native";
+import type { TouchableOpacityProps } from "react-native-gesture-handler";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 function PrimaryButton(props: {
-  onPress?: PressableProps["onPress"];
+  onPress?: TouchableOpacityProps["onPress"];
   text: string;
+  isLoading?: boolean;
 }) {
   return (
-    <Pressable
+    <TouchableOpacity
       style={{
         paddingHorizontal: 12,
         paddingVertical: 8,
-        backgroundColor: "#2F80F5",
+        backgroundColor: props.isLoading ? "#D0D5DD" : "#2F80F5",
         borderRadius: 8,
         shadowOffset: { height: 1, width: 0 },
         shadowOpacity: 0.05,
@@ -29,7 +31,7 @@ function PrimaryButton(props: {
       >
         {props.text}
       </Text>
-    </Pressable>
+    </TouchableOpacity>
   );
 }
 

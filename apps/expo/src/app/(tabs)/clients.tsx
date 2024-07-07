@@ -28,6 +28,7 @@ type UpdateTeam = RouterInputs["teams"]["updateTeam"];
 type TeamProps = {
   open: boolean;
   toggleOpen: () => void;
+  isLoading?: boolean;
 } & (
     | { handleSave: (_user: CreateTeam) => Promise<void> }
     | { team: Team; handleSave: (_user: UpdateTeam) => Promise<void> }
@@ -165,7 +166,7 @@ function TeamForm(props: TeamProps) {
           }}
         >
           <SecondaryButton text="Cancel" />
-          <PrimaryButton text="Save" onPress={handleSave} />
+          <PrimaryButton text="Save" onPress={handleSave} isLoading={props.isLoading} />
         </View>
       </View>
     </Animated.View>
@@ -178,7 +179,7 @@ function UpdateTeamForm(props: {
   toggleOpen: () => void
 }) {
   const utils = api.useUtils();
-  const { mutateAsync: updateTeam } = api.teams.updateTeam.useMutation({
+  const { mutateAsync: updateTeam, isPending } = api.teams.updateTeam.useMutation({
     onSuccess: () => {
       utils.teams.readTeams.refetch().catch(console.error);
     },
@@ -190,7 +191,7 @@ function UpdateTeamForm(props: {
   }
 
   return (
-    <TeamForm open={props.open} team={props.team} toggleOpen={props.toggleOpen} handleSave={handleSave} />
+    <TeamForm open={props.open} team={props.team} toggleOpen={props.toggleOpen} handleSave={handleSave} isLoading={isPending} />
   )
 }
 
@@ -199,7 +200,7 @@ function CreateTeamForm(props: {
   toggleOpen: () => void
 }) {
   const utils = api.useUtils();
-  const { mutateAsync: createTeam } = api.teams.createTeam.useMutation({
+  const { mutateAsync: createTeam, isPending } = api.teams.createTeam.useMutation({
     onSuccess: () => {
       utils.teams.readTeams.refetch().catch(console.error);
     },
@@ -211,7 +212,7 @@ function CreateTeamForm(props: {
   }
 
   return (
-    <TeamForm open={props.open} toggleOpen={props.toggleOpen} handleSave={handleSave} />
+    <TeamForm open={props.open} toggleOpen={props.toggleOpen} handleSave={handleSave} isLoading={isPending} />
   )
 }
 

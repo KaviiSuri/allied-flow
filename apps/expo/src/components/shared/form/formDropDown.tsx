@@ -33,6 +33,7 @@ export const FormDropDown: React.FC<FormDropDownProps> = ({ label, options, left
           {label}
         </Text>
         <SingleSelect
+          style={{ flexDirection: 'row', alignItems: 'center' }}
           value={selectedValue}
           defaultValue={selectedValue}
           onChange={(e) => onValueChange(e)}

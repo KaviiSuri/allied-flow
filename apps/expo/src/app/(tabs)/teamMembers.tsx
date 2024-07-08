@@ -58,17 +58,17 @@ function MemberForm(props: {
   const [role, setRole] = useState<Role>(isUpdateUserProps(props) ? props.user.role : 'MANAGEMENT')
 
   const RoleOptions = [{
-    label: "ADMIN",
+    label: "Admin",
     value: "ADMIN"
   }, {
-    label: "MANAGEMENT",
+    label: "Management",
     value: "MANAGEMENT",
   }, {
-    label: "LOGISTICS",
+    label: "Logistics",
     value: "LOGISTICS",
   },
   {
-    label: "SALES",
+    label: "Sales",
     value: "SALES",
   }]
 
@@ -167,8 +167,8 @@ function MemberForm(props: {
                   source={require('../assets/images/down-arrow-icon.png')}
                   style={{
                     resizeMode: "contain",
-                    width: 20,
-                    height: 20,
+                    width: 18,
+                    height: 18,
                     tintColor: 'black'
                   }}
                 />

@@ -1,5 +1,6 @@
 import React, { useState, ReactNode, useRef, useEffect, useContext } from 'react';
-import { View, Text, TouchableOpacity, Modal, StyleSheet, ViewStyle, TextStyle, LayoutChangeEvent } from 'react-native';
+import { View, Text, TouchableOpacity, Modal, StyleSheet, ViewStyle, TextStyle, LayoutChangeEvent, Image } from 'react-native';
+import { Colors } from '~/constants/Color';
 
 interface Option {
   label: string;
@@ -115,7 +116,7 @@ export const SingleSelect: React.FC<SingleSelectProps> = ({ value, defaultValue,
         onLayout={handleLayout}
       >
         {leftIcon && <View>{leftIcon}</View>}
-        <Text>{(selectedChild && changeLabel) ? selectedChild.props.children : defaultValue}</Text>
+        <Text style={styles.label}>{(selectedChild && changeLabel) ? selectedChild.props.children : defaultValue}</Text>
         {rightIcon && <View >{rightIcon}</View>}
       </TouchableOpacity>
       <Modal
@@ -152,7 +153,24 @@ export const MenuItem: React.FC<MenuItemProps & { onPress?: () => void }> = ({ v
 
   return (
     <TouchableOpacity style={[styles.menuItem, style]} onPress={handlePress}>
-      <Text>{selectedValue === value ? '🔘' : '⚪️'} {children}</Text>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+      <Image
+        source={selectedValue === value ? require('../../../app/assets/images/filled-radio.png') : require('../../../app/assets/images/unfilled-radio.png')}
+        style={{
+          resizeMode: "contain",
+          width: 16,
+          height: 16,
+          marginRight: 10,
+        }}
+      />
+      <Text style={{
+        fontFamily: 'Avenir',
+        flex: 1,
+        fontWeight: '500',
+        color: Colors.textPrimary
+      }}>{children}
+      </Text>
+      </View>
     </TouchableOpacity>
   );
 };
@@ -165,12 +183,14 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   label: {
-    // Add your label styles
+    fontFamily: 'Avenir',
+    flex: 1,
+    textAlign: 'left',
   },
   select: {
     padding: 10,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#E2E8F0',
     borderRadius: 5,
   },
   modalOverlay: {
@@ -185,6 +205,6 @@ const styles = StyleSheet.create({
   menuItem: {
     padding: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    borderBottomColor: '#E2E8F0',
   },
 });

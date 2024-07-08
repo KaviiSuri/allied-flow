@@ -88,10 +88,16 @@ export const SingleSelect: React.FC<SingleSelectProps> = ({ value, defaultValue,
     }
   }, [value]);
 
-  const handleChange = (newValue: string | number) => {
-    setInternalValue(newValue);
-    onChange(newValue);
-    setOpen(false);
+  const handleChange = (newValue: string | number, customOnPress?: () => void) => {
+    if (newValue) {
+      setInternalValue(newValue);
+      onChange(newValue);
+      setOpen(false);
+      if (customOnPress) {
+        customOnPress();
+      }
+    }
+
   };
 
   const handleLayout = () => {
@@ -125,13 +131,13 @@ export const SingleSelect: React.FC<SingleSelectProps> = ({ value, defaultValue,
         visible={open}
         onRequestClose={() => setOpen(false)}
       >
-        <TouchableOpacity style={styles.modalOverlay} onPress={() => setOpen(false)}>
+        <TouchableOpacity style={styles.modalOverlay} onPress={() => { setOpen(false) }}>
           <View style={[styles.modalContent, { position: 'absolute', top: dropdownPosition.top, left: dropdownPosition.left, width: dropdownPosition.width }]}>
             {React.Children.map(children, child =>
               React.isValidElement(child)
                 ? React.cloneElement(child, {
                   ...child.props,
-                  onPress: () => handleChange(child.props.value)
+                  onPress: () => { handleChange(child.props.value, child.props.onPress) }
                 })
                 : child
             )}
@@ -154,12 +160,12 @@ export const MenuItem: React.FC<MenuItemProps & { onPress?: () => void }> = ({ v
   return (
     <TouchableOpacity style={[styles.menuItem, style]} onPress={handlePress}>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-      <Image
-        source={selectedValue === value ? require('../../../app/assets/images/filled-radio.png') : require('../../../app/assets/images/unfilled-radio.png')}
-        style={styles.radioIcon}
-      />
-      <Text style={styles.menuItemText}>{children}
-      </Text>
+        <Image
+          source={selectedValue === value ? require('../../../app/assets/images/filled-radio.png') : require('../../../app/assets/images/unfilled-radio.png')}
+          style={styles.radioIcon}
+        />
+        <Text style={styles.menuItemText}>{children}
+        </Text>
       </View>
     </TouchableOpacity>
   );

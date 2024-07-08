@@ -1,14 +1,17 @@
 import { Image, Pressable, StyleSheet, Text, View } from "react-native"
 import { SingleSelectDropdown } from "./shared/dropdown"
-import { DropDownLabel, MenuItem, SingleSelect } from "./shared/dropdown/singleSelect"
+import { SingleSelect } from "./shared/dropdown/singleSelect"
 import { useState } from "react"
 import { useLogto } from "@logto/rn"
 import { logtoService } from "~/config/logto"
 import { Colors } from "~/constants/Color"
+import { TouchableOpacity } from "react-native-gesture-handler"
+import { MenuItem } from "./shared/dropdown/multiSelect"
 
 
 export const Logout: React.FC = () => {
   const [logout, setLogout] = useState("")
+  const { signOut } = useLogto()
 
   const handleClick = () => {
 
@@ -24,40 +27,40 @@ export const Logout: React.FC = () => {
           onChange={handleClick}
           changeLabel={false}
           leftIcon={<Image
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             source={require('../app/assets/images/org-icon.png')}
             style={{ ...styles.icon, marginRight: 10 }}
           />}
           rightIcon={<Image
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             source={require('../app/assets/images/down-arrow-icon.png')}
             style={styles.icon}
           />}
         >
-          <Pressable
+          <MenuItem
+            value="invite"
             style={styles.item}
             onPress={() => console.log("Invite")}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Image
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                 source={require('../app/assets/images/share-icon.png')}
                 style={{ ...styles.itemIcon, tintColor: Colors.text }}
               />
               <Text style={{ ...styles.itemText, color: Colors.text }}>Invite members</Text>
             </View>
-          </Pressable>
-          <Pressable
+          </MenuItem>
+          <MenuItem
+            value="logout"
             style={styles.item}
-            onPress={() => console.log("Logout")}>
+            onPress={() => {
+              signOut(logtoService.redirectUri);
+            }}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Image
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                 source={require('../app/assets/images/logout-icon.png')}
                 style={{ ...styles.itemIcon, tintColor: Colors.error }}
               />
               <Text style={{ ...styles.itemText, color: Colors.error }}>Logout</Text>
             </View>
-          </Pressable>
+          </MenuItem>
         </SingleSelect>
       </SingleSelectDropdown>
       <Image

@@ -156,19 +156,9 @@ export const MenuItem: React.FC<MenuItemProps & { onPress?: () => void }> = ({ v
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
       <Image
         source={selectedValue === value ? require('../../../app/assets/images/filled-radio.png') : require('../../../app/assets/images/unfilled-radio.png')}
-        style={{
-          resizeMode: "contain",
-          width: 16,
-          height: 16,
-          marginRight: 10,
-        }}
+        style={styles.radioIcon}
       />
-      <Text style={{
-        fontFamily: 'Avenir',
-        flex: 1,
-        fontWeight: '500',
-        color: Colors.textPrimary
-      }}>{children}
+      <Text style={styles.menuItemText}>{children}
       </Text>
       </View>
     </TouchableOpacity>
@@ -207,4 +197,16 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#E2E8F0',
   },
+  menuItemText: {
+    fontFamily: 'Avenir',
+    flex: 1,
+    fontWeight: '500',
+    color: Colors.textPrimary
+  },
+  radioIcon: {
+    resizeMode: "contain",
+    width: 16,
+    height: 16,
+    marginRight: 10,
+  }
 });

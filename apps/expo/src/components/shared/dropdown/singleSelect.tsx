@@ -1,5 +1,6 @@
 import React, { useState, ReactNode, useRef, useEffect, useContext } from 'react';
-import { View, Text, TouchableOpacity, Modal, StyleSheet, ViewStyle, TextStyle, LayoutChangeEvent } from 'react-native';
+import { View, Text, TouchableOpacity, Modal, StyleSheet, ViewStyle, TextStyle, LayoutChangeEvent, Image } from 'react-native';
+import { Colors } from '~/constants/Color';
 
 interface Option {
   label: string;
@@ -87,10 +88,16 @@ export const SingleSelect: React.FC<SingleSelectProps> = ({ value, defaultValue,
     }
   }, [value]);
 
-  const handleChange = (newValue: string | number) => {
-    setInternalValue(newValue);
-    onChange(newValue);
-    setOpen(false);
+  const handleChange = (newValue: string | number, customOnPress?: () => void) => {
+    if (newValue) {
+      setInternalValue(newValue);
+      onChange(newValue);
+      setOpen(false);
+      if (customOnPress) {
+        customOnPress();
+      }
+    }
+
   };
 
   const handleLayout = () => {
@@ -115,7 +122,7 @@ export const SingleSelect: React.FC<SingleSelectProps> = ({ value, defaultValue,
         onLayout={handleLayout}
       >
         {leftIcon && <View>{leftIcon}</View>}
-        <Text>{(selectedChild && changeLabel) ? selectedChild.props.children : defaultValue}</Text>
+        <Text style={styles.label}>{(selectedChild && changeLabel) ? selectedChild.props.children : defaultValue}</Text>
         {rightIcon && <View >{rightIcon}</View>}
       </TouchableOpacity>
       <Modal
@@ -124,13 +131,13 @@ export const SingleSelect: React.FC<SingleSelectProps> = ({ value, defaultValue,
         visible={open}
         onRequestClose={() => setOpen(false)}
       >
-        <TouchableOpacity style={styles.modalOverlay} onPress={() => setOpen(false)}>
+        <TouchableOpacity style={styles.modalOverlay} onPress={() => { setOpen(false) }}>
           <View style={[styles.modalContent, { position: 'absolute', top: dropdownPosition.top, left: dropdownPosition.left, width: dropdownPosition.width }]}>
             {React.Children.map(children, child =>
               React.isValidElement(child)
                 ? React.cloneElement(child, {
                   ...child.props,
-                  onPress: () => handleChange(child.props.value)
+                  onPress: () => { handleChange(child.props.value, child.props.onPress) }
                 })
                 : child
             )}
@@ -152,7 +159,14 @@ export const MenuItem: React.FC<MenuItemProps & { onPress?: () => void }> = ({ v
 
   return (
     <TouchableOpacity style={[styles.menuItem, style]} onPress={handlePress}>
-      <Text>{selectedValue === value ? '🔘' : '⚪️'} {children}</Text>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <Image
+          source={selectedValue === value ? require('../../../app/assets/images/filled-radio.png') : require('../../../app/assets/images/unfilled-radio.png')}
+          style={styles.radioIcon}
+        />
+        <Text style={styles.menuItemText}>{children}
+        </Text>
+      </View>
     </TouchableOpacity>
   );
 };
@@ -165,12 +179,14 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   label: {
-    // Add your label styles
+    fontFamily: 'Avenir',
+    flex: 1,
+    textAlign: 'left',
   },
   select: {
     padding: 10,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#E2E8F0',
     borderRadius: 5,
   },
   modalOverlay: {
@@ -185,6 +201,18 @@ const styles = StyleSheet.create({
   menuItem: {
     padding: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    borderBottomColor: '#E2E8F0',
   },
+  menuItemText: {
+    fontFamily: 'Avenir',
+    flex: 1,
+    fontWeight: '500',
+    color: Colors.textPrimary
+  },
+  radioIcon: {
+    resizeMode: "contain",
+    width: 16,
+    height: 16,
+    marginRight: 10,
+  }
 });

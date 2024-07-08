@@ -29,6 +29,7 @@ type UpdateTeam = RouterInputs["products"]["update"];
 type ProductProps = {
   open: boolean;
   toggleOpen: () => void;
+  isLoading?: boolean;
 } & (
     | { handleSave: (_user: CreateProduct) => Promise<void> }
     | { product: Product; handleSave: (_user: UpdateTeam) => Promise<void> }
@@ -42,6 +43,19 @@ function isUpdateProductProps(props: ProductProps): props is {
 }
 
 function ProductForm(props: ProductProps) {
+  const [name, setName] = useState(isUpdateProductProps(props) ? props.product.name : "")
+  const [make, setMake] = useState(isUpdateProductProps(props) ? props.product.make : "")
+  const [cas, setCas] = useState(isUpdateProductProps(props) ? props.product.cas : "")
+  const [desc, setDesc] = useState(isUpdateProductProps(props) ? props.product.desc : "")
+
+  const handleSave = async () => {
+    if (isUpdateProductProps(props)) {
+      await props.handleSave({ id: props.product.id, name, make, cas, desc });
+    } else {
+      await props.handleSave({ name, make, cas, desc });
+    }
+  }
+
   return (
     <Animated.View
       style={{
@@ -110,13 +124,15 @@ function ProductForm(props: ProductProps) {
             <FormTextInput
               label="Product Name"
               placeholder="Type product name"
+              onChangeText={setName}
             />
-            <FormTextInput label="Make" placeholder="Type product make" />
-            <FormTextInput label="CAS" placeholder="Type product CAS" />
+            <FormTextInput label="Make" placeholder="Type product make" onChangeText={setMake} />
+            <FormTextInput label="CAS" placeholder="Type product CAS" onChangeText={setCas} />
             <FormTextInput
               label="Description"
               placeholder="Type description of the product"
               numberOfLines={4}
+              onChangeText={setDesc}
             />
           </View>
         </View>
@@ -131,7 +147,7 @@ function ProductForm(props: ProductProps) {
           }}
         >
           <SecondaryButton text="Cancel" />
-          <PrimaryButton text="Save" />
+          <PrimaryButton text="Save" onPress={handleSave} isLoading={props.isLoading} />
         </View>
       </View>
     </Animated.View>
@@ -238,10 +254,12 @@ export default function Products() {
             // value={text}
             />
           </View>
-          <View style={{ flexDirection: "row", gap: 16 }}>
-            <SecondaryButton text="Upload Products" />
-            <PrimaryButton text="Add Products" onPress={toggleDrawer} />
-          </View>
+          <Can I='create' a='Product'>
+            <View style={{ flexDirection: "row", gap: 16 }}>
+              <SecondaryButton text="Upload Products" />
+              <PrimaryButton text="Add Products" onPress={toggleDrawer} />
+            </View>
+          </Can>
         </View>
 
         <View style={{ padding: 16, height: windowHeight }}>

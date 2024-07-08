@@ -1,17 +1,20 @@
 import React from "react";
-import type { PressableProps } from "react-native";
-import { Pressable, Text } from "react-native";
+import { Text } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import type { TouchableOpacityProps } from "react-native-gesture-handler";
+
 
 function SecondaryButton(props: {
-  onPress?: PressableProps["onPress"];
+  onPress?: TouchableOpacityProps["onPress"];
   text: string;
+  isLoading?: boolean;
 }) {
   return (
-    <Pressable
+    <TouchableOpacity
       style={{
         paddingHorizontal: 12,
         paddingVertical: 8,
-        backgroundColor: "#ffffff",
+        backgroundColor: props.isLoading ? "#D0D5DD" : "#FFFFFF",
         borderRadius: 8,
         borderColor: "#D0D5DD",
         borderWidth: 1,
@@ -19,6 +22,7 @@ function SecondaryButton(props: {
         shadowOpacity: 0.05,
         shadowColor: "#101828",
       }}
+      disabled={props.isLoading}
       onPress={props.onPress}
     >
       <Text
@@ -31,7 +35,7 @@ function SecondaryButton(props: {
       >
         {props.text}
       </Text>
-    </Pressable>
+    </TouchableOpacity>
   );
 }
 

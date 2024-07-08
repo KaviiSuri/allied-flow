@@ -46,6 +46,7 @@ function isUpdateUserProps(props: MemberProps): props is {
 function MemberForm(props: {
   open: boolean,
   toggleOpen: () => void
+  isLoading?: boolean
 } & ({
   handleSave: (_user: CreateUser) => Promise<void>
 } | {
@@ -164,6 +165,7 @@ function MemberForm(props: {
               onValueChange={(e) => setRole(e)}
               rightIcon={
                 <Image
+                      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                   source={require('../assets/images/down-arrow-icon.png')}
                   style={{
                     resizeMode: "contain",
@@ -172,7 +174,6 @@ function MemberForm(props: {
                     tintColor: 'black'
                   }}
                 />
-
               }
             />
           </View>
@@ -188,7 +189,7 @@ function MemberForm(props: {
           }}
         >
           <SecondaryButton text="Cancel" onPress={props.toggleOpen} />
-          <PrimaryButton text="Save" onPress={handleSave} />
+          <PrimaryButton text="Save" onPress={handleSave} isLoading={props.isLoading} />
         </View>
       </View>
     </Animated.View>
@@ -201,7 +202,7 @@ function UpdateMemberForm(props: {
   toggleOpen: () => void
 }) {
   const utils = api.useUtils();
-  const { mutateAsync: updateUser } = api.users.updateUser.useMutation({
+  const { mutateAsync: updateUser, isPending } = api.users.updateUser.useMutation({
     onSuccess: () => {
       utils.users.readUsers.refetch().catch(console.error);
     },
@@ -213,7 +214,7 @@ function UpdateMemberForm(props: {
   }
 
   return (
-    <MemberForm open={props.open} user={props.user} toggleOpen={props.toggleOpen} handleSave={handleSave} />
+    <MemberForm open={props.open} user={props.user} toggleOpen={props.toggleOpen} handleSave={handleSave} isLoading={isPending} />
   )
 }
 
@@ -222,7 +223,7 @@ function CreateMemberForm(props: {
   toggleOpen: () => void
 }) {
   const utils = api.useUtils();
-  const { mutateAsync: createUser } = api.users.createUser.useMutation({
+  const { mutateAsync: createUser, isPending } = api.users.createUser.useMutation({
     onSuccess: () => {
       utils.users.readUsers.refetch().catch(console.error);
     },
@@ -234,7 +235,7 @@ function CreateMemberForm(props: {
   }
 
   return (
-    <MemberForm open={props.open} toggleOpen={props.toggleOpen} handleSave={handleSave} />
+    <MemberForm open={props.open} toggleOpen={props.toggleOpen} handleSave={handleSave} isLoading={isPending} />
   )
 }
 
@@ -304,12 +305,14 @@ export default function TeamMembers() {
             // value={text}
             />
           </View>
-          <View
-            style={{ flexDirection: "row", gap: 16, backgroundColor: "#FFF" }}
-          >
-            <SecondaryButton text="Upload members" />
-            <PrimaryButton text="Add members" onPress={toggleDrawer} />
-          </View>
+          <Can I='create' a='User'>
+            <View
+              style={{ flexDirection: "row", gap: 16, backgroundColor: "#FFF" }}
+            >
+              <SecondaryButton text="Upload members" />
+              <PrimaryButton text="Add members" onPress={toggleDrawer} />
+            </View>
+          </Can>
         </View>
 
         <View style={{ padding: 16, height: windowHeight }}>

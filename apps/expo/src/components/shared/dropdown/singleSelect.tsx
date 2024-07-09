@@ -126,7 +126,7 @@ export const SingleSelect: React.FC<SingleSelectProps> = ({ value, defaultValue,
         {rightIcon && <View >{rightIcon}</View>}
       </TouchableOpacity>
       <Modal
-        animationType="fade"
+        animationType="none"
         transparent={true}
         visible={open}
         onRequestClose={() => setOpen(false)}

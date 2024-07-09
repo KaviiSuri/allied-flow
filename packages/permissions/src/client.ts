@@ -1,4 +1,4 @@
-import { DefinePermissions, Role } from "./config";
+import { DefinePermissions, Role } from "./config.js";
 
 export const clientPermissions: Record<Role, DefinePermissions> = {
   SALES: (user, { can }) => {},

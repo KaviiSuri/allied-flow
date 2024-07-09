@@ -6,11 +6,16 @@ import {
   Role,
   SubjectsWithTypes,
   TeamType,
-} from "./config";
-import { clientPermissions } from "./client";
-import { sellerPermissions } from "./seller";
+} from "./config.js";
+import { clientPermissions } from "./client.js";
+import { sellerPermissions } from "./seller.js";
 
-export type { AppAbilities, Role, TeamType, SubjectsWithTypes } from "./config";
+export type {
+  AppAbilities,
+  Role,
+  TeamType,
+  SubjectsWithTypes,
+} from "./config.js";
 
 const lambdaMatcher = (matchConditions: MatchConditions) => matchConditions;
 

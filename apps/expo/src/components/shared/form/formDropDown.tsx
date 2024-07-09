@@ -13,10 +13,10 @@ interface FormDropDownProps {
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   onValueChange: (e: any) => void;
+  value?: any
 }
 
-export const FormDropDown: React.FC<FormDropDownProps> = ({ label, options, leftIcon, rightIcon, onValueChange }) => {
-  const [selectedValue, setSelectedValue] = useState("ADMIN")
+export const FormDropDown: React.FC<FormDropDownProps> = ({ label, options, leftIcon, rightIcon, onValueChange, value: _defaultValue }) => {
 
   return (
     <View >
@@ -34,8 +34,8 @@ export const FormDropDown: React.FC<FormDropDownProps> = ({ label, options, left
         </Text>
         <SingleSelect
           style={{ flexDirection: 'row', alignItems: 'center' }}
-          value={selectedValue}
-          defaultValue={selectedValue}
+          value={_defaultValue}
+          defaultValue={_defaultValue}
           onChange={(e) => onValueChange(e)}
           changeLabel={true}
           rightIcon={rightIcon}

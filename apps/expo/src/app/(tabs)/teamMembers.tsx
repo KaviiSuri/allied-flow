@@ -162,10 +162,11 @@ function MemberForm(props: {
             <FormDropDown
               label="Role"
               options={RoleOptions}
+              value={role}
               onValueChange={(e) => setRole(e)}
               rightIcon={
                 <Image
-                      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                   source={require('../assets/images/down-arrow-icon.png')}
                   style={{
                     resizeMode: "contain",

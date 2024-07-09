@@ -165,7 +165,7 @@ function MemberForm(props: {
               onValueChange={(e) => setRole(e)}
               rightIcon={
                 <Image
-                      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                   source={require('../assets/images/down-arrow-icon.png')}
                   style={{
                     resizeMode: "contain",
@@ -363,6 +363,7 @@ export default function TeamMembers() {
                         shadowOffset: { height: 1, width: 0 },
                         shadowOpacity: 0.05,
                         shadowColor: "#101828",
+                        maxHeight: 35,
                       }}
                       onPress={() => setUserToUpdate(user)}
                     >
@@ -382,6 +383,7 @@ export default function TeamMembers() {
                         shadowOffset: { height: 1, width: 0 },
                         shadowOpacity: 0.05,
                         shadowColor: "#101828",
+                        maxHeight: 35,
                       }}
                     >
                       <Image

@@ -364,6 +364,7 @@ export default function TeamMembers() {
                         shadowOffset: { height: 1, width: 0 },
                         shadowOpacity: 0.05,
                         shadowColor: "#101828",
+                        maxHeight: 35,
                       }}
                       onPress={() => setUserToUpdate(user)}
                     >
@@ -383,6 +384,7 @@ export default function TeamMembers() {
                         shadowOffset: { height: 1, width: 0 },
                         shadowOpacity: 0.05,
                         shadowColor: "#101828",
+                        maxHeight: 35,
                       }}
                     >
                       <Image

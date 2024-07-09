@@ -140,6 +140,7 @@ function TeamForm(props: TeamProps) {
                 label="POC"
                 placeholder="Type POC"
                 style={{ flex: 1 }}
+                editable={false}
               />
               <FormTextInput
                 label="GST Number"
@@ -151,8 +152,9 @@ function TeamForm(props: TeamProps) {
             <FormTextInput
               label="Phone Number"
               placeholder="Type phone number"
+              editable={false}
             />
-            <FormTextInput label="Email" placeholder="Type email" />
+            <FormTextInput label="Email" placeholder="Type email" editable={false} />
           </View>
         </View>
         <View

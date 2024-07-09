@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, TextInput } from "react-native";
-import type { TextInputProps, ViewStyle } from "react-native";
+import type { CursorValue, TextInputProps, ViewStyle } from "react-native";
 
 interface FormTextInputProps extends TextInputProps {
   label: string;
@@ -35,6 +35,8 @@ function FormTextInput({ style, numberOfLines, label, ...props }: FormTextInputP
           shadowOffset: { height: 1, width: 0 },
           shadowOpacity: 0.05,
           shadowColor: "#101828",
+          backgroundColor: props.editable === false ? "lightgray" : "transparent",
+          pointerEvents: props.editable === false ? "none" : "auto",
         }}
         placeholderTextColor="#94A3B8"
         multiline

@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import type { TRPCRouterRecord } from "@trpc/server";
-import { protectedProcedure } from "../trpc";
+import { protectedProcedure } from "../trpc.js";
 import { insertProductSchema, products } from "@repo/db/schema";
 import { z } from "zod";
 import { eq } from "@repo/db";

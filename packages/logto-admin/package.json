@@ -11,7 +11,7 @@
   },
   "license": "MIT",
   "scripts": {
-    "gen:logto": "tsx ./src/scripts/generate-logto-admin-sdk.ts",
+    "gen:logto": "tsx ./src/scripts/generate-logto-admin-sdk.ts && npx fix-esm-import-path ./src/sdk/index.ts",
     "build": "tsc --build",
     "dev": "tsc --watch",
     "clean": "rm -rf .turbo node_modules",

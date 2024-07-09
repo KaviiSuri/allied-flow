@@ -118,7 +118,10 @@ export const SingleSelect: React.FC<SingleSelectProps> = ({ value, defaultValue,
       <TouchableOpacity
         ref={selectRef as React.RefObject<TouchableOpacity>}
         style={[styles.select, style]}
-        onPress={() => setOpen(true)}
+        onPress={() => {
+          setOpen(true)
+          handleLayout()
+        }}
         onLayout={handleLayout}
       >
         {leftIcon && <View>{leftIcon}</View>}

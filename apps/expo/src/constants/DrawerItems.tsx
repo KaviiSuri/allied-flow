@@ -1,17 +1,23 @@
+import DashboardIcon from "../app/assets/images/dashboard-icon.png";
+import InquiriesIcon from "../app/assets/images/inquiries-icon.png";
+import OrdersIcon from "../app/assets/images/orders-icon.png";
+import SamplesIcon from "../app/assets/images/samples-icon.png";
+import HomeIcon from "../app/assets/images/home-icon.png";
+import ClientIcon from "../app/assets/images/client-icon.png";
+import UserIcon from "../app/assets/images/user-icon.png";
+
 export default [
   {
     path: "index",
     name: "Dashboard",
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    icon: require("../app/assets/images/dashboard-icon.png"),
+    icon: DashboardIcon,
     action: undefined,
     subject: undefined,
   },
   {
     path: "inquiries",
     name: "Inquiries",
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    icon: require("../app/assets/images/inquiries-icon.png"),
+    icon: InquiriesIcon,
     action: undefined,
     subject: undefined,
   },
@@ -19,40 +25,35 @@ export default [
   {
     path: "orders",
     name: "Orders",
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    icon: require("../app/assets/images/orders-icon.png"),
+    icon: OrdersIcon,
     action: undefined,
     subject: undefined,
   },
   {
     path: "samples",
     name: "Samples",
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    icon: require("../app/assets/images/samples-icon.png"),
+    icon: SamplesIcon,
     action: undefined,
     subject: undefined,
   },
   {
     path: "products",
     name: "Products",
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    icon: require("../app/assets/images/home-icon.png"),
+    icon: HomeIcon,
     action: "read",
     subject: "Product",
   },
   {
     path: "clients",
     name: "Clients",
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    icon: require("../app/assets/images/client-icon.png"),
+    icon: ClientIcon,
     action: "read",
     subject: "Team",
   },
   {
     path: "teamMembers",
     name: "Team Members",
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    icon: require("../app/assets/images/user-icon.svg"),
+    icon: UserIcon,
     action: "read",
     subject: "User",
   },

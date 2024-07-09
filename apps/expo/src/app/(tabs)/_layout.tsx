@@ -53,10 +53,10 @@ export default function TabLayout() {
                       style={{
                         width: 20,
                         height: 20,
-                        resizeMode: "contain",
-                        tintColor: color,
                         marginBottom: -10,
                       }}
+                      resizeMode={"contain"}
+                      tintColor={color}
                     />
                   ),
                   header: () => (
@@ -66,6 +66,8 @@ export default function TabLayout() {
                           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                           source={ClientIcon}
                           style={styles.navImage}
+                          tintColor={"#000"}
+                          resizeMode={"contain"}
                         />
                         <Text>ABC Chemicals</Text>
                         <TouchableOpacity
@@ -99,8 +101,6 @@ const styles = StyleSheet.create({
   navImage: {
     height: 16,
     width: 16,
-    resizeMode: "contain",
-    tintColor: "#000",
   },
   logout: {
     borderWidth: 1,

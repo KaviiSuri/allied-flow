@@ -1,6 +1,10 @@
-import React, { useState, ReactNode, useRef, useEffect, useContext } from 'react';
-import { View, Text, TouchableOpacity, Modal, StyleSheet, ViewStyle, TextStyle, LayoutChangeEvent, Image } from 'react-native';
+import type { ReactNode } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
+import type { ViewStyle, TextStyle } from 'react-native';
+import { View, Text, TouchableOpacity, Modal, StyleSheet, LayoutChangeEvent, Image } from 'react-native';
 import { Colors } from '~/constants/Color';
+import FilledRadioIcon from '~/app/assets/images/filled-radio.png';
+import UnfilledRadioIcon from '~/app/assets/images/unfilled-radio.png';
 
 interface Option {
   label: string;
@@ -164,8 +168,9 @@ export const MenuItem: React.FC<MenuItemProps & { onPress?: () => void }> = ({ v
     <TouchableOpacity style={[styles.menuItem, style]} onPress={handlePress}>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <Image
-          source={selectedValue === value ? require('../../../app/assets/images/filled-radio.png') : require('../../../app/assets/images/unfilled-radio.png')}
+          source={selectedValue === value ? FilledRadioIcon : UnfilledRadioIcon}
           style={styles.radioIcon}
+          resizeMode={"contain"}
         />
         <Text style={styles.menuItemText}>{children}
         </Text>
@@ -213,7 +218,6 @@ const styles = StyleSheet.create({
     color: Colors.text
   },
   radioIcon: {
-    resizeMode: "contain",
     width: 16,
     height: 16,
     marginRight: 10,

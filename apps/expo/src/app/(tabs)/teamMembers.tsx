@@ -21,7 +21,11 @@ import { PrimaryButton, SecondaryButton } from "~/components/core/button";
 import { FormTextInput } from "~/components/shared/form/";
 import { FormDropDown } from "~/components/shared/form/formDropDown";
 import { Can, useAbility } from "~/providers/auth";
-import { Role } from "@repo/permissions";
+import type { Role } from "@repo/permissions";
+import CloseIcon from '~/app/assets/images/close-icon.png'
+import DownArrowIcon from '~/app/assets/images/down-arrow-icon.png'
+import EditIcon from '~/app/assets/images/edit-icon.svg'
+import TrashIcon from '~/app/assets/images/trash-icon.svg'
 const windowHeight = Dimensions.get("window").height - 64;
 
 type User = RouterOutputs["users"]['readUsers'][0];
@@ -130,7 +134,7 @@ function MemberForm(props: {
           <Pressable onPress={props.toggleOpen}>
             <Image
               // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-              source={require("../../app/assets/images/close-icon.png")}
+              source={CloseIcon}
             />
           </Pressable>
         </View>
@@ -167,13 +171,13 @@ function MemberForm(props: {
               rightIcon={
                 <Image
                   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                  source={require('../assets/images/down-arrow-icon.png')}
+                  source={DownArrowIcon}
                   style={{
-                    resizeMode: "contain",
                     width: 18,
                     height: 18,
-                    tintColor: 'black'
                   }}
+                  resizeMode={"contain"}
+                  tintColor={'black'}
                 />
               }
             />
@@ -368,10 +372,7 @@ export default function TeamMembers() {
                       }}
                       onPress={() => setUserToUpdate(user)}
                     >
-                      <Image
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                        source={require("../../app/assets/images/edit-icon.svg")}
-                      />
+                      <EditIcon />
                     </Pressable>
                   </Can>
                   {ability.can("delete", "User") && (
@@ -387,12 +388,7 @@ export default function TeamMembers() {
                         maxHeight: 35,
                       }}
                     >
-                      <Image
-                        source={
-                          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                          require("../../app/assets/images/trash-icon.svg")
-                        }
-                      />
+                      <TrashIcon />
                     </Pressable>
                   )
                   }

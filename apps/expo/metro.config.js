@@ -5,8 +5,26 @@ const { FileStore } = require("metro-cache");
 const path = require("path");
 
 module.exports = withTurborepoManagedCache(
-  withMonorepoPaths(getDefaultConfig(__dirname)),
+  withSvgTransformer(withMonorepoPaths(getDefaultConfig(__dirname))),
 );
+
+/**
+ * Add SVG support to the Metro config.
+ * @see https://turbo.build/repo/docs/reference/configuration#env
+ * @param {import('expo/metro-config').MetroConfig} config
+ * @returns {import('expo/metro-config').MetroConfig}
+ */
+function withSvgTransformer(config) {
+  config.transformer.babelTransformerPath = require.resolve(
+    "react-native-svg-transformer",
+  );
+  config.resolver = {
+    ...config.resolver,
+    assetExts: config.resolver.assetExts.filter((ext) => ext !== "svg") ?? [],
+    sourceExts: [...config.resolver.sourceExts, "svg"],
+  };
+  return config;
+}
 
 /**
  * Add the monorepo paths to the Metro config.

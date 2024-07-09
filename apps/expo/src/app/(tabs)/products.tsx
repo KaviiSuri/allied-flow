@@ -20,6 +20,9 @@ import { api } from "~/utils/api";
 import { PrimaryButton, SecondaryButton } from "~/components/core/button";
 import { FormTextInput } from "~/components/shared/form/";
 import { Can } from "~/providers/auth";
+import CloseIcon from '~/app/assets/images/close-icon.png'
+import EditIcon from '~/app/assets/images/edit-icon.svg'
+import TrashIcon from '~/app/assets/images/trash-icon.svg'
 const windowHeight = Dimensions.get("window").height - 64;
 
 type Product = RouterOutputs["products"]['read'][0];
@@ -103,7 +106,7 @@ function ProductForm(props: ProductProps) {
           <Pressable onPress={props.toggleOpen}>
             <Image
               // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-              source={require("../../app/assets/images/close-icon.png")}
+              source={CloseIcon}
             />
           </Pressable>
         </View>
@@ -311,10 +314,7 @@ export default function Products() {
                         shadowColor: "#101828",
                       }}
                     >
-                      <Image
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                        source={require("../../app/assets/images/edit-icon.svg")}
-                      />
+                      <EditIcon />
                     </Pressable>
                   </Can>
                   <Can I="delete" a="Product">
@@ -329,10 +329,7 @@ export default function Products() {
                         shadowColor: "#101828",
                       }}
                     >
-                      <Image
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                        source={require("../../app/assets/images/trash-icon.svg")}
-                      />
+                      <TrashIcon />
                     </Pressable>
                   </Can>
                 </View>

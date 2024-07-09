@@ -14,6 +14,7 @@ import { Redirect } from "expo-router";
 import { Logout } from "~/components/Logout";
 import { logtoService } from "~/config/logto";
 import AuthProvider, { AuthConsumer, useAbility } from "~/providers/auth";
+import DashboardIcon from "~/app/assets/images/dashboard-icon.png";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function CustomDrawerContent(props: any) {
@@ -38,13 +39,13 @@ function CustomDrawerContent(props: any) {
         icon={({ focused }) => (
           <Image
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            source={require("../../app/assets/images/dashboard-icon.png")}
+            source={DashboardIcon}
             style={{
-              resizeMode: "contain",
               width: 20,
               height: 20,
-              tintColor: focused ? "#2F80F5" : "#475569",
             }}
+            resizeMode={"contain"}
+            tintColor={focused ? "#2F80F5" : "#475569"}
           />
         )}
       />
@@ -121,11 +122,11 @@ export default function WebLayout() {
                         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                         source={drawer.icon}
                         style={{
-                          resizeMode: "contain",
                           width: 20,
                           height: 20,
-                          tintColor: focused ? "#2F80F5" : "#475569",
                         }}
+                        resizeMode={"contain"}
+                        tintColor={focused ? "#2F80F5" : "#475569"}
                       />
                     ),
                   }}

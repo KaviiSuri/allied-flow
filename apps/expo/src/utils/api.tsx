@@ -32,7 +32,7 @@ const getBaseUrl = () => {
   const localhost = debuggerHost?.split(":")[0];
 
   if (!localhost) {
-    return "https://allied-flow.onrender.com";
+    return process.env.EXPO_PUBLIC_API_URL ?? "http://localhost:5000";
   }
   return `http://${localhost}:5000`;
 };

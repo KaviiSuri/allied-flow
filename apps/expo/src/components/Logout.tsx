@@ -1,20 +1,24 @@
-import { Image, Pressable, StyleSheet, Text, View } from "react-native"
+import { Image, StyleSheet, Text, View } from "react-native"
 import { SingleSelectDropdown } from "./shared/dropdown"
 import { SingleSelect } from "./shared/dropdown/singleSelect"
 import { useState } from "react"
 import { useLogto } from "@logto/rn"
 import { logtoService } from "~/config/logto"
 import { Colors } from "~/constants/Color"
-import { TouchableOpacity } from "react-native-gesture-handler"
+import OrgIcon from "~/app/assets/images/org-icon.png"
+import DownArrowIcon from "~/app/assets/images/down-arrow-icon.png"
+import ShareIcon from "~/app/assets/images/share-icon.png"
+import LogoutIcon from "~/app/assets/images/logout-icon.png"
+import NotebookIcon from "~/app/assets/images/notebook-icon.png"
 import { MenuItem } from "./shared/dropdown/multiSelect"
 
 
 export const Logout: React.FC = () => {
-  const [logout, setLogout] = useState("")
+  const [logout, _setLogout] = useState("")
   const { signOut } = useLogto()
 
   const handleClick = () => {
-
+    /* empty */
   }
 
   return (
@@ -27,12 +31,16 @@ export const Logout: React.FC = () => {
           onChange={handleClick}
           changeLabel={false}
           leftIcon={<Image
-            source={require('../app/assets/images/org-icon.png')}
+            source={OrgIcon}
             style={{ ...styles.icon, marginRight: 10 }}
+            tintColor={Colors.text}
+            resizeMode="contain"
           />}
           rightIcon={<Image
-            source={require('../app/assets/images/down-arrow-icon.png')}
+            source={DownArrowIcon}
             style={styles.icon}
+            resizeMode="contain"
+            tintColor={Colors.text}
           />}
         >
           <MenuItem
@@ -41,8 +49,10 @@ export const Logout: React.FC = () => {
             onPress={() => console.log("Invite")}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Image
-                source={require('../app/assets/images/share-icon.png')}
-                style={{ ...styles.itemIcon, tintColor: Colors.text }}
+                source={ShareIcon}
+                style={{ ...styles.itemIcon }}
+                tintColor={Colors.text}
+                resizeMode="contain"
               />
               <Text style={{ ...styles.itemText, color: Colors.text }}>Invite members</Text>
             </View>
@@ -51,12 +61,14 @@ export const Logout: React.FC = () => {
             value="logout"
             style={styles.item}
             onPress={() => {
-              signOut(logtoService.redirectUri);
+              signOut(logtoService.redirectUri).catch(console.error);
             }}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Image
-                source={require('../app/assets/images/logout-icon.png')}
-                style={{ ...styles.itemIcon, tintColor: Colors.error }}
+                source={LogoutIcon}
+                style={{ ...styles.itemIcon }}
+                tintColor={Colors.error}
+                resizeMode="contain"
               />
               <Text style={{ ...styles.itemText, color: Colors.error }}>Logout</Text>
             </View>
@@ -64,9 +76,9 @@ export const Logout: React.FC = () => {
         </SingleSelect>
       </SingleSelectDropdown>
       <Image
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        source={require('../app/assets/images/notebook-icon.png')}
+        source={NotebookIcon}
         style={styles.trailingIcon}
+        resizeMode="contain"
       />
     </View>
   )
@@ -88,9 +100,7 @@ const styles = StyleSheet.create({
   },
   dropdownItem: { width: 200, flexDirection: 'row', alignItems: 'center', },
   icon: {
-    resizeMode: "contain",
     width: 16,
-    tintColor: Colors.text,
     height: 16,
   },
   item: {
@@ -99,7 +109,6 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.border,
   },
   itemIcon: {
-    resizeMode: "contain",
     width: 16,
     height: 16,
     marginRight: 10,
@@ -109,7 +118,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   trailingIcon: {
-    resizeMode: "contain",
     width: 20,
     height: 20,
     marginRight: 40,

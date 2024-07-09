@@ -13,7 +13,7 @@ export const authRouter = {
         team: true,
       },
     });
-    const { status } = await usersApi.apiUsersUserIdGet(uid, "true");
+    const { status } = await usersApi.getUser(uid, "true");
     if (status !== 200) {
       throw new TRPCError({
         code: "FORBIDDEN",

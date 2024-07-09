@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Avenir',
     flex: 1,
     fontWeight: '500',
-    color: Colors.textPrimary
+    color: Colors.text
   },
   radioIcon: {
     resizeMode: "contain",

@@ -40,7 +40,7 @@ export default function TabLayout() {
                     lineHeight: 18,
                   },
                   tabBarItemStyle: {
-                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                    // @ts-expect-error types broken here
                     ...((drawer.action && drawer.subject && !ability.can(drawer.action, drawer.subject)) && {
                       display: "none",
                     }),

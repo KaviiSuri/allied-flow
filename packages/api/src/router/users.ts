@@ -31,7 +31,7 @@ export const usersRouter = {
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const user = await usersApi.apiUsersPost({
+      const user = await usersApi.createUser({
         primaryEmail: input.email,
         name: input.name,
         primaryPhone: input.phone,
@@ -117,7 +117,7 @@ export const usersRouter = {
 
       console.log("updatedUser", updatedUser[0]);
 
-      await usersApi.apiUsersUserIdPatch(input.id, {
+      await usersApi.updateUser(input.id, {
         primaryEmail: updatedUser[0].email,
         name: updatedUser[0].name,
         primaryPhone: updatedUser[0].phone,

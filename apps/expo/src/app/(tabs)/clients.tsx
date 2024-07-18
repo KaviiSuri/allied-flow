@@ -19,12 +19,12 @@ import { RouterInputs, RouterOutputs, api } from "~/utils/api";
 import { PrimaryButton, SecondaryButton } from "~/components/core/button";
 import { FormTextInput } from "~/components/shared/form/";
 import { Can } from "~/providers/auth";
-import CloseIcon from '~/app/assets/images/close-icon.png'
-import EditIcon from '~/app/assets/images/edit-icon.svg'
-import TrashIcon from '~/app/assets/images/trash-icon.svg'
+import CloseIcon from "~/app/assets/images/close-icon.png";
+import EditIcon from "~/app/assets/images/edit-icon.svg";
+import TrashIcon from "~/app/assets/images/trash-icon.svg";
 const windowHeight = Dimensions.get("window").height - 64;
 
-type Team = RouterOutputs["teams"]['readTeams'][0];
+type Team = RouterOutputs["teams"]["readTeams"][0];
 type CreateTeam = RouterInputs["teams"]["createTeam"];
 type UpdateTeam = RouterInputs["teams"]["updateTeam"];
 
@@ -33,31 +33,44 @@ type TeamProps = {
   toggleOpen: () => void;
   isLoading?: boolean;
 } & (
-    | { handleSave: (_user: CreateTeam) => Promise<void> }
-    | { team: Team; handleSave: (_user: UpdateTeam) => Promise<void> }
-  );
+  | { handleSave: (_user: CreateTeam) => Promise<void> }
+  | { team: Team; handleSave: (_user: UpdateTeam) => Promise<void> }
+);
 
 function isUpdateTeamProps(props: TeamProps): props is {
-  team: Team; handleSave: (_user: UpdateTeam) => Promise<void>, open: boolean;
+  team: Team;
+  handleSave: (_user: UpdateTeam) => Promise<void>;
+  open: boolean;
   toggleOpen: () => void;
 } {
-  return 'team' in props;
+  return "team" in props;
 }
 
 function TeamForm(props: TeamProps) {
-  const [name, setName] = useState(isUpdateTeamProps(props) ? props.team.name : '');
-  const [address, setAddress] = useState(isUpdateTeamProps(props) ? props.team.address : '');
-  const [gstNumber, setGstNumber] = useState(isUpdateTeamProps(props) ? props.team.gstNo : '');
+  const [name, setName] = useState(
+    isUpdateTeamProps(props) ? props.team.name : "",
+  );
+  const [address, setAddress] = useState(
+    isUpdateTeamProps(props) ? props.team.address : "",
+  );
+  const [gstNumber, setGstNumber] = useState(
+    isUpdateTeamProps(props) ? props.team.gstNo : "",
+  );
 
   async function handleSave() {
     if (isUpdateTeamProps(props)) {
-      await props.handleSave({ id: props.team.id, name, address, gstNo: gstNumber });
+      await props.handleSave({
+        id: props.team.id,
+        name,
+        address,
+        gstNo: gstNumber,
+      });
     } else {
       await props.handleSave({
         name,
         gstNo: gstNumber,
         address,
-        type: 'CLIENT',
+        type: "CLIENT",
       });
     }
     props.toggleOpen();
@@ -102,15 +115,11 @@ function TeamForm(props: TeamProps) {
             borderBottomColor: "#E2E8F0",
           }}
         >
-          <Text
-            style={{ fontSize: 18, fontWeight: 800, fontFamily: "Avenir" }}
-          >
+          <Text style={{ fontSize: 18, fontWeight: 800, fontFamily: "Avenir" }}>
             Add clients
           </Text>
           <Pressable onPress={props.toggleOpen}>
-            <Image
-              source={CloseIcon}
-            />
+            <Image source={CloseIcon} />
           </Pressable>
         </View>
         <View
@@ -156,7 +165,11 @@ function TeamForm(props: TeamProps) {
               placeholder="Type phone number"
               editable={false}
             />
-            <FormTextInput label="Email" placeholder="Type email" editable={false} />
+            <FormTextInput
+              label="Email"
+              placeholder="Type email"
+              editable={false}
+            />
           </View>
         </View>
         <View
@@ -170,24 +183,29 @@ function TeamForm(props: TeamProps) {
           }}
         >
           <SecondaryButton text="Cancel" />
-          <PrimaryButton text="Save" onPress={handleSave} isLoading={props.isLoading} />
+          <PrimaryButton
+            text="Save"
+            onPress={handleSave}
+            isLoading={props.isLoading}
+          />
         </View>
       </View>
     </Animated.View>
-  )
+  );
 }
 
 function UpdateTeamForm(props: {
-  open: boolean,
-  team: Team,
-  toggleOpen: () => void
+  open: boolean;
+  team: Team;
+  toggleOpen: () => void;
 }) {
   const utils = api.useUtils();
-  const { mutateAsync: updateTeam, isPending } = api.teams.updateTeam.useMutation({
-    onSuccess: () => {
-      utils.teams.readTeams.refetch().catch(console.error);
-    },
-  });
+  const { mutateAsync: updateTeam, isPending } =
+    api.teams.updateTeam.useMutation({
+      onSuccess: () => {
+        utils.teams.readTeams.refetch().catch(console.error);
+      },
+    });
 
   async function handleSave(team: RouterInputs["teams"]["updateTeam"]) {
     await updateTeam(team);
@@ -195,20 +213,24 @@ function UpdateTeamForm(props: {
   }
 
   return (
-    <TeamForm open={props.open} team={props.team} toggleOpen={props.toggleOpen} handleSave={handleSave} isLoading={isPending} />
-  )
+    <TeamForm
+      open={props.open}
+      team={props.team}
+      toggleOpen={props.toggleOpen}
+      handleSave={handleSave}
+      isLoading={isPending}
+    />
+  );
 }
 
-function CreateTeamForm(props: {
-  open: boolean,
-  toggleOpen: () => void
-}) {
+function CreateTeamForm(props: { open: boolean; toggleOpen: () => void }) {
   const utils = api.useUtils();
-  const { mutateAsync: createTeam, isPending } = api.teams.createTeam.useMutation({
-    onSuccess: () => {
-      utils.teams.readTeams.refetch().catch(console.error);
-    },
-  });
+  const { mutateAsync: createTeam, isPending } =
+    api.teams.createTeam.useMutation({
+      onSuccess: () => {
+        utils.teams.readTeams.refetch().catch(console.error);
+      },
+    });
 
   async function handleSave(team: CreateTeam) {
     await createTeam(team);
@@ -216,8 +238,13 @@ function CreateTeamForm(props: {
   }
 
   return (
-    <TeamForm open={props.open} toggleOpen={props.toggleOpen} handleSave={handleSave} isLoading={isPending} />
-  )
+    <TeamForm
+      open={props.open}
+      toggleOpen={props.toggleOpen}
+      handleSave={handleSave}
+      isLoading={isPending}
+    />
+  );
 }
 
 export default function Clients() {
@@ -246,8 +273,16 @@ export default function Clients() {
       }}
     >
       <Can I="read" a="Team">
-        {!teamToUpdate && <CreateTeamForm open={drawerVisible} toggleOpen={toggleDrawer} />}
-        {teamToUpdate && <UpdateTeamForm open={!!teamToUpdate} team={teamToUpdate} toggleOpen={() => setTeamToUpdate(null)} />}
+        {!teamToUpdate && (
+          <CreateTeamForm open={drawerVisible} toggleOpen={toggleDrawer} />
+        )}
+        {teamToUpdate && (
+          <UpdateTeamForm
+            open={!!teamToUpdate}
+            team={teamToUpdate}
+            toggleOpen={() => setTeamToUpdate(null)}
+          />
+        )}
         <View
           style={{
             paddingHorizontal: 24,
@@ -274,9 +309,9 @@ export default function Clients() {
                 shadowColor: "#101828",
               }}
               placeholderTextColor="#94A3B8"
-            // You can adjust the number of lines
-            // onChangeText={(text) => setText(text)}
-            // value={text}
+              // You can adjust the number of lines
+              // onChangeText={(text) => setText(text)}
+              // value={text}
             />
           </View>
           <Can I="create" a="Team">
@@ -359,6 +394,5 @@ export default function Clients() {
         </View>
       </Can>
     </SafeAreaView>
-
   );
 }

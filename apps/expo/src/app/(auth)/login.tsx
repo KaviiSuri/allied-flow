@@ -30,7 +30,6 @@ export default function Home() {
       {/* Changes page title visible on the header */}
       <View style={styles.loginContainer}>
         <View style={styles.loginWindow}>
-
           <Text style={styles.textPrimary}>
             Log in to your account
             {/* {(isLoading || isRefetching) && ( */}
@@ -44,9 +43,7 @@ export default function Home() {
             style={styles.loginButtons}
             onPress={() => signIn(logtoService.redirectUri)}
           >
-            <Text style={styles.loginButtonText}>
-              Sign In
-            </Text>
+            <Text style={styles.loginButtonText}>Sign In</Text>
           </Pressable>
         </View>
         <Text style={styles.bottomText}>

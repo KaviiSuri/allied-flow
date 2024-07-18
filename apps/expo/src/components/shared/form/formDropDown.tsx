@@ -1,26 +1,31 @@
-
-import { View, Text, StyleSheet, Image } from "react-native"
-import { ReactNode, useState } from "react"
-import { SingleSelectDropdown } from "../dropdown"
-import { MenuItem, SingleSelect } from "../dropdown/singleSelect"
+import { View, Text, StyleSheet, Image } from "react-native";
+import { ReactNode, useState } from "react";
+import { SingleSelectDropdown } from "../dropdown";
+import { MenuItem, SingleSelect } from "../dropdown/singleSelect";
 
 interface FormDropDownProps {
-  label: string,
+  label: string;
   options: {
-    label: string,
-    value: string
-  }[],
+    label: string;
+    value: string;
+  }[];
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   onValueChange: (e: any) => void;
-  value?: any
+  value?: any;
 }
 
-export const FormDropDown: React.FC<FormDropDownProps> = ({ label, options, leftIcon, rightIcon, onValueChange, value: _defaultValue }) => {
-
+export const FormDropDown: React.FC<FormDropDownProps> = ({
+  label,
+  options,
+  leftIcon,
+  rightIcon,
+  onValueChange,
+  value: _defaultValue,
+}) => {
   return (
-    <View >
-      <SingleSelectDropdown >
+    <View>
+      <SingleSelectDropdown>
         <Text
           style={{
             fontSize: 14,
@@ -33,7 +38,7 @@ export const FormDropDown: React.FC<FormDropDownProps> = ({ label, options, left
           {label}
         </Text>
         <SingleSelect
-          style={{ flexDirection: 'row', alignItems: 'center' }}
+          style={{ flexDirection: "row", alignItems: "center" }}
           value={_defaultValue}
           defaultValue={_defaultValue}
           onChange={(e) => onValueChange(e)}
@@ -48,13 +53,13 @@ export const FormDropDown: React.FC<FormDropDownProps> = ({ label, options, left
         </SingleSelect>
       </SingleSelectDropdown>
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   icon: {
     marginHorizontal: 8, // Adjust spacing as needed
     width: 20,
-    height: 20
+    height: 20,
   },
-})
+});

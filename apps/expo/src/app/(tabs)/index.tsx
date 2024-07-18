@@ -2,7 +2,6 @@ import { SafeAreaView, Text } from "react-native";
 import SkeletonLoader from "~/components/shared/skelton";
 
 export default function Dashboard() {
-
   return (
     <SafeAreaView
       style={{

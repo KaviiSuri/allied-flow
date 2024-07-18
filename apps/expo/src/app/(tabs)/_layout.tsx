@@ -41,9 +41,11 @@ export default function TabLayout() {
                   },
                   tabBarItemStyle: {
                     // @ts-expect-error types broken here
-                    ...((drawer.action && drawer.subject && !ability.can(drawer.action, drawer.subject)) && {
-                      display: "none",
-                    }),
+                    ...(drawer.action &&
+                      drawer.subject &&
+                      !ability.can(drawer.action, drawer.subject) && {
+                        display: "none",
+                      }),
                   },
                   title: drawer.name,
                   tabBarIcon: ({ color }) => (

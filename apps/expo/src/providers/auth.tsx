@@ -5,12 +5,12 @@ import { useLogto } from "@logto/rn";
 import { Redirect } from "expo-router";
 import type { RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
-import { createContextualCan } from '@casl/react';
+import { createContextualCan } from "@casl/react";
 
 interface AuthContext {
   isLoading: boolean;
   isError: boolean;
-  user: RouterOutputs['auth']['getSession'] | null;
+  user: RouterOutputs["auth"]["getSession"] | null;
 }
 
 const authContext = createContext<AuthContext>({
@@ -19,7 +19,7 @@ const authContext = createContext<AuthContext>({
   user: null,
 });
 
-export type Abilities = ReturnType<typeof defineAbilityFor>
+export type Abilities = ReturnType<typeof defineAbilityFor>;
 const abilityContext = createContext<Abilities>(defaultAbility);
 
 export const Can = createContextualCan<Abilities>(abilityContext.Consumer);
@@ -29,7 +29,12 @@ export const useAbility = () => useContext(abilityContext);
 
 export default function AuthProvider(props: { children: React.ReactNode }) {
   const { isAuthenticated } = useLogto();
-  const { data: backendUser, isLoading, isPending, isError } = api.auth.getSession.useQuery(undefined, {
+  const {
+    data: backendUser,
+    isLoading,
+    isPending,
+    isError,
+  } = api.auth.getSession.useQuery(undefined, {
     enabled: isAuthenticated,
   });
 
@@ -37,11 +42,11 @@ export default function AuthProvider(props: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!backendUser) {
-      setAbility(null)
+      setAbility(null);
       return;
     }
-    const ability = defineAbilityFor(backendUser)
-    setAbility(ability)
+    const ability = defineAbilityFor(backendUser);
+    setAbility(ability);
   }, [backendUser]);
 
   if (!isAuthenticated) {
@@ -49,11 +54,13 @@ export default function AuthProvider(props: { children: React.ReactNode }) {
   }
 
   return (
-    <authContext.Provider value={{
-      isLoading: isLoading || isPending,
-      user: backendUser ?? null,
-      isError,
-    }}>
+    <authContext.Provider
+      value={{
+        isLoading: isLoading || isPending,
+        user: backendUser ?? null,
+        isError,
+      }}
+    >
       <abilityContext.Provider value={ability ?? defaultAbility}>
         {props.children}
       </abilityContext.Provider>
@@ -62,10 +69,7 @@ export default function AuthProvider(props: { children: React.ReactNode }) {
 }
 
 export function AuthConsumer(props: {
-  children: (
-    value: AuthContext,
-    ability: Abilities,
-  ) => React.ReactNode
+  children: (value: AuthContext, ability: Abilities) => React.ReactNode;
 }) {
   return (
     <authContext.Consumer>

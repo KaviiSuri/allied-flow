@@ -1,7 +1,19 @@
-import React, { useEffect } from 'react';
-import { View, StyleSheet, StyleProp, ViewStyle, Dimensions } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import Animated, { Easing, useSharedValue, useAnimatedStyle, withRepeat, withTiming } from 'react-native-reanimated';
+import React, { useEffect } from "react";
+import {
+  View,
+  StyleSheet,
+  StyleProp,
+  ViewStyle,
+  Dimensions,
+} from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import Animated, {
+  Easing,
+  useSharedValue,
+  useAnimatedStyle,
+  withRepeat,
+  withTiming,
+} from "react-native-reanimated";
 
 interface SkeletonLoaderProps {
   rows: number;
@@ -10,9 +22,14 @@ interface SkeletonLoaderProps {
   itemWidth?: number;
 }
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
-const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({ rows, columns, itemHeight = 20, itemWidth = 100 }) => {
+const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({
+  rows,
+  columns,
+  itemHeight = 20,
+  itemWidth = 100,
+}) => {
   const shimmerTranslateX = useSharedValue(-width);
 
   useEffect(() => {
@@ -22,7 +39,7 @@ const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({ rows, columns, itemHeig
         easing: Easing.linear,
       }),
       -1,
-      true
+      true,
     );
   }, [shimmerTranslateX]);
 
@@ -38,22 +55,28 @@ const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({ rows, columns, itemHeig
       const skeletonColumns = [];
       for (let j = 0; j < columns; j++) {
         skeletonColumns.push(
-          <View key={`skeleton-item-${i}-${j}`} style={[styles.skeletonItem, { width: itemWidth, height: itemHeight }]}>
+          <View
+            key={`skeleton-item-${i}-${j}`}
+            style={[
+              styles.skeletonItem,
+              { width: itemWidth, height: itemHeight },
+            ]}
+          >
             <Animated.View style={[styles.shimmerEffect, animatedStyle]}>
               <LinearGradient
-                colors={['#e0e0e0', '#f0f0f0', '#e0e0e0']}
+                colors={["#e0e0e0", "#f0f0f0", "#e0e0e0"]}
                 style={{ flex: 1 }}
                 start={{ x: 0, y: 0.5 }}
                 end={{ x: 1, y: 0.5 }}
               />
             </Animated.View>
-          </View>
+          </View>,
         );
       }
       skeletonRows.push(
         <View key={`skeleton-row-${i}`} style={styles.skeletonRow}>
           {skeletonColumns}
-        </View>
+        </View>,
       );
     }
     return skeletonRows;
@@ -64,19 +87,19 @@ const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({ rows, columns, itemHeig
 
 const styles = StyleSheet.create({
   skeletonContainer: {
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
   },
   skeletonRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginBottom: 16,
   },
   skeletonItem: {
-    backgroundColor: '#e0e0e0',
+    backgroundColor: "#e0e0e0",
     marginRight: 16,
     borderRadius: 4,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   shimmerEffect: {
     ...StyleSheet.absoluteFillObject,

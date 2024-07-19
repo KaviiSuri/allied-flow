@@ -17,6 +17,8 @@ export const notificationsRouter = {
         readStatus: true,
         id: true,
         createdAt: true,
+      }).extend({
+        products: z.array(z.string()),
       }),
     )
     .mutation(async ({ ctx, input }) => {

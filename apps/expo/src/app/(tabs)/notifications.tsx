@@ -1,6 +1,8 @@
 import type { NotificationProps } from "~/components/utils/notifications/Notification";
-import NotificationButton from "~/components/utils/notifications/NotificationButton";
 import NotificationList from "~/components/utils/notifications/NotificationList";
+
+import { api } from "~/utils/api";
+
 export const dummyNotificationData: NotificationProps[] = [
   {
     id: "3",
@@ -84,9 +86,13 @@ export const dummyNotificationData: NotificationProps[] = [
 ];
 
 function Notifications() {
-  return (<>
-    <NotificationList data={dummyNotificationData} />
-  </>);
+  const { data } = api.notifications.readNotifications.useQuery();
+  console.log(data);
+  return (
+    <>
+      <NotificationList data={dummyNotificationData} />
+    </>
+  );
 }
 
 export default Notifications;

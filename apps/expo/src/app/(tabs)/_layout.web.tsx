@@ -31,7 +31,6 @@ function CustomDrawerContent(props: any) {
       }}
     >
       <Logout />
-
       <DrawerContentScrollView {...props}>
         <DrawerItemList {...props} />
       </DrawerContentScrollView>
@@ -87,11 +86,11 @@ export default function WebLayout() {
                 headerLeft: () => null,
                 headerRight: () => {
                   return (
-                    <View style={{gap: 16, marginRight: 24}}>
+                    <View style={{ gap: 16, marginRight: 24 }}>
                       <NotificationButton data={dummyNotificationData} />
                     </View>
-                  )
-                }
+                  );
+                },
               }}
               drawerContent={CustomDrawerContent}
             >

@@ -1,19 +1,21 @@
+import type {
+  ReactNode} from "react";
 import React, {
   useState,
-  ReactNode,
   useRef,
   useEffect,
   useContext,
 } from "react";
+import type {
+  ViewStyle,
+  TextStyle} from "react-native";
 import {
   View,
   Text,
   TouchableOpacity,
   Modal,
   ScrollView,
-  StyleSheet,
-  ViewStyle,
-  TextStyle,
+  StyleSheet
 } from "react-native";
 
 interface Option {

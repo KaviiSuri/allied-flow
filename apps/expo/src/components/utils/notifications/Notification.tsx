@@ -1,11 +1,12 @@
 import React from "react";
-import { View, Text, Image, ImageSourcePropType } from "react-native";
+import type { ImageSourcePropType } from "react-native";
+import { View, Text, Image } from "react-native";
 
 export interface NotificationProps {
   readStatus: "UNREAD" | "READ";
-  productNames: string[];
+  products: string[];
   id: string;
-  timePlaced: Date;
+  createdAt: string;
   notificationType:
     | "ORDER_PLACED"
     | "NEW_QUOTE_RECIEVED"
@@ -78,12 +79,11 @@ function NotificationContent(props: NotificationProps) {
       <Text style={{ fontFamily: "Avenir", fontSize: 14, fontWeight: 500 }}>
         Order for{" "}
         <Text style={{ fontWeight: 700 }}>
-          {props.productNames.length === 2
-            ? props.productNames[0] + ` & 1 other`
-            : props.productNames.length > 2
-              ? props.productNames[0] +
-                ` & ${props.productNames.length - 1} others`
-              : props.productNames[0]}
+          {props.products.length === 2
+            ? props.products[0] + ` & 1 other`
+            : props.products.length > 2
+              ? props.products[0] + ` & ${props.products.length - 1} others`
+              : props.products[0]}
         </Text>{" "}
         with order id <Text style={{ fontWeight: 700 }}>#{props.id}</Text> has
         been successfully placed.
@@ -122,12 +122,11 @@ function NotificationContent(props: NotificationProps) {
       <Text style={{ fontFamily: "Avenir", fontSize: 14, fontWeight: 500 }}>
         Order for{" "}
         <Text style={{ fontWeight: 700 }}>
-          {props.productNames.length === 2
-            ? props.productNames[0] + ` & 1 other`
-            : props.productNames.length > 2
-              ? props.productNames[0] +
-                ` & ${props.productNames.length - 1} others`
-              : props.productNames[0]}
+          {props.products.length === 2
+            ? props.products[0] + ` & 1 other`
+            : props.products.length > 2
+              ? props.products[0] + ` & ${props.products.length - 1} others`
+              : props.products[0]}
         </Text>{" "}
         with order id <Text style={{ fontWeight: 700 }}>#{props.id}</Text> has
         been dispatched.
@@ -138,12 +137,11 @@ function NotificationContent(props: NotificationProps) {
       <Text style={{ fontFamily: "Avenir", fontSize: 14, fontWeight: 500 }}>
         Order for{" "}
         <Text style={{ fontWeight: 700 }}>
-          {props.productNames.length === 2
-            ? props.productNames[0] + ` & 1 other`
-            : props.productNames.length > 2
-              ? props.productNames[0] +
-                ` & ${props.productNames.length - 1} others`
-              : props.productNames[0]}
+          {props.products.length === 2
+            ? props.products[0] + ` & 1 other`
+            : props.products.length > 2
+              ? props.products[0] + ` & ${props.products.length - 1} others`
+              : props.products[0]}
         </Text>{" "}
         with order id <Text style={{ fontWeight: 700 }}>#{props.id}</Text> has
         been shipped successfully.
@@ -154,12 +152,11 @@ function NotificationContent(props: NotificationProps) {
       <Text style={{ fontFamily: "Avenir", fontSize: 14, fontWeight: 500 }}>
         Sample for{" "}
         <Text style={{ fontWeight: 700 }}>
-          {props.productNames.length === 2
-            ? props.productNames[0] + ` & 1 other`
-            : props.productNames.length > 2
-              ? props.productNames[0] +
-                ` & ${props.productNames.length - 1} others`
-              : props.productNames[0]}
+          {props.products.length === 2
+            ? props.products[0] + ` & 1 other`
+            : props.products.length > 2
+              ? props.products[0] + ` & ${props.products.length - 1} others`
+              : props.products[0]}
         </Text>{" "}
         with order id <Text style={{ fontWeight: 700 }}>#{props.id}</Text> has
         been dispatched successfully.
@@ -170,31 +167,14 @@ function NotificationContent(props: NotificationProps) {
       <Text style={{ fontFamily: "Avenir", fontSize: 14, fontWeight: 500 }}>
         Sample for{" "}
         <Text style={{ fontWeight: 700 }}>
-          {props.productNames.length === 2
-            ? props.productNames[0] + ` & 1 other`
-            : props.productNames.length > 2
-              ? props.productNames[0] +
-                ` & ${props.productNames.length - 1} others`
-              : props.productNames[0]}
+          {props.products.length === 2
+            ? props.products[0] + ` & 1 other`
+            : props.products.length > 2
+              ? props.products[0] + ` & ${props.products.length - 1} others`
+              : props.products[0]}
         </Text>{" "}
         with order id <Text style={{ fontWeight: 700 }}>#{props.id}</Text> has
         been shipped successfully.
-      </Text>
-    );
-  } else if (props.notificationType === "SAMPLE_DISPATCHED") {
-    return (
-      <Text style={{ fontFamily: "Avenir", fontSize: 14, fontWeight: 500 }}>
-        Sample for{" "}
-        <Text style={{ fontWeight: 700 }}>
-          {props.productNames.length === 2
-            ? props.productNames[0] + ` & 1 other`
-            : props.productNames.length > 2
-              ? props.productNames[0] +
-                ` & ${props.productNames.length - 1} others`
-              : props.productNames[0]}
-        </Text>{" "}
-        with order id <Text style={{ fontWeight: 700 }}>#{props.id}</Text> has
-        been dispatched successfully.
       </Text>
     );
   } else if (props.notificationType === "INQUIRY_RAISED") {
@@ -202,28 +182,26 @@ function NotificationContent(props: NotificationProps) {
       <Text style={{ fontFamily: "Avenir", fontSize: 14, fontWeight: 500 }}>
         Inquiry for{" "}
         <Text style={{ fontWeight: 700 }}>
-          {props.productNames.length === 2
-            ? props.productNames[0] + ` & 1 other`
-            : props.productNames.length > 2
-              ? props.productNames[0] +
-                ` & ${props.productNames.length - 1} others`
-              : props.productNames[0]}
+          {props.products.length === 2
+            ? props.products[0] + ` & 1 other`
+            : props.products.length > 2
+              ? props.products[0] + ` & ${props.products.length - 1} others`
+              : props.products[0]}
         </Text>{" "}
         with inquiry number <Text style={{ fontWeight: 700 }}>#{props.id}</Text>{" "}
         has been raised successfully.
       </Text>
     );
-  } else if (props.notificationType === "SAMPLE_ORDER_PLACED") {
+  } else {
     return (
       <Text style={{ fontFamily: "Avenir", fontSize: 14, fontWeight: 500 }}>
         Sample order for{" "}
         <Text style={{ fontWeight: 700 }}>
-          {props.productNames.length === 2
-            ? props.productNames[0] + ` & 1 other`
-            : props.productNames.length > 2
-              ? props.productNames[0] +
-                ` & ${props.productNames.length - 1} others`
-              : props.productNames[0]}
+          {props.products.length === 2
+            ? props.products[0] + ` & 1 other`
+            : props.products.length > 2
+              ? props.products[0] + ` & ${props.products.length - 1} others`
+              : props.products[0]}
         </Text>{" "}
         with order id <Text style={{ fontWeight: 700 }}>#{props.id}</Text> has
         been placed successfully.

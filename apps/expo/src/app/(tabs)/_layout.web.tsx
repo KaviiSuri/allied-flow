@@ -16,8 +16,7 @@ import { logtoService } from "~/config/logto";
 import AuthProvider, { AuthConsumer, useAbility } from "~/providers/auth";
 import DashboardIcon from "~/app/assets/images/dashboard-icon.png";
 import NotificationButton from "~/components/utils/notifications/NotificationButton";
-import { dummyNotificationData } from "./notifications";
-
+import { api } from "~/utils/api";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function CustomDrawerContent(props: any) {
   const { signOut } = useLogto();
@@ -39,7 +38,7 @@ function CustomDrawerContent(props: any) {
         onPress={() => signOut(logtoService.redirectUri)}
         icon={({ focused }) => (
           <Image
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+             
             source={DashboardIcon}
             style={{
               width: 20,
@@ -65,7 +64,7 @@ export default function WebLayout() {
   if (!isAuthenticated) {
     return <Redirect href={"/login"} />;
   }
-
+  const { data } = api.notifications.readNotifications.useQuery();
   return (
     <AuthProvider>
       <GestureHandlerRootView>
@@ -85,11 +84,13 @@ export default function WebLayout() {
                 },
                 headerLeft: () => null,
                 headerRight: () => {
-                  return (
-                    <View style={{ gap: 16, marginRight: 24 }}>
-                      <NotificationButton data={dummyNotificationData} />
-                    </View>
-                  );
+                  if (data) {
+                    return (
+                      <View style={{ gap: 16, marginRight: 24 }}>
+                        <NotificationButton data={data} />
+                      </View>
+                    );
+                  }
                 },
               }}
               drawerContent={CustomDrawerContent}
@@ -129,7 +130,7 @@ export default function WebLayout() {
                     ),
                     drawerIcon: ({ focused }) => (
                       <Image
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                         
                         source={drawer.icon}
                         style={{
                           width: 20,

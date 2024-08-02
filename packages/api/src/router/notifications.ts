@@ -13,13 +13,15 @@ export const notificationsRouter = {
       subject: "User",
     })
     .input(
-      insertNotificationSchema.omit({
-        readStatus: true,
-        id: true,
-        createdAt: true,
-      }).extend({
-        products: z.array(z.string()),
-      }),
+      insertNotificationSchema
+        .omit({
+          readStatus: true,
+          id: true,
+          createdAt: true,
+        })
+        .extend({
+          products: z.array(z.string()),
+        }),
     )
     .mutation(async ({ ctx, input }) => {
       const insertedNotificationId = await ctx.db

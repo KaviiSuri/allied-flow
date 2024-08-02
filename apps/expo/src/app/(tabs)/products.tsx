@@ -113,7 +113,7 @@ function ProductForm(props: ProductProps) {
           </Text>
           <Pressable onPress={props.toggleOpen}>
             <Image
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+               
               source={CloseIcon}
             />
           </Pressable>

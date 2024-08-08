@@ -84,9 +84,11 @@ export const dummyNotificationData: NotificationProps[] = [
 ];
 
 function Notifications() {
-  return (<>
-    <NotificationList data={dummyNotificationData} />
-  </>);
+  return (
+    <>
+      <NotificationList data={dummyNotificationData} />
+    </>
+  );
 }
 
 export default Notifications;

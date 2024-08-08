@@ -150,7 +150,7 @@ function MemberForm(
           </Text>
           <Pressable onPress={props.toggleOpen}>
             <Image
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+               
               source={CloseIcon}
             />
           </Pressable>
@@ -193,7 +193,7 @@ function MemberForm(
               onValueChange={(e) => setRole(e)}
               rightIcon={
                 <Image
-                  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                   
                   source={DownArrowIcon}
                   style={{
                     width: 18,

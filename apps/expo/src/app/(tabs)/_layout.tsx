@@ -41,14 +41,16 @@ export default function TabLayout() {
                   },
                   tabBarItemStyle: {
                     // @ts-expect-error types broken here
-                    ...((drawer.action && drawer.subject && !ability.can(drawer.action, drawer.subject)) && {
-                      display: "none",
-                    }),
+                    ...(drawer.action &&
+                      drawer.subject &&
+                      !ability.can(drawer.action, drawer.subject) && {
+                        display: "none",
+                      }),
                   },
                   title: drawer.name,
                   tabBarIcon: ({ color }) => (
                     <Image
-                      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                       
                       source={drawer.icon}
                       style={{
                         width: 20,
@@ -63,7 +65,7 @@ export default function TabLayout() {
                     <SafeAreaView>
                       <View style={styles.container}>
                         <Image
-                          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                           
                           source={ClientIcon}
                           style={styles.navImage}
                           tintColor={"#000"}

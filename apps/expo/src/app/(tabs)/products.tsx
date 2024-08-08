@@ -20,12 +20,12 @@ import { api } from "~/utils/api";
 import { PrimaryButton, SecondaryButton } from "~/components/core/button";
 import { FormTextInput } from "~/components/shared/form/";
 import { Can } from "~/providers/auth";
-import CloseIcon from '~/app/assets/images/close-icon.png'
-import EditIcon from '~/app/assets/images/edit-icon.svg'
-import TrashIcon from '~/app/assets/images/trash-icon.svg'
+import CloseIcon from "~/app/assets/images/close-icon.png";
+import EditIcon from "~/app/assets/images/edit-icon.svg";
+import TrashIcon from "~/app/assets/images/trash-icon.svg";
 const windowHeight = Dimensions.get("window").height - 64;
 
-type Product = RouterOutputs["products"]['read'][0];
+type Product = RouterOutputs["products"]["read"][0];
 type CreateProduct = RouterInputs["products"]["create"];
 type UpdateTeam = RouterInputs["products"]["update"];
 
@@ -34,22 +34,32 @@ type ProductProps = {
   toggleOpen: () => void;
   isLoading?: boolean;
 } & (
-    | { handleSave: (_user: CreateProduct) => Promise<void> }
-    | { product: Product; handleSave: (_user: UpdateTeam) => Promise<void> }
-  );
+  | { handleSave: (_user: CreateProduct) => Promise<void> }
+  | { product: Product; handleSave: (_user: UpdateTeam) => Promise<void> }
+);
 
 function isUpdateProductProps(props: ProductProps): props is {
-  product: Product; handleSave: (_user: UpdateTeam) => Promise<void>, open: boolean;
+  product: Product;
+  handleSave: (_user: UpdateTeam) => Promise<void>;
+  open: boolean;
   toggleOpen: () => void;
 } {
-  return 'product' in props;
+  return "product" in props;
 }
 
 function ProductForm(props: ProductProps) {
-  const [name, setName] = useState(isUpdateProductProps(props) ? props.product.name : "")
-  const [make, setMake] = useState(isUpdateProductProps(props) ? props.product.make : "")
-  const [cas, setCas] = useState(isUpdateProductProps(props) ? props.product.cas : "")
-  const [desc, setDesc] = useState(isUpdateProductProps(props) ? props.product.desc : "")
+  const [name, setName] = useState(
+    isUpdateProductProps(props) ? props.product.name : "",
+  );
+  const [make, setMake] = useState(
+    isUpdateProductProps(props) ? props.product.make : "",
+  );
+  const [cas, setCas] = useState(
+    isUpdateProductProps(props) ? props.product.cas : "",
+  );
+  const [desc, setDesc] = useState(
+    isUpdateProductProps(props) ? props.product.desc : "",
+  );
 
   const handleSave = async () => {
     if (isUpdateProductProps(props)) {
@@ -57,7 +67,7 @@ function ProductForm(props: ProductProps) {
     } else {
       await props.handleSave({ name, make, cas, desc });
     }
-  }
+  };
 
   return (
     <Animated.View
@@ -98,14 +108,12 @@ function ProductForm(props: ProductProps) {
             borderBottomColor: "#E2E8F0",
           }}
         >
-          <Text
-            style={{ fontSize: 18, fontWeight: 800, fontFamily: "Avenir" }}
-          >
+          <Text style={{ fontSize: 18, fontWeight: 800, fontFamily: "Avenir" }}>
             Add Product
           </Text>
           <Pressable onPress={props.toggleOpen}>
             <Image
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+               
               source={CloseIcon}
             />
           </Pressable>
@@ -129,8 +137,16 @@ function ProductForm(props: ProductProps) {
               placeholder="Type product name"
               onChangeText={setName}
             />
-            <FormTextInput label="Make" placeholder="Type product make" onChangeText={setMake} />
-            <FormTextInput label="CAS" placeholder="Type product CAS" onChangeText={setCas} />
+            <FormTextInput
+              label="Make"
+              placeholder="Type product make"
+              onChangeText={setMake}
+            />
+            <FormTextInput
+              label="CAS"
+              placeholder="Type product CAS"
+              onChangeText={setCas}
+            />
             <FormTextInput
               label="Description"
               placeholder="Type description of the product"
@@ -150,7 +166,11 @@ function ProductForm(props: ProductProps) {
           }}
         >
           <SecondaryButton text="Cancel" />
-          <PrimaryButton text="Save" onPress={handleSave} isLoading={props.isLoading} />
+          <PrimaryButton
+            text="Save"
+            onPress={handleSave}
+            isLoading={props.isLoading}
+          />
         </View>
       </View>
     </Animated.View>
@@ -158,9 +178,9 @@ function ProductForm(props: ProductProps) {
 }
 
 function UpdateProductForm(props: {
-  open: boolean,
-  product: Product,
-  toggleOpen: () => void
+  open: boolean;
+  product: Product;
+  toggleOpen: () => void;
 }) {
   const utils = api.useUtils();
   const { mutateAsync: updateProduct } = api.products.update.useMutation({
@@ -175,14 +195,16 @@ function UpdateProductForm(props: {
   }
 
   return (
-    <ProductForm open={props.open} product={props.product} toggleOpen={props.toggleOpen} handleSave={handleSave} />
-  )
+    <ProductForm
+      open={props.open}
+      product={props.product}
+      toggleOpen={props.toggleOpen}
+      handleSave={handleSave}
+    />
+  );
 }
 
-function CreateProductForm(props: {
-  open: boolean,
-  toggleOpen: () => void
-}) {
+function CreateProductForm(props: { open: boolean; toggleOpen: () => void }) {
   const utils = api.useUtils();
   const { mutateAsync: createProduct } = api.products.create.useMutation({
     onSuccess: () => {
@@ -196,8 +218,12 @@ function CreateProductForm(props: {
   }
 
   return (
-    <ProductForm open={props.open} toggleOpen={props.toggleOpen} handleSave={handleSave} />
-  )
+    <ProductForm
+      open={props.open}
+      toggleOpen={props.toggleOpen}
+      handleSave={handleSave}
+    />
+  );
 }
 
 export default function Products() {
@@ -224,8 +250,16 @@ export default function Products() {
       }}
     >
       <Can I="read" a="Product">
-        {!productToUpdate && <CreateProductForm open={drawerVisible} toggleOpen={toggleDrawer} />}
-        {productToUpdate && <UpdateProductForm open={!!productToUpdate} product={productToUpdate} toggleOpen={() => setProductToUpdate(null)} />}
+        {!productToUpdate && (
+          <CreateProductForm open={drawerVisible} toggleOpen={toggleDrawer} />
+        )}
+        {productToUpdate && (
+          <UpdateProductForm
+            open={!!productToUpdate}
+            product={productToUpdate}
+            toggleOpen={() => setProductToUpdate(null)}
+          />
+        )}
         <View
           style={{
             paddingHorizontal: 24,
@@ -252,12 +286,12 @@ export default function Products() {
                 shadowColor: "#101828",
               }}
               placeholderTextColor="#94A3B8"
-            // You can adjust the number of lines
-            // onChangeText={(text) => setText(text)}
-            // value={text}
+              // You can adjust the number of lines
+              // onChangeText={(text) => setText(text)}
+              // value={text}
             />
           </View>
-          <Can I='create' a='Product'>
+          <Can I="create" a="Product">
             <View style={{ flexDirection: "row", gap: 16 }}>
               <SecondaryButton text="Upload Products" />
               <PrimaryButton text="Add Products" onPress={toggleDrawer} />

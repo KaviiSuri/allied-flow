@@ -1,5 +1,22 @@
-import React, { useState, ReactNode, useRef, useEffect, useContext } from 'react';
-import { View, Text, TouchableOpacity, Modal, ScrollView, StyleSheet, ViewStyle, TextStyle } from 'react-native';
+import type {
+  ReactNode} from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useContext,
+} from "react";
+import type {
+  ViewStyle,
+  TextStyle} from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Modal,
+  ScrollView,
+  StyleSheet
+} from "react-native";
 
 interface Option {
   label: string;
@@ -36,22 +53,35 @@ interface MultiSelectDropdownContextType {
   open: boolean;
   setOpen: (open: boolean) => void;
   dropdownPosition: { top: number; left: number; width: number };
-  setDropdownPosition: React.Dispatch<React.SetStateAction<{ top: number; left: number; width: number }>>;
+  setDropdownPosition: React.Dispatch<
+    React.SetStateAction<{ top: number; left: number; width: number }>
+  >;
 }
 
-const MultiSelectDropdownContext = React.createContext<MultiSelectDropdownContextType>({
-  open: false,
-  setOpen: () => { },
-  dropdownPosition: { top: 0, left: 0, width: 0 },
-  setDropdownPosition: () => { },
-});
+const MultiSelectDropdownContext =
+  React.createContext<MultiSelectDropdownContextType>({
+    open: false,
+    setOpen: () => {},
+    dropdownPosition: { top: 0, left: 0, width: 0 },
+    setDropdownPosition: () => {},
+  });
 
-export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({ children, fullWidth, style }) => {
+export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
+  children,
+  fullWidth,
+  style,
+}) => {
   const [open, setOpen] = useState(false);
-  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
+  const [dropdownPosition, setDropdownPosition] = useState({
+    top: 0,
+    left: 0,
+    width: 0,
+  });
 
   return (
-    <MultiSelectDropdownContext.Provider value={{ open, setOpen, dropdownPosition, setDropdownPosition }}>
+    <MultiSelectDropdownContext.Provider
+      value={{ open, setOpen, dropdownPosition, setDropdownPosition }}
+    >
       <View style={[styles.container, fullWidth && styles.fullWidth, style]}>
         {children}
       </View>
@@ -59,14 +89,26 @@ export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({ childr
   );
 };
 
-export const DropDownLabel: React.FC<DropDownLabelProps> = ({ children, style }) => {
+export const DropDownLabel: React.FC<DropDownLabelProps> = ({
+  children,
+  style,
+}) => {
   return <Text style={[styles.label, style]}>{children}</Text>;
 };
 
-export const MultiSelect: React.FC<MultiSelectProps> = ({ value, label, onChange, children, style }) => {
-  const { open, setOpen, setDropdownPosition, dropdownPosition } = useContext(MultiSelectDropdownContext);
+export const MultiSelect: React.FC<MultiSelectProps> = ({
+  value,
+  label,
+  onChange,
+  children,
+  style,
+}) => {
+  const { open, setOpen, setDropdownPosition, dropdownPosition } = useContext(
+    MultiSelectDropdownContext,
+  );
   const selectRef = useRef<View>(null);
-  const [internalValue, setInternalValue] = useState<(string | number)[]>(value);
+  const [internalValue, setInternalValue] =
+    useState<(string | number)[]>(value);
 
   useEffect(() => {
     if (JSON.stringify(value) !== JSON.stringify(internalValue)) {
@@ -76,7 +118,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({ value, label, onChange
 
   const handleChange = (newValue: string | number) => {
     const updatedValue = internalValue.includes(newValue)
-      ? internalValue.filter(v => v !== newValue)
+      ? internalValue.filter((v) => v !== newValue)
       : [...internalValue, newValue];
     setInternalValue(updatedValue);
     onChange(updatedValue);
@@ -95,11 +137,13 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({ value, label, onChange
   };
 
   const selectedLabels = React.Children.toArray(children)
-    .filter((child): child is React.ReactElement<MenuItemProps> =>
-      React.isValidElement(child) && internalValue.includes(child.props.value)
+    .filter(
+      (child): child is React.ReactElement<MenuItemProps> =>
+        React.isValidElement(child) &&
+        internalValue.includes(child.props.value),
     )
-    .map(child => child.props.children)
-    .join(', ');
+    .map((child) => child.props.children)
+    .join(", ");
 
   return (
     <>
@@ -118,16 +162,26 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({ value, label, onChange
         onRequestClose={() => setOpen(false)}
       >
         <TouchableOpacity style={styles.modalOverlay} onPress={handleDone}>
-          <View style={[styles.modalContent, { position: 'absolute', top: dropdownPosition.top, left: dropdownPosition.left, width: dropdownPosition.width }]}>
+          <View
+            style={[
+              styles.modalContent,
+              {
+                position: "absolute",
+                top: dropdownPosition.top,
+                left: dropdownPosition.left,
+                width: dropdownPosition.width,
+              },
+            ]}
+          >
             <ScrollView>
-              {React.Children.map(children, child =>
+              {React.Children.map(children, (child) =>
                 React.isValidElement(child)
                   ? React.cloneElement(child, {
-                    ...child.props,
-                    selected: internalValue.includes(child.props.value),
-                    onPress: () => handleChange(child.props.value)
-                  })
-                  : child
+                      ...child.props,
+                      selected: internalValue.includes(child.props.value),
+                      onPress: () => handleChange(child.props.value),
+                    })
+                  : child,
               )}
             </ScrollView>
             <TouchableOpacity style={styles.doneButton} onPress={handleDone}>
@@ -140,7 +194,13 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({ value, label, onChange
   );
 };
 
-export const MenuItem: React.FC<MenuItemProps & { onPress?: () => void }> = ({ value, children, style, selected, onPress }) => {
+export const MenuItem: React.FC<MenuItemProps & { onPress?: () => void }> = ({
+  value,
+  children,
+  style,
+  selected,
+  onPress,
+}) => {
   const handlePress = () => {
     if (onPress) {
       onPress();
@@ -148,8 +208,13 @@ export const MenuItem: React.FC<MenuItemProps & { onPress?: () => void }> = ({ v
   };
 
   return (
-    <TouchableOpacity style={[styles.menuItem, selected && styles.selectedMenuItem, style]} onPress={handlePress}>
-      <Text style={selected ? styles.selectedMenuItemText : undefined}>{children}</Text>
+    <TouchableOpacity
+      style={[styles.menuItem, selected && styles.selectedMenuItem, style]}
+      onPress={handlePress}
+    >
+      <Text style={selected ? styles.selectedMenuItemText : undefined}>
+        {children}
+      </Text>
     </TouchableOpacity>
   );
 };
@@ -159,7 +224,7 @@ const styles = StyleSheet.create({
     // Add your container styles
   },
   fullWidth: {
-    width: '100%',
+    width: "100%",
   },
   label: {
     // Add your label styles
@@ -167,37 +232,37 @@ const styles = StyleSheet.create({
   select: {
     padding: 10,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderRadius: 5,
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 5,
-    overflow: 'hidden',
+    overflow: "hidden",
     maxHeight: 300,
   },
   menuItem: {
     padding: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    borderBottomColor: "#ccc",
   },
   selectedMenuItem: {
-    backgroundColor: '#e6e6e6',
+    backgroundColor: "#e6e6e6",
   },
   selectedMenuItemText: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   doneButton: {
     padding: 10,
-    backgroundColor: '#007AFF',
-    alignItems: 'center',
+    backgroundColor: "#007AFF",
+    alignItems: "center",
   },
   doneButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
+    color: "white",
+    fontWeight: "bold",
   },
 });

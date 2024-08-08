@@ -3,7 +3,6 @@ import { Text } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import type { TouchableOpacityProps } from "react-native-gesture-handler";
 
-
 function SecondaryButton(props: {
   onPress?: TouchableOpacityProps["onPress"];
   text: string;

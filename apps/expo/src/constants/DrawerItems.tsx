@@ -57,4 +57,11 @@ export default [
     action: "read",
     subject: "User",
   },
+  {
+    path: "notifications",
+    name: "Notifications",
+    icon: UserIcon,
+    action: "read",
+    subject: "User",
+  },
 ] as const;

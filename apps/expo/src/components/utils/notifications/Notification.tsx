@@ -1,5 +1,6 @@
 import React from "react";
-import { View, Text, Image, ImageSourcePropType } from "react-native";
+import type { ImageSourcePropType } from "react-native";
+import { View, Text, Image } from "react-native";
 
 export interface NotificationProps {
   readStatus: "UNREAD" | "READ";

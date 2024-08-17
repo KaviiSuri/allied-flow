@@ -50,7 +50,7 @@ export default function TabLayout() {
                   title: drawer.name,
                   tabBarIcon: ({ color }) => (
                     <Image
-                      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                       
                       source={drawer.icon}
                       style={{
                         width: 20,
@@ -65,7 +65,7 @@ export default function TabLayout() {
                     <SafeAreaView>
                       <View style={styles.container}>
                         <Image
-                          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                           
                           source={ClientIcon}
                           style={styles.navImage}
                           tintColor={"#000"}

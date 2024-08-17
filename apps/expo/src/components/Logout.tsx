@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
   dropdown: {
     marginVertical: 20,
     marginLeft: 20,
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+     
     borderColor: Colors.border,
     borderWidth: 1,
     borderRadius: 10,

@@ -40,7 +40,7 @@ function CustomDrawerContent(props: any) {
         onPress={() => signOut(logtoService.redirectUri)}
         icon={({ focused }) => (
           <Image
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+             
             source={DashboardIcon}
             style={{
               width: 20,
@@ -87,11 +87,11 @@ export default function WebLayout() {
                 headerLeft: () => null,
                 headerRight: () => {
                   return (
-                    <View style={{gap: 16, marginRight: 24}}>
+                    <View style={{ gap: 16, marginRight: 24 }}>
                       <NotificationButton data={dummyNotificationData} />
                     </View>
-                  )
-                }
+                  );
+                },
               }}
               drawerContent={CustomDrawerContent}
             >
@@ -130,7 +130,7 @@ export default function WebLayout() {
                     ),
                     drawerIcon: ({ focused }) => (
                       <Image
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                         
                         source={drawer.icon}
                         style={{
                           width: 20,

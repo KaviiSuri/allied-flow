@@ -9,7 +9,12 @@ interface FormTextInputProps extends TextInputProps {
   style?: ViewStyle;
 }
 
-function FormTextInput({ style, numberOfLines, label, ...props }: FormTextInputProps) {
+function FormTextInput({
+  style,
+  numberOfLines,
+  label,
+  ...props
+}: FormTextInputProps) {
   return (
     <View style={style}>
       <Text
@@ -35,7 +40,8 @@ function FormTextInput({ style, numberOfLines, label, ...props }: FormTextInputP
           shadowOffset: { height: 1, width: 0 },
           shadowOpacity: 0.05,
           shadowColor: "#101828",
-          backgroundColor: props.editable === false ? "lightgray" : "transparent",
+          backgroundColor:
+            props.editable === false ? "lightgray" : "transparent",
           pointerEvents: props.editable === false ? "none" : "auto",
         }}
         placeholderTextColor="#94A3B8"

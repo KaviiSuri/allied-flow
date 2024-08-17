@@ -1,6 +1,7 @@
 import type { UserWithTeam } from "@repo/db/schema";
-import { AbilityBuilder, PureAbility, MatchConditions } from "@casl/ability";
-import {
+import type { MatchConditions } from "@casl/ability";
+import { AbilityBuilder, PureAbility } from "@casl/ability";
+import type {
   AppAbilities,
   DefinePermissions,
   Role,

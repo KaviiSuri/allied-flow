@@ -1,10 +1,18 @@
-import type { ReactNode } from 'react';
-import React, { useState, useRef, useEffect, useContext } from 'react';
-import type { ViewStyle, TextStyle } from 'react-native';
-import { View, Text, TouchableOpacity, Modal, StyleSheet, LayoutChangeEvent, Image } from 'react-native';
-import { Colors } from '~/constants/Color';
-import FilledRadioIcon from '~/app/assets/images/filled-radio.png';
-import UnfilledRadioIcon from '~/app/assets/images/unfilled-radio.png';
+import type { ReactNode } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
+import type { ViewStyle, TextStyle } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Modal,
+  StyleSheet,
+  LayoutChangeEvent,
+  Image,
+} from "react-native";
+import { Colors } from "~/constants/Color";
+import FilledRadioIcon from "~/app/assets/images/filled-radio.png";
+import UnfilledRadioIcon from "~/app/assets/images/unfilled-radio.png";
 
 interface Option {
   label: string;
@@ -46,22 +54,33 @@ interface SingleSelectDropdownContextType {
   value: string | number | null;
   onChange: (value: string | number) => void;
   dropdownPosition: { top: number; left: number; width: number };
-  setDropdownPosition: React.Dispatch<React.SetStateAction<{ top: number; left: number; width: number }>>;
+  setDropdownPosition: React.Dispatch<
+    React.SetStateAction<{ top: number; left: number; width: number }>
+  >;
 }
 
-const SingleSelectDropdownContext = React.createContext<SingleSelectDropdownContextType>({
-  open: false,
-  setOpen: () => { },
-  value: null,
-  onChange: () => { },
-  dropdownPosition: { top: 0, left: 0, width: 0 },
-  setDropdownPosition: () => { },
-});
+const SingleSelectDropdownContext =
+  React.createContext<SingleSelectDropdownContextType>({
+    open: false,
+    setOpen: () => {},
+    value: null,
+    onChange: () => {},
+    dropdownPosition: { top: 0, left: 0, width: 0 },
+    setDropdownPosition: () => {},
+  });
 
-export const SingleSelectDropdown: React.FC<SingleSelectDropdownProps> = ({ children, fullWidth, style }) => {
+export const SingleSelectDropdown: React.FC<SingleSelectDropdownProps> = ({
+  children,
+  fullWidth,
+  style,
+}) => {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState<string | number | null>(null);
-  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
+  const [dropdownPosition, setDropdownPosition] = useState({
+    top: 0,
+    left: 0,
+    width: 0,
+  });
 
   const handleChange = (newValue: string | number) => {
     setValue(newValue);
@@ -69,7 +88,16 @@ export const SingleSelectDropdown: React.FC<SingleSelectDropdownProps> = ({ chil
   };
 
   return (
-    <SingleSelectDropdownContext.Provider value={{ open, setOpen, value, onChange: handleChange, dropdownPosition, setDropdownPosition }}>
+    <SingleSelectDropdownContext.Provider
+      value={{
+        open,
+        setOpen,
+        value,
+        onChange: handleChange,
+        dropdownPosition,
+        setDropdownPosition,
+      }}
+    >
       <View style={[styles.container, fullWidth && styles.fullWidth, style]}>
         {children}
       </View>
@@ -77,14 +105,30 @@ export const SingleSelectDropdown: React.FC<SingleSelectDropdownProps> = ({ chil
   );
 };
 
-export const DropDownLabel: React.FC<DropDownLabelProps> = ({ children, style }) => {
+export const DropDownLabel: React.FC<DropDownLabelProps> = ({
+  children,
+  style,
+}) => {
   return <Text style={[styles.label, style]}>{children}</Text>;
 };
 
-export const SingleSelect: React.FC<SingleSelectProps> = ({ value, defaultValue, onChange, children, style, changeLabel, rightIcon, leftIcon }) => {
-  const { open, setOpen, setDropdownPosition, dropdownPosition } = useContext(SingleSelectDropdownContext);
+export const SingleSelect: React.FC<SingleSelectProps> = ({
+  value,
+  defaultValue,
+  onChange,
+  children,
+  style,
+  changeLabel,
+  rightIcon,
+  leftIcon,
+}) => {
+  const { open, setOpen, setDropdownPosition, dropdownPosition } = useContext(
+    SingleSelectDropdownContext,
+  );
   const selectRef = useRef<View>(null);
-  const [internalValue, setInternalValue] = useState<string | number | null>(value);
+  const [internalValue, setInternalValue] = useState<string | number | null>(
+    value,
+  );
 
   useEffect(() => {
     if (value !== internalValue) {
@@ -92,7 +136,10 @@ export const SingleSelect: React.FC<SingleSelectProps> = ({ value, defaultValue,
     }
   }, [value]);
 
-  const handleChange = (newValue: string | number, customOnPress?: () => void) => {
+  const handleChange = (
+    newValue: string | number,
+    customOnPress?: () => void,
+  ) => {
     if (newValue) {
       setInternalValue(newValue);
       onChange(newValue);
@@ -101,7 +148,6 @@ export const SingleSelect: React.FC<SingleSelectProps> = ({ value, defaultValue,
         customOnPress();
       }
     }
-
   };
 
   const handleLayout = () => {
@@ -114,7 +160,7 @@ export const SingleSelect: React.FC<SingleSelectProps> = ({ value, defaultValue,
 
   const selectedChild = React.Children.toArray(children).find(
     (child): child is React.ReactElement<MenuItemProps> =>
-      React.isValidElement(child) && child.props.value === internalValue
+      React.isValidElement(child) && child.props.value === internalValue,
   );
 
   return (
@@ -123,14 +169,18 @@ export const SingleSelect: React.FC<SingleSelectProps> = ({ value, defaultValue,
         ref={selectRef as React.RefObject<TouchableOpacity>}
         style={[styles.select, style]}
         onPress={() => {
-          setOpen(true)
-          handleLayout()
+          setOpen(true);
+          handleLayout();
         }}
         onLayout={handleLayout}
       >
         {leftIcon && <View>{leftIcon}</View>}
-        <Text style={styles.label}>{(selectedChild && changeLabel) ? selectedChild.props.children : defaultValue}</Text>
-        {rightIcon && <View >{rightIcon}</View>}
+        <Text style={styles.label}>
+          {selectedChild && changeLabel
+            ? selectedChild.props.children
+            : defaultValue}
+        </Text>
+        {rightIcon && <View>{rightIcon}</View>}
       </TouchableOpacity>
       <Modal
         animationType="none"
@@ -138,15 +188,32 @@ export const SingleSelect: React.FC<SingleSelectProps> = ({ value, defaultValue,
         visible={open}
         onRequestClose={() => setOpen(false)}
       >
-        <TouchableOpacity style={styles.modalOverlay} onPress={() => { setOpen(false) }}>
-          <View style={[styles.modalContent, { position: 'absolute', top: dropdownPosition.top, left: dropdownPosition.left, width: dropdownPosition.width }]}>
-            {React.Children.map(children, child =>
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          onPress={() => {
+            setOpen(false);
+          }}
+        >
+          <View
+            style={[
+              styles.modalContent,
+              {
+                position: "absolute",
+                top: dropdownPosition.top,
+                left: dropdownPosition.left,
+                width: dropdownPosition.width,
+              },
+            ]}
+          >
+            {React.Children.map(children, (child) =>
               React.isValidElement(child)
                 ? React.cloneElement(child, {
-                  ...child.props,
-                  onPress: () => { handleChange(child.props.value, child.props.onPress) }
-                })
-                : child
+                    ...child.props,
+                    onPress: () => {
+                      handleChange(child.props.value, child.props.onPress);
+                    },
+                  })
+                : child,
             )}
           </View>
         </TouchableOpacity>
@@ -155,8 +222,15 @@ export const SingleSelect: React.FC<SingleSelectProps> = ({ value, defaultValue,
   );
 };
 
-export const MenuItem: React.FC<MenuItemProps & { onPress?: () => void }> = ({ value, children, style, onPress }) => {
-  const { value: selectedValue, onChange } = useContext(SingleSelectDropdownContext);
+export const MenuItem: React.FC<MenuItemProps & { onPress?: () => void }> = ({
+  value,
+  children,
+  style,
+  onPress,
+}) => {
+  const { value: selectedValue, onChange } = useContext(
+    SingleSelectDropdownContext,
+  );
   const handlePress = () => {
     if (onPress) {
       onPress();
@@ -166,14 +240,13 @@ export const MenuItem: React.FC<MenuItemProps & { onPress?: () => void }> = ({ v
 
   return (
     <TouchableOpacity style={[styles.menuItem, style]} onPress={handlePress}>
-      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+      <View style={{ flexDirection: "row", alignItems: "center" }}>
         <Image
           source={selectedValue === value ? FilledRadioIcon : UnfilledRadioIcon}
           style={styles.radioIcon}
           resizeMode={"contain"}
         />
-        <Text style={styles.menuItemText}>{children}
-        </Text>
+        <Text style={styles.menuItemText}>{children}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -184,42 +257,42 @@ const styles = StyleSheet.create({
     // Add your container styles
   },
   fullWidth: {
-    width: '100%',
+    width: "100%",
   },
   label: {
-    fontFamily: 'Avenir',
+    fontFamily: "Avenir",
     flex: 1,
-    textAlign: 'left',
+    textAlign: "left",
   },
   select: {
     padding: 10,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: "#E2E8F0",
     borderRadius: 5,
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0)',
+    backgroundColor: "rgba(0, 0, 0, 0)",
   },
   modalContent: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 5,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   menuItem: {
     padding: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#E2E8F0',
+    borderBottomColor: "#E2E8F0",
   },
   menuItemText: {
-    fontFamily: 'Avenir',
+    fontFamily: "Avenir",
     flex: 1,
-    fontWeight: '500',
-    color: Colors.text
+    fontWeight: "500",
+    color: Colors.text,
   },
   radioIcon: {
     width: 16,
     height: 16,
     marginRight: 10,
-  }
+  },
 });

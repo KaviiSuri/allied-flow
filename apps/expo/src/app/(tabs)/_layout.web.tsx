@@ -15,6 +15,8 @@ import { Logout } from "~/components/Logout";
 import { logtoService } from "~/config/logto";
 import AuthProvider, { AuthConsumer, useAbility } from "~/providers/auth";
 import DashboardIcon from "~/app/assets/images/dashboard-icon.png";
+import NotificationButton from "~/components/utils/notifications/NotificationButton";
+import { dummyNotificationData } from "./notifications";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function CustomDrawerContent(props: any) {
@@ -38,7 +40,7 @@ function CustomDrawerContent(props: any) {
         onPress={() => signOut(logtoService.redirectUri)}
         icon={({ focused }) => (
           <Image
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+             
             source={DashboardIcon}
             style={{
               width: 20,
@@ -55,11 +57,11 @@ function CustomDrawerContent(props: any) {
 
 export default function WebLayout() {
   const { isAuthenticated } = useLogto();
-  const ability = useAbility()
+  const ability = useAbility();
 
   useEffect(() => {
-    console.log('======', ability.can("read", "User"))
-  }, [ability])
+    console.log("======", ability.can("read", "User"));
+  }, [ability]);
 
   if (!isAuthenticated) {
     return <Redirect href={"/login"} />;
@@ -83,6 +85,13 @@ export default function WebLayout() {
                   fontSize: 18,
                 },
                 headerLeft: () => null,
+                headerRight: () => {
+                  return (
+                    <View style={{ gap: 16, marginRight: 24 }}>
+                      <NotificationButton data={dummyNotificationData} />
+                    </View>
+                  );
+                },
               }}
               drawerContent={CustomDrawerContent}
             >
@@ -100,9 +109,11 @@ export default function WebLayout() {
                     },
                     drawerItemStyle: {
                       // @ts-expect-error types broken here
-                      ...((drawer.action && drawer.subject && !ability.can(drawer.action, drawer.subject)) && {
-                        display: "none",
-                      }),
+                      ...(drawer.action &&
+                        drawer.subject &&
+                        !ability.can(drawer.action, drawer.subject) && {
+                          display: "none",
+                        }),
                     },
                     drawerLabel: ({ focused }) => (
                       <Text
@@ -119,7 +130,7 @@ export default function WebLayout() {
                     ),
                     drawerIcon: ({ focused }) => (
                       <Image
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                         
                         source={drawer.icon}
                         style={{
                           width: 20,
@@ -136,6 +147,6 @@ export default function WebLayout() {
           )}
         </AuthConsumer>
       </GestureHandlerRootView>
-    </AuthProvider >
+    </AuthProvider>
   );
 }

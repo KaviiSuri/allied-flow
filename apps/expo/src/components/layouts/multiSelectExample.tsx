@@ -1,6 +1,11 @@
-import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { MultiSelectDropdown, DropDownLabel, MultiSelect, MenuItem } from '../shared/dropdown/multiSelect';
+import React, { useState } from "react";
+import { View, StyleSheet } from "react-native";
+import {
+  MultiSelectDropdown,
+  DropDownLabel,
+  MultiSelect,
+  MenuItem,
+} from "../shared/dropdown/multiSelect";
 
 interface FruitOption {
   label: string;
@@ -8,11 +13,11 @@ interface FruitOption {
 }
 
 const fruitOptions: FruitOption[] = [
-  { label: 'Apple', value: 'apple' },
-  { label: 'Banana', value: 'banana' },
-  { label: 'Cherry', value: 'cherry' },
-  { label: 'Date', value: 'date' },
-  { label: 'Elderberry', value: 'elderberry' },
+  { label: "Apple", value: "apple" },
+  { label: "Banana", value: "banana" },
+  { label: "Cherry", value: "cherry" },
+  { label: "Date", value: "date" },
+  { label: "Elderberry", value: "elderberry" },
 ];
 
 export const MultiSelectExample: React.FC = () => {
@@ -33,7 +38,11 @@ export const MultiSelectExample: React.FC = () => {
           style={styles.select}
         >
           {fruitOptions.map((option) => (
-            <MenuItem key={option.value} value={option.value} style={styles.menuItem}>
+            <MenuItem
+              key={option.value}
+              value={option.value}
+              style={styles.menuItem}
+            >
               {option.label}
             </MenuItem>
           ))}
@@ -46,22 +55,22 @@ export const MultiSelectExample: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
     padding: 20,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
   },
   dropdown: {
     marginBottom: 20,
   },
   label: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 5,
-    color: '#333',
+    color: "#333",
   },
   select: {
-    backgroundColor: '#ffffff',
-    borderColor: '#007AFF',
+    backgroundColor: "#ffffff",
+    borderColor: "#007AFF",
     borderWidth: 1,
     borderRadius: 8,
     padding: 12,
@@ -69,7 +78,6 @@ const styles = StyleSheet.create({
   menuItem: {
     padding: 15,
     borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
+    borderBottomColor: "#e0e0e0",
   },
 });
-

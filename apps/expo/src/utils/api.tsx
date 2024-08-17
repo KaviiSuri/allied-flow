@@ -56,7 +56,7 @@ export function TRPCProvider(props: { children: React.ReactNode }) {
         httpBatchLink({
           transformer: superjson,
           url: `${getBaseUrl()}/trpc`,
-          headers: async function() {
+          headers: async function () {
             const headers = new Map<string, string>();
             headers.set("x-trpc-source", "expo-react");
             const token = `Bearer ${await getAccessToken(logtoService.config.resources[0])}`;

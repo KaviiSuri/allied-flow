@@ -1,6 +1,6 @@
 import React from "react";
 import type { PropsWithChildren } from "react";
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import type { ViewStyle } from "react-native";
 
 function Table(props: PropsWithChildren<{ style?: ViewStyle }>) {
@@ -10,7 +10,9 @@ function Table(props: PropsWithChildren<{ style?: ViewStyle }>) {
     borderWidth: 1,
   };
   return (
-    <View style={{ ...defaultStyles, ...props.style }}>{props.children}</View>
+    <View style={StyleSheet.compose(defaultStyles, props.style)}>
+      {props.children}
+    </View>
   );
 }
 

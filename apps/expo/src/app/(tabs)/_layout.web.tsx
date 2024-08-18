@@ -20,7 +20,12 @@ import { dummyNotificationData } from "./notifications";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function CustomDrawerContent(props: any) {
-  const { signOut } = useLogto();
+  const { isAuthenticated, signOut } = useLogto();
+
+  if (!isAuthenticated) {
+    return <Redirect href={"/login"} />;
+  }
+
   return (
     <View
       style={{
@@ -40,7 +45,6 @@ function CustomDrawerContent(props: any) {
         onPress={() => signOut(logtoService.redirectUri)}
         icon={({ focused }) => (
           <Image
-             
             source={DashboardIcon}
             style={{
               width: 20,
@@ -130,7 +134,6 @@ export default function WebLayout() {
                     ),
                     drawerIcon: ({ focused }) => (
                       <Image
-                         
                         source={drawer.icon}
                         style={{
                           width: 20,

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -45,6 +45,7 @@ function ProductContainer({
     { label: "Millilitre", value: "ml" },
     { label: "Piece", value: "piece" },
   ];
+
   return (
     <View
       style={{

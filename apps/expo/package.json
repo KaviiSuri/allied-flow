@@ -43,6 +43,7 @@
     "expo-status-bar": "~1.12.1",
     "expo-updates": "~0.25.17",
     "expo-web-browser": "~13.0.3",
+    "native-base": "^3.4.28",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-native": "~0.74.1",
@@ -56,6 +57,7 @@
     "react-native-screens": "~3.31.1",
     "react-native-svg": "^15.3.0",
     "react-native-svg-transformer": "^1.4.0",
+    "react-native-toast-message": "^2.2.0",
     "react-native-web": "~0.19.10",
     "react-responsive": "10.0.0",
     "superjson": "2.2.1"

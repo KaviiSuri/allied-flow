@@ -1,9 +1,13 @@
-import type { Team, UserWithTeam, Product } from "@repo/db/schema";
-import type { AbilityBuilder, PureAbility, MatchConditions } from "@casl/ability";
+import type { Team, UserWithTeam, Product, Inquiry } from "@repo/db/schema";
+import type {
+  AbilityBuilder,
+  PureAbility,
+  MatchConditions,
+} from "@casl/ability";
 
 const crudActions = ["read", "create", "update", "delete"] as const;
 
-export interface SubjectsWithTypes {
+export type SubjectsWithTypes = {
   User: {
     type: UserWithTeam;
     actions: (typeof crudActions)[number];
@@ -16,7 +20,11 @@ export interface SubjectsWithTypes {
     type: Product;
     actions: (typeof crudActions)[number];
   };
-}
+  Inquiry: {
+    type: Inquiry;
+    actions: "raise" | "negotiate" | "accept" | "reject";
+  };
+};
 
 // Using a generic function to map SubjectsWithTypes to AppAbilities
 type ConvertToAbilities<T extends Record<string, { type: any; actions: any }>> =

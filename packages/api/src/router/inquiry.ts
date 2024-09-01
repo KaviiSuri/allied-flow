@@ -1,10 +1,11 @@
-import { TRPCError, TRPCRouterRecord } from "@trpc/server";
+import type { TRPCRouterRecord } from "@trpc/server";
+import { TRPCError } from "@trpc/server";
 import { protectedProcedure } from "../trpc";
 import { z } from "zod";
 import { inquiries } from "@repo/db/schema";
 import { nanoid } from "nanoid";
 import { productRequestSchema, quotesService } from "../services/quote";
-import { eq } from "@repo/db";
+import { and, eq, or, lte, lt } from "@repo/db";
 
 // Define the schema for raising an inquiry
 const raiseInquiryInput = z.object({
@@ -170,5 +171,88 @@ export const inquiryRouter = {
 
         await quotesService.reject(trx, input.quoteId);
       });
+    }),
+  getDetails: protectedProcedure
+    .meta({
+      action: "getDetails",
+      subject: "Inquiry",
+    })
+    .input(z.object({ inquiryId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const result = await ctx.db.transaction(async (trx) => {
+        const inquiry = await trx.query.inquiries.findFirst({
+          where: (inquiries) => eq(inquiries.id, input.inquiryId),
+        });
+
+        if (!inquiry) {
+          throw new TRPCError({
+            message: "Inquiry not found",
+            code: "NOT_FOUND",
+          });
+        }
+
+        const latestQuote = await trx.query.quotes.findFirst({
+          where: (quotes) => eq(quotes.inquiryId, input.inquiryId),
+          orderBy: (quotes, { desc }) => desc(quotes.createdAt),
+          with: {
+            quoteItems: true,
+          },
+        });
+
+        const buyerTeam = await trx.query.teams.findFirst({
+          where: (teams) => eq(teams.id, inquiry.buyerId),
+        });
+
+        const sellerTeam = await trx.query.teams.findFirst({
+          where: (teams) => eq(teams.id, inquiry.sellerId),
+        });
+
+        return {
+          inquiry,
+          latestQuote,
+          buyerTeam,
+          sellerTeam,
+        };
+      });
+
+      return result;
+    }),
+  list: protectedProcedure
+    .meta({
+      action: "list",
+      subject: "Inquiry",
+    })
+    .input(z.object({
+      limit: z.number().min(1).max(100).default(10),
+      cursor: z.string().optional(),
+      status: z.enum(["NEGOTIATING", "ACCEPTED", "REJECTED"]).optional(),
+    }))
+    .query(async ({ ctx, input }) => {
+      const { limit, cursor, status } = input;
+
+      const accessibleInquiries = await ctx.db.query.inquiries.findMany({
+        where: (inquiries) =>
+          and(
+            or(
+              eq(inquiries.buyerId, ctx.user.team.id),
+              eq(inquiries.sellerId, ctx.user.team.id)
+            ),
+            cursor ? lt(inquiries.createdAt, cursor) : undefined,
+            status ? eq(inquiries.status, status) : undefined
+          ),
+        orderBy: (inquiries, { desc }) => desc(inquiries.createdAt),
+        limit: limit + 1,
+      });
+
+      let nextCursor: string | undefined = undefined;
+      if (accessibleInquiries.length > limit) {
+        const nextItem = accessibleInquiries.pop();
+        nextCursor = nextItem?.id;
+      }
+
+      return {
+        items: accessibleInquiries,
+        nextCursor,
+      };
     }),
 } satisfies TRPCRouterRecord;

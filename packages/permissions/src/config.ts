@@ -22,9 +22,9 @@ export type SubjectsWithTypes = {
   };
   Inquiry: {
     type: Inquiry;
-    actions: "raise" | "negotiate" | "accept" | "reject";
+    actions: "raise" | "negotiate" | "accept" | "reject" | "getDetails" | "list";
   };
-};
+}
 
 // Using a generic function to map SubjectsWithTypes to AppAbilities
 type ConvertToAbilities<T extends Record<string, { type: any; actions: any }>> =

@@ -178,3 +178,63 @@ export const quotesRelations = relations(quotes, ({ many }) => ({
 export const productsRelations = relations(products, ({ many }) => ({
   quoteItems: many(quoteItems),
 }));
+
+export const orders = sqliteTable("orders", {
+  id: text("id").primaryKey().unique(),
+  status: text("status", {
+    enum: ["PLACED", "DISPATCHED", "DELIVERED", "REJECTED"],
+  }).notNull(),
+  buyerId: text("buyer_id")
+    .notNull()
+    .references(() => teams.id),
+  sellerId: text("seller_id")
+    .notNull()
+    .references(() => teams.id),
+  createdAt: text("created_at")
+    .$defaultFn(() => new Date().toISOString())
+    .notNull(),
+  updatedAt: text("updated_at")
+    .$defaultFn(() => new Date().toISOString())
+    .notNull(),
+  inquiryId: text("inquiry_id")
+    .notNull()
+    .references(() => inquiries.id),
+  quoteId: text("quote_id")
+    .notNull()
+    .references(() => quotes.id),
+  type: text("type", {
+    enum: ["REGULAR", "SAMPLE"],
+  }).notNull(),
+});
+
+export type Order = InferSelectModel<typeof orders>;
+
+export const insertOrderSchema = createInsertSchema(orders);
+
+export const orderItems = sqliteTable(
+  "order_items",
+  {
+    orderId: text("order_id")
+      .notNull()
+      .references(() => orders.id),
+    productId: text("product_id")
+      .notNull()
+      .references(() => products.id),
+    price: real("price").notNull(),
+    quantity: real("quantity").notNull(),
+    unit: text("unit").notNull(),
+    createdAt: text("created_at")
+      .$defaultFn(() => new Date().toISOString())
+      .notNull(),
+    updatedAt: text("updated_at")
+      .$defaultFn(() => new Date().toISOString())
+      .notNull(),
+  },
+  (table) => {
+    return {
+      pk: primaryKey({
+        columns: [table.orderId, table.productId],
+      }),
+    };
+  },
+);

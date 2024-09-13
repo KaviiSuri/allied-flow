@@ -1,4 +1,10 @@
-import type { Team, UserWithTeam, Product, Inquiry } from "@repo/db/schema";
+import type {
+  Team,
+  UserWithTeam,
+  Product,
+  Inquiry,
+  Order,
+} from "@repo/db/schema";
 import type {
   AbilityBuilder,
   PureAbility,
@@ -22,9 +28,19 @@ export type SubjectsWithTypes = {
   };
   Inquiry: {
     type: Inquiry;
-    actions: "raise" | "negotiate" | "accept" | "reject" | "getDetails" | "list";
+    actions:
+      | "raise"
+      | "negotiate"
+      | "accept"
+      | "reject"
+      | "getDetails"
+      | "list";
   };
-}
+  Order: {
+    type: Order;
+    actions: "create" | "list" | "read" | "update" | "delete";
+  };
+};
 
 // Using a generic function to map SubjectsWithTypes to AppAbilities
 type ConvertToAbilities<T extends Record<string, { type: any; actions: any }>> =

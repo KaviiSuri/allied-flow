@@ -3,7 +3,7 @@ import type { TRPCRouterRecord } from "@trpc/server";
 import { protectedProcedure } from "../trpc.js";
 import { insertOrderSchema, orderItems, orders } from "@repo/db/schema";
 import { nanoid } from "nanoid";
-import { and, eq } from "@repo/db";
+import { and, eq, lt } from "@repo/db";
 import { z } from "zod";
 
 export const ordersRouter = {
@@ -85,17 +85,37 @@ export const ordersRouter = {
       action: "list",
       subject: "Order",
     })
-    .query(async ({ ctx }) => {
+    .input(
+      z.object({
+        status: z
+          .enum(["PLACED", "DISPATCHED", "DELIVERED", "REJECTED"])
+          .optional(),
+        limit: z.number().min(1).max(100).default(10),
+        type: z.enum(["REGULAR", "SAMPLE"]),
+        cursor: z.string().optional(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
       const teamType = ctx.user.team.type;
       const teamId = ctx.user.team.id;
 
       const orders = await ctx.db.query.orders.findMany({
         where: (orders) =>
-          teamType === "CLIENT"
-            ? eq(orders.buyerId, teamId)
-            : eq(orders.sellerId, teamId),
+          and(
+            teamType === "CLIENT"
+              ? eq(orders.buyerId, teamId)
+              : eq(orders.sellerId, teamId),
+            eq(orders.type, input.type),
+            input.status ? eq(orders.status, input.status) : undefined,
+            input.cursor ? lt(orders.createdAt, input.cursor) : undefined,
+          ),
+        orderBy: (orders, { desc }) => desc(orders.createdAt),
         with: {
-          orderItems: true,
+          orderItems: {
+            with: {
+              product: true,
+            },
+          },
         },
       });
 
@@ -190,4 +210,4 @@ export const ordersRouter = {
 
       return deletedOrder[0];
     }),
-} as TRPCRouterRecord;
+} satisfies TRPCRouterRecord;

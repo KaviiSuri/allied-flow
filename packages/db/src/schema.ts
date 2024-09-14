@@ -244,6 +244,25 @@ export const orderItems = sqliteTable(
   },
 );
 
+export type OrderItem = InferSelectModel<typeof orderItems>;
+
+export const insertOrderItemSchema = createInsertSchema(orderItems);
+
+export const orderItemsRelations = relations(orderItems, ({ one }) => ({
+  order: one(orders, {
+    fields: [orderItems.orderId],
+    references: [orders.id],
+  }),
+  product: one(products, {
+    fields: [orderItems.productId],
+    references: [products.id],
+  }),
+}));
+
+export const ordersRelations = relations(orders, ({ many }) => ({
+  orderItems: many(orderItems),
+}));
+
 export const inquiryAuditLogs = sqliteTable("inquiry_audit_logs", {
   id: text("id").primaryKey().unique(),
   inquiryId: text("inquiry_id")

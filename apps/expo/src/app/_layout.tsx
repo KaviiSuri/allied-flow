@@ -9,6 +9,8 @@ import { logtoService } from "~/config/logto";
 import { TRPCProvider } from "~/utils/api";
 
 import "react-native-reanimated";
+import Toast from "react-native-toast-message";
+import { toastConfig } from "~/components/shared/toast";
 
 void SplashScreen.preventAutoHideAsync();
 
@@ -42,6 +44,7 @@ export default function RootLayout() {
         >
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         </Stack>
+        <Toast config={toastConfig} />
         <StatusBar />
       </TRPCProvider>
     </LogtoProvider>

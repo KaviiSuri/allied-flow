@@ -1,17 +1,17 @@
 import { SafeAreaView, Text } from "react-native";
+import { SamplePage } from "~/components/sample/SamplesPage";
 
 export default function Samples() {
   return (
     <SafeAreaView
       style={{
         display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
         width: "100%",
         height: "100%",
+        backgroundColor: "white"
       }}
     >
-      <Text>Samples</Text>
+      <SamplePage />
     </SafeAreaView>
   );
 }

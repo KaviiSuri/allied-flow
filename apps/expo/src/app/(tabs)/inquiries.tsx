@@ -1,17 +1,10 @@
-import { SafeAreaView, Text } from "react-native";
+import { Text } from "react-native"
+import { InquiryPage } from "~/components/inquiry/InquiryPage"
 
-export default function Inquiries() {
+
+export default () => {
   return (
-    <SafeAreaView
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        width: "100%",
-        height: "100%",
-      }}
-    >
-      <Text>Inquiries</Text>
-    </SafeAreaView>
-  );
+    <InquiryPage />
+  )
 }
+

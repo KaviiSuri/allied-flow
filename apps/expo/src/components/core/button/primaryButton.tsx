@@ -1,7 +1,7 @@
 import React from "react";
 import { Text } from "react-native";
-import type { TouchableOpacityProps } from "react-native-gesture-handler";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import type { TouchableOpacityProps } from "react-native";
+import { TouchableOpacity } from "react-native";
 
 function PrimaryButton(props: {
   onPress?: TouchableOpacityProps["onPress"];

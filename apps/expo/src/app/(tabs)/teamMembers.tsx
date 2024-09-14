@@ -7,6 +7,9 @@ import {
   Dimensions,
   Pressable,
   Image,
+  Modal,
+  Alert,
+  PanResponder,
 } from "react-native";
 import {
   Table,
@@ -14,7 +17,8 @@ import {
   TableRow,
   TableData,
 } from "~/components/shared/table";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import DocumentPicker from 'react-native-document-picker';
 import type { RouterInputs, RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
 import { PrimaryButton, SecondaryButton } from "~/components/core/button";
@@ -26,6 +30,9 @@ import CloseIcon from "~/app/assets/images/close-icon.png";
 import DownArrowIcon from "~/app/assets/images/down-arrow-icon.png";
 import EditIcon from "~/app/assets/images/edit-icon.svg";
 import TrashIcon from "~/app/assets/images/trash-icon.svg";
+import UploadIcon from "~/app/assets/images/upload-icon.png";
+import ExcelIcon from "~/app/assets/images/excel-icon.png";
+import DownloadIcon from "~/app/assets/images/download-icon.png";
 const windowHeight = Dimensions.get("window").height - 64;
 
 type User = RouterOutputs["users"]["readUsers"][0];
@@ -55,14 +62,14 @@ function MemberForm(
     toggleOpen: () => void;
     isLoading?: boolean;
   } & (
-    | {
+      | {
         handleSave: (_user: CreateUser) => Promise<void>;
       }
-    | {
+      | {
         user: User;
         handleSave: (_user: UpdateUser) => Promise<void>;
       }
-  ),
+    ),
 ) {
   const [email, setEmail] = useState<string>(
     isUpdateUserProps(props) ? props.user.email : "",
@@ -257,6 +264,307 @@ function UpdateMemberForm(props: {
   );
 }
 
+const handleFileDrop = () => {
+  console.log('Upload');
+}
+
+// const handleFileDrop = async () => {
+//   try {
+//     // Pick the file(s) using the document picker
+//     const result = await DocumentPicker.pick({
+//       type: [DocumentPicker.types.allFiles],
+//     });
+
+//     // Process the selected files
+//     result.forEach(file => {
+//       console.log('Selected File:', file);
+//       // You can handle the file upload logic here
+//       // For example, upload the file to your server
+//     });
+//   } catch (err) {
+//     if (DocumentPicker.isCancel(err)) {
+//       // User canceled the picker
+//       Alert.alert('Upload canceled');
+//     } else {
+//       // Handle other errors
+//       Alert.alert('Unknown error:', err.message);
+//     }
+//   }
+// };
+
+const DragAndDrop = ({ onDrop, children }) => {
+  const panResponder = useRef(
+    PanResponder.create({
+      onMoveShouldSetPanResponder: () => true,
+      onPanResponderRelease: () => {
+        // Check if the drop location is valid and trigger the onDrop event
+        onDrop();
+      },
+    })
+  ).current;
+
+  return (
+    <View {...panResponder.panHandlers} style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      {children}
+    </View>
+  );
+};
+
+function UploadMemberPopup(props: { open: boolean; toggleOpen: () => void }) {
+
+  const openFilePicker = () => {
+    console.log("open");
+  }
+
+  // const openFilePicker = async () => {
+  //   try {
+  //     // Open the document picker to select a file
+  //     const result = await DocumentPicker.pick({
+  //       type: [DocumentPicker.types.allFiles],
+  //     });
+
+  //     // Handle the selected file
+  //     console.log('Selected File:', result);
+  //     if (Array.isArray(result) && result.length > 0 && result[0]) {
+  //       const selectedFile = result[0];
+  //       console.log('Selected File:', selectedFile);
+  //       Alert.alert('File Selected', `You selected: ${selectedFile.name}`);
+  //     } else {
+  //       Alert.alert('No file selected');
+  //     }
+  //   } catch (err) {
+  //     if (DocumentPicker.isCancel(err)) {
+  //       // User canceled the picker
+  //       Alert.alert('Upload canceled');
+  //     } else {
+  //       // Handle other errors
+  //       Alert.alert('Unknown error:', err.message);
+  //     }
+  //   }
+  // };
+
+  //return a centered modal which looks like a card and opens based on the value of open which takes value from uploadPopupVisible
+  return (
+    <Modal transparent visible={props.open}>
+      <View
+        style={{
+          position: "absolute",
+          width: "100%",
+          height: "100%",
+          backgroundColor: "rgba(0,0,0,0.5)",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <View
+          style={{
+            width: 480,
+            height: 582,
+            backgroundColor: "white",
+            borderRadius: 16,
+          }}
+        >
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              borderTopLeftRadius: 16,
+              borderTopRightRadius: 16,
+              paddingVertical: 20,
+              paddingHorizontal: 16,
+              borderBottomWidth: 1,
+              borderBottomColor: "#E2E8F0",
+              backgroundColor: "#FFF",
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 18,
+                fontWeight: 800,
+                fontFamily: "Avenir",
+              }}
+            >
+              Upload Members
+            </Text>
+            <Pressable onPress={props.toggleOpen}>
+              <Image
+                style={{
+                  tintColor: "#64748B",
+                }}
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                source={CloseIcon}
+              />
+            </Pressable>
+          </View>
+          <DragAndDrop onDrop={handleFileDrop}>
+            <View
+              style={{
+                margin: 16,
+                height: 300,
+                width: 448,
+                backgroundColor: " #F8FAFC",
+                alignItems: "center",
+                justifyContent: "center",
+                borderColor: "#E2E8F0",
+                borderWidth: 1,
+                borderRadius: 8,
+                borderStyle: "dashed",
+              }}
+            >
+              <Pressable
+                style={{
+                  height: 40,
+                  width: 40,
+                  backgroundColor: "#FFFFFF",
+                  borderColor: "#E2E8F0",
+                  borderRadius: 8,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  margin: 12,
+                  shadowColor: "#101828",
+                  shadowRadius: 5,
+                  shadowOpacity: 0.2,
+                }}
+                onPress={openFilePicker}
+              >
+                <Image
+                  style={{
+                    tintColor: "#64748B",
+                    height: 20,
+                    width: 20,
+                    resizeMode: "contain",
+                  }}
+                  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                  source={UploadIcon}
+                ></Image>
+              </Pressable>
+              <Text>Click to upload or drag and drop</Text>
+            </View>
+          </DragAndDrop>
+
+
+          <Text
+            style={{
+              fontSize: 14,
+              fontFamily: "Avenir",
+              marginBottom: 16,
+              fontWeight: 500,
+              color: "#64748B",
+              textAlign: "center",
+            }}
+          >
+            Upload a CSV file to add multiple members at once
+          </Text>
+          <Pressable onPress={props.toggleOpen}>
+            <View
+              style={{
+                borderWidth: 1,
+                borderRadius: 4,
+                borderColor: "#E2E8F0",
+                alignSelf: "center",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                paddingVertical: 4,
+                paddingHorizontal: 8,
+              }}
+            >
+              <Image
+                style={{
+                  tintColor: "#007442",
+                  height: 20,
+                  width: 20,
+                  resizeMode: "contain",
+                }}
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                source={ExcelIcon}
+              ></Image>
+              <Text
+                style={{
+                  fontWeight: 500,
+                  marginHorizontal: 8,
+                  fontSize: 12,
+                  color: "#1E293B",
+                }}
+              >
+                Download template
+              </Text>
+              <Image
+                style={{
+                  tintColor: "#64748B",
+                  height: 14,
+                  width: 14,
+                  resizeMode: "contain",
+                }}
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                source={DownloadIcon}
+              ></Image>
+            </View>
+            <View style={{
+              borderTopWidth: 1,
+              flexDirection: "row",
+              justifyContent: "flex-end",
+              alignItems: "center",
+              marginTop: 16,
+              borderColor: "#E2E8F0"
+            }}>
+              <Pressable onPress={props.toggleOpen}
+                style={{
+                  backgroundColor: "#FFF",
+                  paddingHorizontal: 12,
+                  paddingVertical: 8,
+                  borderWidth: 1,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  margin: 16,
+                  borderRadius: 8,
+                  borderColor: "#D0D5DD"
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontFamily: "Avenir",
+                    color: "black",
+                    textAlign: "center",
+                  }}
+                >
+                  Cancel
+                </Text>
+
+
+              </Pressable>
+              <Pressable onPress={props.toggleOpen} style={{
+                backgroundColor: "#2F80F5",
+                paddingHorizontal: 12,
+                paddingVertical: 8,
+                borderWidth: 1,
+                alignItems: "center",
+                justifyContent: "center",
+                marginVertical: 16,
+                marginRight: 16,
+                borderRadius: 8,
+                borderColor: "#2F80F5",
+              }}>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontFamily: "Avenir",
+                    color: "#FFF",
+                    textAlign: "center",
+                  }}
+                >
+                  Upload
+                </Text>
+              </Pressable>
+            </View>
+          </Pressable>
+        </View>
+      </View>
+    </Modal>
+  );
+}
+
 function CreateMemberForm(props: { open: boolean; toggleOpen: () => void }) {
   const utils = api.useUtils();
   const { mutateAsync: createUser, isPending } =
@@ -296,8 +604,16 @@ export default function TeamMembers() {
   //   }).start();
   // }, [slideAnim]);
   const [drawerVisible, setDrawerVisible] = useState(false);
+  const [uploadPopupVisible, setUploadPopupVisible] = useState(false);
   const toggleDrawer = () => {
     setDrawerVisible(!drawerVisible);
+  };
+  useEffect(() => {
+    console.log("===", ability.can("read", "User"));
+  }, [ability]);
+
+  const toggleUploadPopup = () => {
+    setUploadPopupVisible(!uploadPopupVisible);
   };
   useEffect(() => {
     console.log("===", ability.can("read", "User"));
@@ -313,6 +629,12 @@ export default function TeamMembers() {
       >
         {!userToUpdate && (
           <CreateMemberForm open={drawerVisible} toggleOpen={toggleDrawer} />
+        )}
+        {!userToUpdate && (
+          <UploadMemberPopup
+            open={uploadPopupVisible}
+            toggleOpen={toggleUploadPopup}
+          />
         )}
         {userToUpdate && (
           <UpdateMemberForm
@@ -358,7 +680,10 @@ export default function TeamMembers() {
             <View
               style={{ flexDirection: "row", gap: 16, backgroundColor: "#FFF" }}
             >
-              <SecondaryButton text="Upload members" />
+              <SecondaryButton
+                text="Upload members"
+                onPress={toggleUploadPopup}
+              />
               <PrimaryButton text="Add members" onPress={toggleDrawer} />
             </View>
           </Can>

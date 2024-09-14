@@ -44,13 +44,13 @@ export default function TabLayout() {
                     ...(drawer.action &&
                       drawer.subject &&
                       !ability.can(drawer.action, drawer.subject) && {
-                        display: "none",
-                      }),
+                      display: "none",
+                    }),
                   },
                   title: drawer.name,
                   tabBarIcon: ({ color }) => (
                     <Image
-                       
+
                       source={drawer.icon}
                       style={{
                         width: 20,

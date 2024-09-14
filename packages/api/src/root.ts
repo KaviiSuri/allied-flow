@@ -3,11 +3,15 @@ import { teamsRouter } from "./router/teams.js";
 import { usersRouter } from "./router/users.js";
 import { createTRPCRouter } from "./trpc.js";
 import { productsRotuer } from "./router/products.js";
+import { ordersRouter } from "./router/order.js";
+import { inquiryRouter } from "./router/inquiry.js";
 
 export const appRouter = createTRPCRouter({
   auth: authRouter,
   users: usersRouter,
   products: productsRotuer,
+  orders: ordersRouter,
+  inquiry: inquiryRouter,
   teams: teamsRouter,
 });
 

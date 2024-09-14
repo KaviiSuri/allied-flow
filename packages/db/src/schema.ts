@@ -238,3 +238,52 @@ export const orderItems = sqliteTable(
     };
   },
 );
+
+export const inquiryAuditLogs = sqliteTable("inquiry_audit_logs", {
+  id: text("id").primaryKey().unique(),
+  inquiryId: text("inquiry_id")
+    .notNull()
+    .references(() => inquiries.id),
+  type: text("type", {
+    enum: ["RAISE", "ACCEPT", "REJECT", "NEGOTIATE"],
+  }).notNull(),
+  performedBy: text("performed_by")
+    .notNull()
+    .references(() => users.id), // References the user who performed the action
+  jsonData: text("json_data").notNull(), // Store JSON data as text
+  message: text("message"), // Optional message
+  createdAt: text("created_at")
+    .$defaultFn(() => new Date().toISOString())
+    .notNull(),
+});
+
+export type InquiryAuditLog = InferSelectModel<typeof inquiryAuditLogs>;
+
+// Define specific types for each type of action
+interface RaiseLogData {
+  action: "RAISE";
+  newQuoteId: string;
+}
+
+interface AcceptLogData {
+  action: "ACCEPT";
+  acceptedQuoteId: string;
+}
+
+interface RejectLogData {
+  action: "REJECT";
+  rejectedReason: string;
+}
+
+interface NegotiateLogData {
+  action: "NEGOTIATE";
+  previousQuoteId: string;
+  newQuoteId: string;
+}
+
+// Define a discriminated union for `jsonData`
+export type InquiryAuditLogData =
+  | RaiseLogData
+  | AcceptLogData
+  | RejectLogData
+  | NegotiateLogData;

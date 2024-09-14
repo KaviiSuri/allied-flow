@@ -1,4 +1,4 @@
-import { TransactionType } from "@repo/db/client";
+import type { TransactionType } from "@repo/db/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { quoteItems, quotes } from "@repo/db/schema";
@@ -68,10 +68,10 @@ const create = async (
   };
 };
 
-export type NegotiateQuoteInput = {
+export interface NegotiateQuoteInput {
   quoteId: string;
   updatedProductRequests: ProductRequest[];
-};
+}
 
 const negotiate = async (
   tx: TransactionType,

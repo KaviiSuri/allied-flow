@@ -28,46 +28,57 @@ const notificationIcons: {
   };
 } = {
   ORDER_PLACED: {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     icon: require("../../../app/assets/images/notifications/notification-circle-green.png"),
     background: "#ECFDF5",
   },
   NEW_QUOTE_RECIEVED: {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     icon: require("../../../app/assets/images/notifications/notification-coins-yellow.png"),
     background: "#FFF7ED",
   },
   QUOTE_ACCEPTED: {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     icon: require("../../../app/assets/images/notifications/notification-file-green.png"),
     background: "#ECFDF5",
   },
   QUOTE_EXPIRED: {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     icon: require("../../../app/assets/images/notifications/notification-circle-red.png"),
     background: "#FEF2F2",
   },
   ORDER_ACCEPTED: {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     icon: require("../../../app/assets/images/notifications/notification-circle-green.png"),
     background: "#ECFDF5",
   },
   ORDER_DISPATCHED: {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     icon: require("../../../app/assets/images/notifications/notification-package.png"),
     background: "#F1F5F9",
   },
   ORDER_SHIPPED: {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     icon: require("../../../app/assets/images/notifications/notification-truck.png"),
     background: "#ECFDF5",
   },
   SAMPLE_DISPATCHED: {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     icon: require("../../../app/assets/images/notifications/notification-package.png"),
     background: "#F1F5F9",
   },
   SAMPLE_SHIPPED: {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     icon: require("../../../app/assets/images/notifications/notification-truck.png"),
     background: "#ECFDF5",
   },
   INQUIRY_RAISED: {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     icon: require("../../../app/assets/images/notifications/notification-file-yellow.png"),
     background: "#FFF7ED",
   },
   SAMPLE_ORDER_PLACED: {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     icon: require("../../../app/assets/images/notifications/notification-circle-green.png"),
     background: "#ECFDF5",
   },
@@ -182,6 +193,7 @@ function NotificationContent(props: NotificationProps) {
         been shipped successfully.
       </Text>
     );
+    // eslint-disable-next-line no-dupe-else-if
   } else if (props.notificationType === "SAMPLE_DISPATCHED") {
     return (
       <Text style={{ fontFamily: "Avenir", fontSize: 14, fontWeight: 500 }}>
@@ -214,6 +226,7 @@ function NotificationContent(props: NotificationProps) {
         has been raised successfully.
       </Text>
     );
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   } else if (props.notificationType === "SAMPLE_ORDER_PLACED") {
     return (
       <Text style={{ fontFamily: "Avenir", fontSize: 14, fontWeight: 500 }}>

@@ -1,5 +1,4 @@
-import { View, Text, StyleSheet, Image } from "react-native";
-import { ReactNode, useState } from "react";
+import { View, Text } from "react-native";
 import { SingleSelectDropdown } from "../dropdown";
 import { MenuItem, SingleSelect } from "../dropdown/singleSelect";
 
@@ -11,14 +10,15 @@ interface FormDropDownProps {
   }[];
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onValueChange: (e: any) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value?: any;
 }
 
 export const FormDropDown: React.FC<FormDropDownProps> = ({
   label,
   options,
-  leftIcon,
   rightIcon,
   onValueChange,
   value: _defaultValue,
@@ -39,7 +39,9 @@ export const FormDropDown: React.FC<FormDropDownProps> = ({
         </Text>
         <SingleSelect
           style={{ flexDirection: "row", alignItems: "center" }}
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           value={_defaultValue}
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           defaultValue={_defaultValue}
           onChange={(e) => onValueChange(e)}
           changeLabel={true}
@@ -55,11 +57,3 @@ export const FormDropDown: React.FC<FormDropDownProps> = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  icon: {
-    marginHorizontal: 8, // Adjust spacing as needed
-    width: 20,
-    height: 20,
-  },
-});

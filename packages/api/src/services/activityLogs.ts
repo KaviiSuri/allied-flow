@@ -33,7 +33,7 @@ export async function logInquiryAction(
 export async function getInquiryLogs(
   tx: TransactionType,
   inquiryId: string,
-): Promise<Array<InquiryAuditLogParsed>> {
+): Promise<InquiryAuditLogParsed[]> {
   const logs = await tx
     .select()
     .from(inquiryAuditLogs)

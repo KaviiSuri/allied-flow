@@ -13,7 +13,7 @@ import type {
 
 const crudActions = ["read", "create", "update", "delete"] as const;
 
-export type SubjectsWithTypes = {
+export interface SubjectsWithTypes {
   User: {
     type: UserWithTeam;
     actions: (typeof crudActions)[number];
@@ -40,13 +40,15 @@ export type SubjectsWithTypes = {
     type: Order;
     actions: "create" | "list" | "read" | "update" | "delete";
   };
-};
+}
 
 // Using a generic function to map SubjectsWithTypes to AppAbilities
-type ConvertToAbilities<T extends Record<string, { type: any; actions: any }>> =
-  {
-    [K in keyof T]: [T[K]["actions"], K | T[K]["type"]];
-  }[keyof T];
+type ConvertToAbilities<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  T extends { [K in keyof T]: { type: any; actions: any } },
+> = {
+  [K in keyof T]: [T[K]["actions"], K | T[K]["type"]];
+}[keyof T];
 
 export type AppAbilities = ConvertToAbilities<SubjectsWithTypes>;
 

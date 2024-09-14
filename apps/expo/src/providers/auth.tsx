@@ -1,4 +1,3 @@
-import type { PropsWithChildren } from "react";
 import { createContext, useContext, useEffect, useState } from "react";
 import { defaultAbility, defineAbilityFor } from "@repo/permissions";
 import { useLogto } from "@logto/rn";

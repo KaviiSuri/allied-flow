@@ -9,6 +9,7 @@ function NotificationButton(props: { data: NotificationProps[] }) {
     <View style={{ position: "relative", width: 20, height: 20 }}>
       <Pressable onPress={() => setNotificationsVisible(!notificationsVisible)}>
         <Image
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           source={require("../../../app/assets/images/notification-button.png")}
         />
       </Pressable>

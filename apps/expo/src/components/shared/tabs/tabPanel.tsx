@@ -1,5 +1,7 @@
-import React, { ReactNode } from "react";
-import { View, StyleSheet, ViewStyle, StyleProp } from "react-native";
+import type { ReactNode } from "react";
+import React from "react";
+import type { ViewStyle, StyleProp } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { useTabContext } from "./tabContext";
 
 interface TabPanelProps {

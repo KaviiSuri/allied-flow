@@ -125,7 +125,7 @@ const SampleTable = () => {
 
 const styles = StyleSheet.create({
   dropdown: {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+     
     borderColor: Colors.border,
     // borderWidth: 1,
     borderRadius: 10,

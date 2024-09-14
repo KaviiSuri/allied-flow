@@ -1,4 +1,5 @@
-import { TRPCError, TRPCRouterRecord } from "@trpc/server";
+import { TRPCError } from "@trpc/server";
+import type { TRPCRouterRecord } from "@trpc/server";
 import { protectedProcedure } from "../trpc.js";
 import { insertOrderSchema, orderItems, orders } from "@repo/db/schema";
 import { nanoid } from "nanoid";
@@ -22,7 +23,7 @@ export const ordersRouter = {
       // takes in an inquiry id and quote id and creates an order, with a status of "PLACED"
       // each quoteItem in the quote is added to the order as an orderItem
       // returns the created order
-      ctx.db.transaction(async (trx) => {
+      const order = await ctx.db.transaction(async (trx) => {
         const inquiry = await trx.query.inquiries.findFirst({
           where: (inquiry) => eq(inquiry.id, input.inquiryId),
         });
@@ -62,7 +63,7 @@ export const ordersRouter = {
           });
         }
 
-        trx.insert(orderItems).values(
+        await trx.insert(orderItems).values(
           quote.quoteItems.map((quoteItem) => ({
             orderId: order.id,
             productId: quoteItem.productId,
@@ -76,6 +77,7 @@ export const ordersRouter = {
 
         return order;
       });
+      return order;
     }),
 
   list: protectedProcedure

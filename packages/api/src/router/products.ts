@@ -3,7 +3,7 @@ import type { TRPCRouterRecord } from "@trpc/server";
 import { protectedProcedure } from "../trpc.js";
 import { insertProductSchema, products } from "@repo/db/schema";
 import { z } from "zod";
-import { eq } from "@repo/db";
+import { and, eq, like, or } from "@repo/db";
 import { nanoid } from "nanoid";
 
 export const productsRotuer = {
@@ -27,6 +27,10 @@ export const productsRotuer = {
           id: nanoid(),
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
+          searchName: input.name.toLowerCase(),
+          searchMake: input.make.toLowerCase(),
+          searchCas: input.cas.toLowerCase(),
+          searchDesc: input.desc.toLowerCase(),
         })
         .returning();
 
@@ -71,6 +75,10 @@ export const productsRotuer = {
         .set({
           ...input,
           updatedAt: new Date().toISOString(),
+          ...(input.name && { searchName: input.name.toLowerCase() }),
+          ...(input.make && { searchMake: input.make.toLowerCase() }),
+          ...(input.cas && { searchCas: input.cas.toLowerCase() }),
+          ...(input.desc && { searchDesc: input.desc.toLowerCase() }),
         })
         .where(eq(products.id, input.id))
         .returning();
@@ -104,5 +112,25 @@ export const productsRotuer = {
       }
 
       return deletedProduct[0];
+    }),
+
+  search: protectedProcedure
+    .meta({
+      action: "search",
+      subject: "Product",
+    })
+    .input(z.object({ query: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const products = await ctx.db.query.products.findMany({
+        where: (product) =>
+          or(
+            like(product.searchName, `%${input.query.toLowerCase()}%`),
+            like(product.searchMake, `%${input.query.toLowerCase()}%`),
+            like(product.searchCas, `%${input.query.toLowerCase()}%`),
+            like(product.searchDesc, `%${input.query.toLowerCase()}%`),
+          ),
+      });
+
+      return products;
     }),
 } satisfies TRPCRouterRecord;

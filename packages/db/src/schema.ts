@@ -1,5 +1,5 @@
-import type { InferSelectModel } from "drizzle-orm";
-import { relations } from "drizzle-orm";
+import type { InferSelectModel, SQL } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   text,
   sqliteTable,
@@ -7,6 +7,7 @@ import {
   primaryKey,
   real,
 } from "drizzle-orm/sqlite-core";
+import type { AnySQLiteColumn } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
 
 export const users = sqliteTable("users", {
@@ -63,6 +64,10 @@ export const products = sqliteTable("products", {
   desc: text("desc").notNull(),
   createdAt: text("created_at").notNull(),
   updatedAt: text("updated_at").notNull(),
+  searchName: text("search_name").notNull(),
+  searchMake: text("search_make").notNull(),
+  searchCas: text("search_cas").notNull(),
+  searchDesc: text("search_desc").notNull(),
 });
 
 export type Product = InferSelectModel<typeof products>;

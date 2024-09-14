@@ -24,7 +24,7 @@ export type SubjectsWithTypes = {
   };
   Product: {
     type: Product;
-    actions: (typeof crudActions)[number];
+    actions: (typeof crudActions)[number] | "search";
   };
   Inquiry: {
     type: Inquiry;

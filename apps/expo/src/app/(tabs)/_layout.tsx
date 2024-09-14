@@ -60,24 +60,32 @@ export default function TabLayout() {
                     />
                   ),
                   header: () => (
-                    <SafeAreaView>
-                      <View style={styles.container}>
-                        <Image
-                          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                          source={ClientIcon}
-                          style={styles.navImage}
-                          tintColor={"#000"}
-                          resizeMode={"contain"}
-                        />
-                        <Text>ABC Chemicals</Text>
-                        <TouchableOpacity
-                          onPress={() => signOut()}
-                          style={styles.logout}
-                        >
-                          <Text style={styles.logoutText}>Logout</Text>
-                        </TouchableOpacity>
-                      </View>
-                    </SafeAreaView>
+                    <>
+                      {drawer.name === "Dashboard" ?
+                        <SafeAreaView>
+                          <View style={styles.container}>
+                            <Image
+                              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                              source={ClientIcon}
+                              style={styles.navImage}
+                              tintColor={"#000"}
+                              resizeMode={"contain"}
+                            />
+                            <Text>ABC Chemicals</Text>
+                            <TouchableOpacity
+                              onPress={() => signOut()}
+                              style={styles.logout}
+                            >
+                              <Text style={styles.logoutText}>Logout</Text>
+                            </TouchableOpacity>
+                          </View>
+                        </SafeAreaView>
+                        :
+                        <SafeAreaView edges={['top', 'left', 'right']} style={styles.titleHeaderContainer}>
+                          <Text style={styles.titleHeader}>{drawer.name}</Text>
+                        </SafeAreaView>
+                      }
+                    </>
                   ),
                 }}
               />
@@ -90,6 +98,19 @@ export default function TabLayout() {
 }
 
 const styles = StyleSheet.create({
+  titleHeaderContainer: {
+    backgroundColor: "white",
+    paddingTop: 8,
+    paddingHorizontal: 16,
+    flexDirection: "row",
+    gap: 4
+  },
+  titleHeader: {
+    fontFamily: "AvenirHeavy",
+    fontWeight: 800,
+    fontSize: 18,
+    color: "#1e293b",
+  },
   container: {
     display: "flex",
     alignItems: "center",

@@ -43,9 +43,9 @@ type MemberProps = {
   open: boolean;
   toggleOpen: () => void;
 } & (
-  | { handleSave: (_user: CreateUser) => Promise<void> }
-  | { user: User; handleSave: (_user: UpdateUser) => Promise<void> }
-);
+    | { handleSave: (_user: CreateUser) => Promise<void> }
+    | { user: User; handleSave: (_user: UpdateUser) => Promise<void> }
+  );
 
 function isUpdateUserProps(props: MemberProps): props is {
   user: User;
@@ -62,14 +62,14 @@ function MemberForm(
     toggleOpen: () => void;
     isLoading?: boolean;
   } & (
-    | {
+      | {
         handleSave: (_user: CreateUser) => Promise<void>;
       }
-    | {
+      | {
         user: User;
         handleSave: (_user: UpdateUser) => Promise<void>;
       }
-  ),
+    ),
 ) {
   const [email, setEmail] = useState<string>(
     isUpdateUserProps(props) ? props.user.email : "",
@@ -345,7 +345,7 @@ function UploadMemberPopup(props: { open: boolean; toggleOpen: () => void }) {
 
   //return a centered modal which looks like a card and opens based on the value of open which takes value from uploadPopupVisible
   return (
-    <Modal visible={props.open}>
+    <Modal transparent visible={props.open}>
       <View
         style={{
           position: "absolute",
@@ -397,51 +397,51 @@ function UploadMemberPopup(props: { open: boolean; toggleOpen: () => void }) {
             </Pressable>
           </View>
           <DragAndDrop onDrop={handleFileDrop}>
-          <View
-            style={{
-              margin: 16,
-              height: 300,
-              width: 448,
-              backgroundColor: " #F8FAFC",
-              alignItems: "center",
-              justifyContent: "center",
-              borderColor: "#E2E8F0",
-              borderWidth: 1,
-              borderRadius: 8,
-              borderStyle: "dashed",
-            }}
-          >
-            <Pressable
+            <View
               style={{
-                height: 40,
-                width: 40,
-                backgroundColor: "#FFFFFF",
-                borderColor: "#E2E8F0",
-                borderRadius: 8,
+                margin: 16,
+                height: 300,
+                width: 448,
+                backgroundColor: " #F8FAFC",
                 alignItems: "center",
                 justifyContent: "center",
-                margin: 12,
-                shadowColor: "#101828",
-                shadowRadius: 5,
-                shadowOpacity: 0.2,
+                borderColor: "#E2E8F0",
+                borderWidth: 1,
+                borderRadius: 8,
+                borderStyle: "dashed",
               }}
-              onPress={openFilePicker}
             >
-              <Image
+              <Pressable
                 style={{
-                  tintColor: "#64748B",
-                  height: 20,
-                  width: 20,
-                  resizeMode: "contain",
+                  height: 40,
+                  width: 40,
+                  backgroundColor: "#FFFFFF",
+                  borderColor: "#E2E8F0",
+                  borderRadius: 8,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  margin: 12,
+                  shadowColor: "#101828",
+                  shadowRadius: 5,
+                  shadowOpacity: 0.2,
                 }}
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                source={UploadIcon}
-              ></Image>
-            </Pressable>
-            <Text>Click to upload or drag and drop</Text>
-          </View>
+                onPress={openFilePicker}
+              >
+                <Image
+                  style={{
+                    tintColor: "#64748B",
+                    height: 20,
+                    width: 20,
+                    resizeMode: "contain",
+                  }}
+                  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                  source={UploadIcon}
+                ></Image>
+              </Pressable>
+              <Text>Click to upload or drag and drop</Text>
+            </View>
           </DragAndDrop>
-          
+
 
           <Text
             style={{
@@ -508,7 +508,7 @@ function UploadMemberPopup(props: { open: boolean; toggleOpen: () => void }) {
               marginTop: 16,
               borderColor: "#E2E8F0"
             }}>
-              <Pressable onPress={props.toggleOpen} 
+              <Pressable onPress={props.toggleOpen}
                 style={{
                   backgroundColor: "#FFF",
                   paddingHorizontal: 12,
@@ -531,21 +531,21 @@ function UploadMemberPopup(props: { open: boolean; toggleOpen: () => void }) {
                 >
                   Cancel
                 </Text>
-               
-                
+
+
               </Pressable>
               <Pressable onPress={props.toggleOpen} style={{
-                  backgroundColor: "#2F80F5",
-                  paddingHorizontal: 12,
-                  paddingVertical: 8,
-                  borderWidth: 1,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  marginVertical: 16,
-                  marginRight:16,
-                  borderRadius: 8,
-                  borderColor: "#2F80F5",
-                }}>
+                backgroundColor: "#2F80F5",
+                paddingHorizontal: 12,
+                paddingVertical: 8,
+                borderWidth: 1,
+                alignItems: "center",
+                justifyContent: "center",
+                marginVertical: 16,
+                marginRight: 16,
+                borderRadius: 8,
+                borderColor: "#2F80F5",
+              }}>
                 <Text
                   style={{
                     fontSize: 16,
@@ -671,9 +671,9 @@ export default function TeamMembers() {
                 shadowColor: "#101828",
               }}
               placeholderTextColor="#94A3B8"
-              // You can adjust the number of lines
-              // onChangeText={(text) => setText(text)}
-              // value={text}
+            // You can adjust the number of lines
+            // onChangeText={(text) => setText(text)}
+            // value={text}
             />
           </View>
           <Can I="create" a="User">

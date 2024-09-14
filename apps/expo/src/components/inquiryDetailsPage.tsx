@@ -56,7 +56,7 @@ export const InquiryDetailsPage = () => {
         </TableRow>
 
 
-        <TableRow style={styles.tableRow} id={'1'} key={1}>
+        <TableRow style={styles.tableRow} id={'1'} key={2}>
           <TableData style={{ fontSize: 14, color: "#1E293B", fontWeight: 400, flex: 1, borderRightWidth: 1, borderColor: "#DCDFEA" }}>
             68845-36-3
           </TableData>
@@ -84,7 +84,7 @@ export const InquiryDetailsPage = () => {
         </TableRow>
 
 
-        <TableRow style={styles.tableRow} id={'1'} key={1}>
+        <TableRow style={styles.tableRow} id={'1'} key={3}>
           <TableData style={{ fontSize: 14, color: "#1E293B", fontWeight: 400, flex: 1, borderRightWidth: 1, borderColor: "#DCDFEA" }}>
             68845-36-3
           </TableData>

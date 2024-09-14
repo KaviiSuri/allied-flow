@@ -32,9 +32,9 @@
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
-    "@repo/server-config": "workspace:*",
     "@libsql/client": "^0.6.0",
     "@paralleldrive/cuid2": "^2.2.2",
+    "@repo/server-config": "workspace:*",
     "@t3-oss/env-core": "^0.10.1",
     "drizzle-orm": "^0.30.10",
     "drizzle-zod": "^0.5.1",

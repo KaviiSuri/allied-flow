@@ -17,6 +17,7 @@
   "dependencies": {
     "@logto/js": "^4.1.2",
     "@repo/api": "workspace:*",
+    "@repo/server-config": "workspace:*",
     "@t3-oss/env-core": "^0.10.1",
     "@t3-oss/env-nextjs": "^0.10.1",
     "@trpc/server": "11.0.0-rc.364",
@@ -27,8 +28,7 @@
     "express": "^4.19.2",
     "jose": "^5.4.0",
     "swagger-ui-express": "^5.0.0",
-    "zod": "^3.23.8",
-    "@repo/server-config": "workspace:*"
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",

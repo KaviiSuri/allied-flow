@@ -17,6 +17,10 @@ export const productsRotuer = {
         id: true,
         createdAt: true,
         updatedAt: true,
+        searchName: true,
+        searchMake: true,
+        searchCas: true,
+        searchDesc: true,
       }),
     )
     .mutation(async ({ ctx, input }) => {

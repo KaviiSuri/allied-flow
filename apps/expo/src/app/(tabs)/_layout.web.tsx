@@ -111,6 +111,7 @@ export default function WebLayout() {
                       fontWeight: 800,
                       fontSize: 18,
                     },
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                     drawerItemStyle: {
                       // @ts-expect-error types broken here
                       ...(drawer.action &&
@@ -118,6 +119,9 @@ export default function WebLayout() {
                         !ability.can(drawer.action, drawer.subject) && {
                           display: "none",
                         }),
+                      ...(drawer.hide && {
+                        display: "none",
+                      }),
                     },
                     drawerLabel: ({ focused }) => (
                       <Text

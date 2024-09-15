@@ -23,6 +23,8 @@ const extractBearerTokenFromHeaders = ({
 const jwks = createRemoteJWKSet(new URL(`${env.LOGTO_ENDPOINT}/oidc/jwks`));
 
 export const extractClaimsFromHeader = async (headers: IncomingHttpHeaders) => {
+  console.log(">>> Extracting claims from headers");
+  console.log(">>> Headers", headers);
   // Extract the token using the helper function defined above
   const token = extractBearerTokenFromHeaders(headers);
 

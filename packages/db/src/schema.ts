@@ -93,11 +93,24 @@ export const inquiries = sqliteTable("inquiries", {
   updatedAt: text("updated_at")
     .$defaultFn(() => new Date().toISOString())
     .notNull(),
+  productNames: text("product_names").notNull(),
 });
 
 export type Inquiry = InferSelectModel<typeof inquiries>;
 
 export const insertInquirySchema = createInsertSchema(inquiries);
+
+export const inquiriesRelations = relations(inquiries, ({ one, many }) => ({
+  buyer: one(teams, {
+    fields: [inquiries.buyerId],
+    references: [teams.id],
+  }),
+  seller: one(teams, {
+    fields: [inquiries.sellerId],
+    references: [teams.id],
+  }),
+  quotes: many(quotes),
+}));
 
 export const quotes = sqliteTable("quotes", {
   id: text("id").primaryKey().unique(),
@@ -176,7 +189,19 @@ export const quoteItemsRelations = relations(quoteItems, ({ one }) => ({
   }),
 }));
 
-export const quotesRelations = relations(quotes, ({ many }) => ({
+export const quotesRelations = relations(quotes, ({ one, many }) => ({
+  inquiry: one(inquiries, {
+    fields: [quotes.inquiryId],
+    references: [inquiries.id],
+  }),
+  createdByUser: one(users, {
+    fields: [quotes.createdBy],
+    references: [users.id],
+  }),
+  createdByTeam: one(teams, {
+    fields: [quotes.createdByTeam],
+    references: [teams.id],
+  }),
   quoteItems: many(quoteItems),
 }));
 

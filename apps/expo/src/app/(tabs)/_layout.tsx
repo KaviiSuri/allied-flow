@@ -39,18 +39,21 @@ export default function TabLayout() {
                     fontWeight: "800",
                     lineHeight: 18,
                   },
+                  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                   tabBarItemStyle: {
                     // @ts-expect-error types broken here
                     ...(drawer.action &&
                       drawer.subject &&
                       !ability.can(drawer.action, drawer.subject) && {
+                        display: "none",
+                      }),
+                    ...(drawer.hide && {
                       display: "none",
                     }),
                   },
                   title: drawer.name,
                   tabBarIcon: ({ color }) => (
                     <Image
-
                       source={drawer.icon}
                       style={{
                         width: 20,
@@ -63,11 +66,10 @@ export default function TabLayout() {
                   ),
                   header: () => (
                     <>
-                      {drawer.name === "Dashboard" ?
+                      {drawer.name === "Dashboard" ? (
                         <SafeAreaView>
                           <View style={styles.container}>
                             <Image
-                               
                               source={ClientIcon}
                               style={styles.navImage}
                               tintColor={"#000"}
@@ -82,11 +84,14 @@ export default function TabLayout() {
                             </TouchableOpacity>
                           </View>
                         </SafeAreaView>
-                        :
-                        <SafeAreaView edges={['top', 'left', 'right']} style={styles.titleHeaderContainer}>
+                      ) : (
+                        <SafeAreaView
+                          edges={["top", "left", "right"]}
+                          style={styles.titleHeaderContainer}
+                        >
                           <Text style={styles.titleHeader}>{drawer.name}</Text>
                         </SafeAreaView>
-                      }
+                      )}
                     </>
                   ),
                 }}
@@ -105,7 +110,7 @@ const styles = StyleSheet.create({
     paddingTop: 8,
     paddingHorizontal: 16,
     flexDirection: "row",
-    gap: 4
+    gap: 4,
   },
   titleHeader: {
     fontFamily: "AvenirHeavy",

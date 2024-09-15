@@ -33,9 +33,12 @@ export default function AuthProvider(props: { children: React.ReactNode }) {
     isLoading,
     isPending,
     isError,
+    error,
   } = api.auth.getSession.useQuery(undefined, {
     enabled: isAuthenticated,
   });
+
+  console.log("error", error);
 
   const [ability, setAbility] = useState<Abilities | null>(null);
 

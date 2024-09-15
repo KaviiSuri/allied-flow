@@ -7,6 +7,7 @@ import { eq } from "@repo/db";
 
 export const productRequestSchema = z.object({
   productId: z.string(),
+  productName: z.string(),
   price: z.number(),
   quantity: z.number(),
   unit: z.string(),

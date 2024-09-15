@@ -34,10 +34,8 @@ const getBaseUrl = () => {
   if (!localhost) {
     return process.env.EXPO_PUBLIC_API_URL ?? "http://localhost:5001";
   }
-  return `http://${localhost}:5000`;
+  return `http://${localhost}:5001`;
 };
-
-
 
 /**
  * A wrapper for your app that provides the TRPC context.
@@ -58,7 +56,7 @@ export function TRPCProvider(props: { children: React.ReactNode }) {
         httpBatchLink({
           transformer: superjson,
           url: `${getBaseUrl()}/trpc`,
-          headers: async function() {
+          headers: async function () {
             const headers = new Map<string, string>();
             headers.set("x-trpc-source", "expo-react");
             try {

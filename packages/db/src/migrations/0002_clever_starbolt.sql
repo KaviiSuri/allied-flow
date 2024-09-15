@@ -1,0 +1,1 @@
+ALTER TABLE `inquiries` ADD `product_names` text NOT NULL;

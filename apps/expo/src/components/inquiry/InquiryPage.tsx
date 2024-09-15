@@ -1,52 +1,120 @@
-import { StyleSheet, Text, View, ScrollView, Pressable, TouchableOpacity, Modal, TouchableWithoutFeedback } from "react-native"
-import { SearchBox } from "../shared/searchComponent"
-import React, { useState } from "react"
-import { GestureHandlerRootView } from "react-native-gesture-handler"
-import { MobileTab } from "../core/mobileTab"
-import { Badge } from "../core/badge"
-import Icon from "react-native-vector-icons/FontAwesome5"
-import { SafeAreaView } from "react-native-safe-area-context"
-import { InquiryForm } from "./InquiryFormMobile"
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  Pressable,
+  TouchableOpacity,
+  Modal,
+  TouchableWithoutFeedback,
+} from "react-native";
+import { SearchBox } from "../shared/searchComponent";
+import React, { useMemo, useState } from "react";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { MobileTab } from "../core/mobileTab";
+import { Badge } from "../core/badge";
+import Icon from "react-native-vector-icons/FontAwesome5";
+import { InquiryForm } from "./InquiryFormMobile";
+import type { RouterInputs, RouterOutputs } from "~/utils/api";
+import { api } from "~/utils/api";
+import { useAbility, useUser } from "~/providers/auth";
+import Toast from "react-native-toast-message";
 
-export type ProductType = {
-  id: number,
-  productName: string;       // Name of the product
-  description: string;       // Product description
-  make: string;              // Make (manufacturer or brand)
-  cas?: string;         // CAS number (Chemical Abstracts Service number)
-  quantity?: string;          // Quantity of the product
-  unit?: string;              // Unit of measurement (e.g., kg, liters, etc.)
-  requestTechnical: boolean;      // Checkbox: Is the product hazardous?
-  requestSample: boolean;      // Checkbox: Is the product currently available?
-};
+export type ProductRequest =
+  RouterInputs["inquiry"]["raise"]["productRequests"][0] & {
+    id: string;
+  };
+
 export const InquiryPage = () => {
-  const [searchResult, setSearchResult] = useState<string>("")
-  const [filter, setFilter] = useState<string>("All")
-  const [openCreateForm, setOpenCreateForm] = useState<boolean>(false)
-  const [expand, setExpand] = useState<boolean>(true)
-  const [products, setProducts] = useState<ProductType[]>([])
+  const [searchResult, setSearchResult] = useState<string>("");
+  const [filter, setFilter] = useState<string>("All");
+  const [openCreateForm, setOpenCreateForm] = useState<boolean>(false);
+  const { user } = useUser();
+  const ability = useAbility();
+  const utils = api.useUtils();
+  const { data } = api.inquiry.list.useInfiniteQuery(
+    {},
+    {
+      getNextPageParam: (lastPage) => {
+        if (lastPage.items.length === 0) return null;
+        return lastPage.nextCursor;
+      },
+      enabled: ability.can("list", "Inquiry"),
+    },
+  );
+  const inquiries = useMemo(
+    () => data?.pages.flatMap((page) => page.items) ?? [],
+    [data],
+  );
 
-  const handleAddProduct = () => {
-    setProducts([
-      ...products,
-      { id: Date.now(), productName: "", description: "", make: "", requestSample: false, requestTechnical: false },
+  const [remarks, setRemarks] = useState<string>("");
+
+  const [productRequests, setProductRequests] = useState<ProductRequest[]>([]);
+
+  const handleAddProductRequest = () => {
+    setProductRequests([
+      ...productRequests,
+      {
+        id: Date.now().toString(),
+        productName: "",
+        productId: "",
+        price: 0,
+        quantity: 0,
+        unit: "",
+        sampleRequested: false,
+        techDocumentRequested: false,
+      },
     ]);
   };
 
-  const deleteProduct = (id: number) => {
-    setProducts(products.filter((product) => product.id !== id));
+  const deleteProductRequest = (id: string) => {
+    setProductRequests(productRequests.filter((product) => product.id !== id));
   };
 
-  const updateProduct = (id: number, field: string, value: number | string | boolean) => {
-    setProducts(
-      products.map((product: any) =>
-        product.id === id ? { ...product, [field]: value } : product,
+  const updateProductRequest = (productRequest: ProductRequest) => {
+    setProductRequests(
+      productRequests.map((product: any) =>
+        product.id === productRequest.id
+          ? {
+              ...product,
+              ...productRequest,
+            }
+          : product,
       ),
     );
   };
+  const [clientId, setClientId] = useState<string | null>(null);
+
+  const { mutateAsync: raiseInquiry } = api.inquiry.raise.useMutation({
+    onSuccess: () => {
+      setOpenCreateForm(false);
+      utils.inquiry.list.invalidate();
+      Toast.show({
+        position: "bottom",
+        type: "success",
+        text1: "Raised Inquiry Successfully",
+      });
+    },
+  });
 
   async function handleSave() {
-
+    if (!user) return;
+    if (!clientId) return;
+    const sellers = await utils.teams.readTeams.fetch({
+      type: "SELLER",
+    });
+    const seller = sellers[0];
+    if (!seller) {
+      return;
+    }
+    let sellerId = user.team.id;
+    await raiseInquiry({
+      tnc: "",
+      remarks,
+      productRequests,
+      buyerId: clientId,
+      sellerId,
+    });
   }
   return (
     <View style={[styles.container, { backgroundColor: "white" }]}>
@@ -61,16 +129,21 @@ export const InquiryPage = () => {
 
       {/* Scrollable content below the fixed SearchBox */}
       <ScrollView style={styles.orderBodyContainer}>
-        <OrderBody filter={filter} setFilter={setFilter} />
+        <InquiryList
+          filter={filter}
+          setFilter={setFilter}
+          inquiries={inquiries}
+        />
       </ScrollView>
 
       {/* create flow */}
       <View style={createStyles.createButtonContainer}>
         <GestureHandlerRootView style={styles.container}>
-          <TouchableOpacity style={createStyles.createButton} onPress={() => setOpenCreateForm(true)}>
-            <Text style={createStyles.text}>
-              +
-            </Text>
+          <TouchableOpacity
+            style={createStyles.createButton}
+            onPress={() => setOpenCreateForm(true)}
+          >
+            <Text style={createStyles.text}>+</Text>
           </TouchableOpacity>
         </GestureHandlerRootView>
       </View>
@@ -82,22 +155,33 @@ export const InquiryPage = () => {
         onRequestClose={() => setOpenCreateForm(false)}
       >
         <TouchableWithoutFeedback onPress={() => setOpenCreateForm(false)}>
-          <View style={createStyles.modalBackground}>
-          </View>
+          <View style={createStyles.modalBackground}></View>
         </TouchableWithoutFeedback>
 
         {/* Modal content: white section */}
         <View style={createStyles.modalContainer}>
           {/* Your modal content goes here */}
-          <View style={createStyles.formHeader} >
+          <View style={createStyles.formHeader}>
             <Text style={createStyles.formHeaderText}>Raise an inquiry</Text>
-            <TouchableOpacity onPress={() => setOpenCreateForm(false)} style={createStyles.closeButtonContainer}>
+            <TouchableOpacity
+              onPress={() => setOpenCreateForm(false)}
+              style={createStyles.closeButtonContainer}
+            >
               <Icon style={createStyles.closeButtonIcon} name="times" />
             </TouchableOpacity>
           </View>
           <ScrollView style={createStyles.formBody}>
             <View>
-              <InquiryForm products={products} handleAddProduct={handleAddProduct} deleteProduct={deleteProduct} updateProduct={updateProduct} handleSave={handleSave} />
+              <InquiryForm
+                productRequests={productRequests}
+                handleAddProductRequest={handleAddProductRequest}
+                deleteProductRequest={deleteProductRequest}
+                updateProductRequest={updateProductRequest}
+                remarks={remarks}
+                updateRemarks={setRemarks}
+                clientId={clientId}
+                setClientId={setClientId}
+              />
             </View>
           </ScrollView>
 
@@ -113,7 +197,7 @@ export const InquiryPage = () => {
                 shadowOffset: { height: 1, width: 0 },
                 shadowOpacity: 0.05,
                 shadowColor: "#101828",
-                flex: 1
+                flex: 1,
               }}
             >
               <Text
@@ -123,7 +207,7 @@ export const InquiryPage = () => {
                   fontFamily: "Avenir",
                   color: "#344054",
                   flex: 1,
-                  textAlign: "center"
+                  textAlign: "center",
                 }}
               >
                 Cancel
@@ -138,8 +222,9 @@ export const InquiryPage = () => {
                 shadowOffset: { height: 1, width: 0 },
                 shadowOpacity: 0.05,
                 shadowColor: "#101828",
-                flex: 1
+                flex: 1,
               }}
+              onPress={handleSave}
             >
               <Text
                 style={{
@@ -148,7 +233,7 @@ export const InquiryPage = () => {
                   color: "white",
                   fontFamily: "Avenir",
                   flex: 1,
-                  textAlign: "center"
+                  textAlign: "center",
                 }}
               >
                 Raise inquiry
@@ -158,13 +243,13 @@ export const InquiryPage = () => {
         </View>
       </Modal>
     </View>
-  )
-}
+  );
+};
 
 const createStyles = StyleSheet.create({
   border: {
     borderWidth: 1,
-    borderColor: "red"
+    borderColor: "red",
   },
   createButtonContainer: {
     height: 46,
@@ -172,7 +257,7 @@ const createStyles = StyleSheet.create({
     borderRadius: 24,
     position: "absolute",
     right: 16,
-    bottom: 50
+    bottom: 50,
   },
   createButton: {
     height: "100%",
@@ -194,7 +279,7 @@ const createStyles = StyleSheet.create({
     height: 669,
     width: "100%",
     backgroundColor: "white",
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
     right: 0,
     borderTopLeftRadius: 24,
@@ -202,8 +287,8 @@ const createStyles = StyleSheet.create({
   },
   modalBackground: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",  // translucent background
-    justifyContent: 'flex-end',  // content sticks to the bottom
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // translucent background
+    justifyContent: "flex-end", // content sticks to the bottom
   },
   formHeader: {
     flexDirection: "row",
@@ -224,12 +309,12 @@ const createStyles = StyleSheet.create({
     alignItems: "center",
   },
   closeButtonIcon: {
-    fontSize: 14
+    fontSize: 14,
   },
   formBody: {
     flex: 1,
     padding: 16,
-    backgroundColor: "#f9f9f9"
+    backgroundColor: "#f9f9f9",
   },
   formSubmitContainer: {
     position: "absolute",
@@ -243,11 +328,19 @@ const createStyles = StyleSheet.create({
     width: "100%",
     borderColor: "#E2E8F0",
     borderTopWidth: 1,
-    gap: 16
+    gap: 16,
   },
-})
+});
 
-const OrderBody = ({ filter, setFilter }: { filter: string, setFilter: React.Dispatch<React.SetStateAction<string>> }) => {
+const InquiryList = ({
+  filter,
+  setFilter,
+  inquiries,
+}: {
+  inquiries: RouterOutputs["inquiry"]["list"]["items"];
+  filter: string;
+  setFilter: React.Dispatch<React.SetStateAction<string>>;
+}) => {
   return (
     <View style={styles.orderBodyContent}>
       <GestureHandlerRootView style={styles.container}>
@@ -258,96 +351,86 @@ const OrderBody = ({ filter, setFilter }: { filter: string, setFilter: React.Dis
           contentContainerStyle={styles.filterTabsContainer}
         >
           <View style={styles.filterTabsContainer}>
-            <MobileTab activeFilter={filter === "All" ? true : false} setFilter={setFilter} currentFilter="All" />
-            <MobileTab activeFilter={filter === "Quotes received" ? true : false} setFilter={setFilter} currentFilter="Quotes received" />
-            <MobileTab activeFilter={filter === "Pending" ? true : false} setFilter={setFilter} currentFilter="Pending" />
-            <MobileTab activeFilter={filter === "Quote expired" ? true : false} setFilter={setFilter} currentFilter="Quote expired" />
+            <MobileTab
+              activeFilter={filter === "All" ? true : false}
+              setFilter={setFilter}
+              currentFilter="All"
+            />
+            <MobileTab
+              activeFilter={filter === "Quotes received" ? true : false}
+              setFilter={setFilter}
+              currentFilter="Quotes received"
+            />
+            <MobileTab
+              activeFilter={filter === "Pending" ? true : false}
+              setFilter={setFilter}
+              currentFilter="Pending"
+            />
+            <MobileTab
+              activeFilter={filter === "Quote expired" ? true : false}
+              setFilter={setFilter}
+              currentFilter="Quote expired"
+            />
           </View>
         </ScrollView>
 
         {/* orders */}
-
-        <View style={orderStyles.orderCardContainer}>
-          <View style={orderStyles.orderCard}>
-            <View style={orderStyles.innerSection}>
-              <Badge IconName="checkcircleo" badgeText="Quote Received" bg="#f0f9f6" accentColor="#047857" />
-              <Pressable>
-                <Icon name="ellipsis-v"></Icon>
-              </Pressable>
-            </View>
-            <View style={orderStyles.innerSection}>
-              <Text style={orderStyles.headerText}>Ketone</Text>
-            </View>
-            <View style={orderStyles.innerSectionFlexStart}>
-              <View style={{ flex: 1, gap: 4 }}>
-                <Text style={orderStyles.orderHeader}>Inquiry Number</Text>
-                <Text style={orderStyles.orderMainText}>#AC-3066</Text>
-              </View>
-              <View style={{ flex: 1, gap: 4 }}>
-                <Text style={orderStyles.orderHeader}>Quantity</Text>
-                <Text style={orderStyles.orderMainText}>3 Kg</Text>
-              </View>
-            </View>
-            <View style={orderStyles.innerSectionFlexStart}>
-              <View style={{ flex: 1, gap: 4 }}>
-                <Text style={orderStyles.orderHeader}>Date</Text>
-                <Text style={orderStyles.orderMainText}>23/04/2024</Text>
-              </View>
-              <View style={{ flex: 1, gap: 4 }}>
-                <Text style={orderStyles.orderHeader}>Make</Text>
-                <Text style={orderStyles.orderMainText}>Spicy</Text>
-              </View>
-            </View>
-          </View>
-
-          <View style={orderStyles.actionContainer}>
-            <Text>Price:Rs 1,171 per kg</Text>
-
-          </View>
-        </View>
-        <View style={orderStyles.orderCardContainer}>
-          <View style={orderStyles.orderCard}>
-            <View style={orderStyles.innerSection}>
-              <Badge IconName="checkcircleo" badgeText="Quote Received" bg="#f0f9f6" accentColor="#047857" />
-              <Pressable>
-                <Icon name="ellipsis-v"></Icon>
-              </Pressable>
-            </View>
-            <View style={orderStyles.innerSection}>
-              <Text style={orderStyles.headerText}>Ketone</Text>
-            </View>
-            <View style={orderStyles.innerSectionFlexStart}>
-              <View style={{ flex: 1, gap: 4 }}>
-                <Text style={orderStyles.orderHeader}>Inquiry Number</Text>
-                <Text style={orderStyles.orderMainText}>#AC-3066</Text>
-              </View>
-              <View style={{ flex: 1, gap: 4 }}>
-                <Text style={orderStyles.orderHeader}>Quantity</Text>
-                <Text style={orderStyles.orderMainText}>3 Kg</Text>
-              </View>
-            </View>
-            <View style={orderStyles.innerSectionFlexStart}>
-              <View style={{ flex: 1, gap: 4 }}>
-                <Text style={orderStyles.orderHeader}>Date</Text>
-                <Text style={orderStyles.orderMainText}>23/04/2024</Text>
-              </View>
-              <View style={{ flex: 1, gap: 4 }}>
-                <Text style={orderStyles.orderHeader}>Make</Text>
-                <Text style={orderStyles.orderMainText}>Spicy</Text>
-              </View>
-            </View>
-          </View>
-
-          <View style={orderStyles.actionContainer}>
-            <Text>Price:Rs 1,171 per kg</Text>
-
-          </View>
-        </View>
-        {/* action */}
+        {inquiries.map((inquiry) => (
+          <InquiryCard inquiry={inquiry} />
+        ))}
       </GestureHandlerRootView>
     </View>
-  )
-}
+  );
+};
+
+const InquiryCard = ({
+  inquiry,
+}: {
+  inquiry: RouterOutputs["inquiry"]["list"]["items"][0];
+}) => {
+  return (
+    <View style={orderStyles.orderCardContainer}>
+      <View style={orderStyles.orderCard}>
+        <View style={orderStyles.innerSection}>
+          <Badge
+            IconName="checkcircleo"
+            badgeText="Quote Received"
+            bg="#f0f9f6"
+            accentColor="#047857"
+          />
+          <Pressable>
+            <Icon name="ellipsis-v"></Icon>
+          </Pressable>
+        </View>
+        <View style={orderStyles.innerSection}>
+          <Text style={orderStyles.headerText}>{inquiry.productNames}</Text>
+        </View>
+        <View style={orderStyles.innerSectionFlexStart}>
+          <View style={{ flex: 1, gap: 4 }}>
+            <Text style={orderStyles.orderHeader}>Inquiry Number</Text>
+            <Text style={orderStyles.orderMainText}>{inquiry.id}</Text>
+          </View>
+          <View style={{ flex: 1, gap: 4 }}>
+            <Text style={orderStyles.orderHeader}>Quantity</Text>
+            <Text style={orderStyles.orderMainText}>-</Text>
+          </View>
+        </View>
+        <View style={orderStyles.innerSectionFlexStart}>
+          <View style={{ flex: 1, gap: 4 }}>
+            <Text style={orderStyles.orderHeader}>Date</Text>
+            <Text style={orderStyles.orderMainText}>
+              {new Date(inquiry.createdAt).toLocaleDateString()}
+            </Text>
+          </View>
+          <View style={{ flex: 1, gap: 4 }}>
+            <Text style={orderStyles.orderHeader}>Make</Text>
+            <Text style={orderStyles.orderMainText}>-</Text>
+          </View>
+        </View>
+      </View>
+    </View>
+  );
+};
 
 const orderStyles = StyleSheet.create({
   orderCardContainer: {
@@ -365,18 +448,18 @@ const orderStyles = StyleSheet.create({
   },
   innerSection: {
     flexDirection: "row",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
   },
   innerSectionFlexStart: {
     flexDirection: "row",
     justifyContent: "flex-start",
-    gap: 4
+    gap: 4,
   },
   headerText: {
     color: "#1e293b",
     fontFamily: "AvenirHeavy",
     fontSize: 16,
-    fontWeight: 800
+    fontWeight: 800,
   },
   orderHeader: {
     fontSize: 14,
@@ -392,13 +475,13 @@ const orderStyles = StyleSheet.create({
   },
   actionContainer: {
     borderTopWidth: 1,
-    backgroundColor: "linear-gradient(180deg, rgba(241, 245, 249, 0.5) 0%, rgba(255, 255, 255, 0.5) 100%)",
+    backgroundColor:
+      "linear-gradient(180deg, rgba(241, 245, 249, 0.5) 0%, rgba(255, 255, 255, 0.5) 100%)",
     borderColor: "#E2E8F0",
     paddingVertical: 12,
-    paddingHorizontal: 16
-  }
-})
-
+    paddingHorizontal: 16,
+  },
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -408,7 +491,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: "#E2E8F0",
   },
   orderBodyContainer: {
     flex: 1,
@@ -423,4 +506,4 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 16,
   },
-})
+});

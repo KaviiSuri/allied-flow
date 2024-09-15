@@ -35,6 +35,9 @@ export const inquiryRouter = {
             buyerId: input.buyerId,
             sellerId: input.sellerId,
             status: "NEGOTIATING",
+            productNames: input.productRequests
+              .map((productRequest) => productRequest.productName)
+              .join(", "),
           })
           .returning();
         const inquiry = createdInquiries[0];
@@ -222,11 +225,13 @@ export const inquiryRouter = {
       action: "list",
       subject: "Inquiry",
     })
-    .input(z.object({
-      limit: z.number().min(1).max(100).default(10),
-      cursor: z.string().optional(),
-      status: z.enum(["NEGOTIATING", "ACCEPTED", "REJECTED"]).optional(),
-    }))
+    .input(
+      z.object({
+        limit: z.number().min(1).max(100).default(10),
+        cursor: z.string().optional(),
+        status: z.enum(["NEGOTIATING", "ACCEPTED", "REJECTED"]).optional(),
+      }),
+    )
     .query(async ({ ctx, input }) => {
       const { limit, cursor, status } = input;
 
@@ -235,13 +240,17 @@ export const inquiryRouter = {
           and(
             or(
               eq(inquiries.buyerId, ctx.user.team.id),
-              eq(inquiries.sellerId, ctx.user.team.id)
+              eq(inquiries.sellerId, ctx.user.team.id),
             ),
             cursor ? lt(inquiries.createdAt, cursor) : undefined,
-            status ? eq(inquiries.status, status) : undefined
+            status ? eq(inquiries.status, status) : undefined,
           ),
         orderBy: (inquiries, { desc }) => desc(inquiries.createdAt),
         limit: limit + 1,
+        with: {
+          buyer: true,
+          seller: true,
+        },
       });
 
       let nextCursor: string | undefined = undefined;

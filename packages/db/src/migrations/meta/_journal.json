@@ -15,6 +15,13 @@
       "when": 1726321665707,
       "tag": "0001_gigantic_kabuki",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1726405907013,
+      "tag": "0002_clever_starbolt",
+      "breakpoints": true
     }
   ]
 }

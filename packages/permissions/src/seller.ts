@@ -15,6 +15,17 @@ export const sellerPermissions: Record<Role, DefinePermissions> = {
     can("update", "Product");
     can("delete", "Product");
     can("create", "Product");
+    can("list", "Inquiry");
+    can("raise", "Inquiry");
+    can("negotiate", "Inquiry");
+    can("accept", "Inquiry");
+    can("reject", "Inquiry");
+    can("getDetails", "Inquiry");
+    can("list", "Order");
+    can("create", "Order");
+    can("read", "Order");
+    can("update", "Order");
+    can("delete", "Order");
   },
   MANAGEMENT: (user, { can }) => {
     // admin can do all actions on User and Team
@@ -24,13 +35,33 @@ export const sellerPermissions: Record<Role, DefinePermissions> = {
     can("read", "Team");
     can("update", "Team");
     can("create", "Team");
+    can("list", "Inquiry");
+    can("raise", "Inquiry");
+    can("negotiate", "Inquiry");
+    can("accept", "Inquiry");
+    can("reject", "Inquiry");
+    can("getDetails", "Inquiry");
+    can("list", "Order");
+    can("create", "Order");
+    can("read", "Order");
+    can("update", "Order");
+    can("delete", "Order");
   },
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   SALES: (user, { can }) => {
     /* Empty */
+    can("list", "Inquiry");
+    can("raise", "Inquiry");
+    can("negotiate", "Inquiry");
+    can("accept", "Inquiry");
+    can("reject", "Inquiry");
+    can("getDetails", "Inquiry");
   },
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   LOGISTICS: (user, { can }) => {
     /* Empty */
+    can("list", "Order");
+    can("read", "Order");
+    can("update", "Order");
   },
 };

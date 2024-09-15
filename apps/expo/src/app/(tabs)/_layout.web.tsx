@@ -112,11 +112,15 @@ export default function WebLayout() {
                       fontWeight: 800,
                       fontSize: 18,
                     },
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                     drawerItemStyle: {
                       // @ts-expect-error types broken here
                       ...(drawer.action &&
                         drawer.subject &&
                         !ability.can(drawer.action, drawer.subject) && {
+                          display: "none",
+                        }),
+                      ...(drawer.hide && {
                         display: "none",
                       }),
                     },

@@ -71,4 +71,14 @@ export default [
     action: "read",
     subject: "User",
   },
+  {
+    path: "inquiry/sendQuote",
+    name: "",
+    hide: true,
+  },
+  {
+    path: "inquiry/[inquiryNumber]",
+    name: "",
+    hide: true,
+  },
 ] as const;

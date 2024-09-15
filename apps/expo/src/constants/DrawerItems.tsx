@@ -13,6 +13,7 @@ export default [
     icon: DashboardIcon,
     action: undefined,
     subject: undefined,
+    mobileView: true,
   },
   {
     path: "inquiries",
@@ -20,6 +21,7 @@ export default [
     icon: InquiriesIcon,
     action: undefined,
     subject: undefined,
+    mobileView: true,
   },
 
   {
@@ -28,6 +30,7 @@ export default [
     icon: OrdersIcon,
     action: undefined,
     subject: undefined,
+    mobileView: true,
   },
   {
     path: "samples",
@@ -35,6 +38,7 @@ export default [
     icon: SamplesIcon,
     action: undefined,
     subject: undefined,
+    mobileView: true,
   },
   {
     path: "products",
@@ -42,6 +46,7 @@ export default [
     icon: HomeIcon,
     action: "read",
     subject: "Product",
+    mobileView: true,
   },
   {
     path: "clients",
@@ -49,6 +54,7 @@ export default [
     icon: ClientIcon,
     action: "read",
     subject: "Team",
+    mobileView: false,
   },
   {
     path: "teamMembers",
@@ -56,6 +62,7 @@ export default [
     icon: UserIcon,
     action: "read",
     subject: "User",
+    mobileView: false,
   },
   {
     path: "notifications",

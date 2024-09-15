@@ -65,7 +65,8 @@ export default function WebLayout() {
 
   useEffect(() => {
     console.log("======", ability.can("read", "User"));
-  }, [ability]);
+    console.log(DrawerItem)
+  }, [ability, DrawerItem]);
 
   if (!isAuthenticated) {
     return <Redirect href={"/login"} />;
@@ -116,8 +117,8 @@ export default function WebLayout() {
                       ...(drawer.action &&
                         drawer.subject &&
                         !ability.can(drawer.action, drawer.subject) && {
-                          display: "none",
-                        }),
+                        display: "none",
+                      }),
                     },
                     drawerLabel: ({ focused }) => (
                       <Text

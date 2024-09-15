@@ -4,7 +4,7 @@ import { SingleSelectDropdown } from "../dropdown";
 import { MenuItem, SingleSelect } from "../dropdown/singleSelect";
 
 interface FormDropDownProps {
-  label: string;
+  label?: string;
   options: {
     label: string;
     value: string;
@@ -13,6 +13,7 @@ interface FormDropDownProps {
   rightIcon?: React.ReactNode;
   onValueChange: (e: any) => void;
   value?: any;
+  paddingBottom?: boolean,
 }
 
 export const FormDropDown: React.FC<FormDropDownProps> = ({
@@ -22,21 +23,28 @@ export const FormDropDown: React.FC<FormDropDownProps> = ({
   rightIcon,
   onValueChange,
   value: _defaultValue,
+  paddingBottom
 }) => {
   return (
     <View>
-      <SingleSelectDropdown>
-        <Text
-          style={{
-            fontSize: 14,
-            fontWeight: 400,
-            paddingBottom: 8,
-            fontFamily: "Avenir",
-            color: "#475467",
-          }}
-        >
-          {label}
-        </Text>
+      <SingleSelectDropdown style={{ justifyContent: "space-between" }}>
+        {label &&
+          <Text
+            style={[
+              {
+                fontSize: 14,
+                fontWeight: 400,
+                fontFamily: "Avenir",
+                color: "#475467",
+              },
+              paddingBottom && {
+                paddingBottom: 8
+              }
+            ]}
+          >
+            {label}
+          </Text>
+        }
         <SingleSelect
           style={{ flexDirection: "row", alignItems: "center" }}
           value={_defaultValue}

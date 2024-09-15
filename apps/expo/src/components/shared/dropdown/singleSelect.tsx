@@ -62,11 +62,11 @@ interface SingleSelectDropdownContextType {
 const SingleSelectDropdownContext =
   React.createContext<SingleSelectDropdownContextType>({
     open: false,
-    setOpen: () => {},
+    setOpen: () => { },
     value: null,
-    onChange: () => {},
+    onChange: () => { },
     dropdownPosition: { top: 0, left: 0, width: 0 },
-    setDropdownPosition: () => {},
+    setDropdownPosition: () => { },
   });
 
 export const SingleSelectDropdown: React.FC<SingleSelectDropdownProps> = ({
@@ -208,11 +208,11 @@ export const SingleSelect: React.FC<SingleSelectProps> = ({
             {React.Children.map(children, (child) =>
               React.isValidElement(child)
                 ? React.cloneElement(child, {
-                    ...child.props,
-                    onPress: () => {
-                      handleChange(child.props.value, child.props.onPress);
-                    },
-                  })
+                  ...child.props,
+                  onPress: () => {
+                    handleChange(child.props.value, child.props.onPress);
+                  },
+                })
                 : child,
             )}
           </View>

@@ -37,6 +37,15 @@ function ProductContainer({
   isSampleReq,
   setIsTechnicalDocReq,
   setIsSampleReq,
+}: {
+  id: string,
+  product: any,
+  onDelete: any,
+  onChange: any,
+  isTechnicalDocReq: boolean,
+  isSampleReq: boolean,
+  setIsTechnicalDocReq: React.Dispatch<React.SetStateAction<boolean>>,
+  setIsSampleReq: React.Dispatch<React.SetStateAction<boolean>>
 }) {
   const UnitOptions = [
     { label: "Kg", value: "kg" },

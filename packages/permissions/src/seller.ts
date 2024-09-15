@@ -25,6 +25,12 @@ export const sellerPermissions: Record<Role, DefinePermissions> = {
     can("update", "Team");
     can("create", "Team");
   },
-  SALES: (user, { can }) => {},
-  LOGISTICS: (user, { can }) => {},
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  SALES: (user, { can }) => {
+    /* Empty */
+  },
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  LOGISTICS: (user, { can }) => {
+    /* Empty */
+  },
 };

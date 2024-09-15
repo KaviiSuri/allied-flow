@@ -14,4 +14,8 @@ export const db = drizzle(turso, {
   logger: true,
 });
 
+export type TransactionType = Parameters<
+  Parameters<(typeof db)["transaction"]>[0]
+>[0];
+
 console.log(env.DATABASE_URL, env.DATABASE_TOKEN);

@@ -67,7 +67,7 @@ export default function TabLayout() {
                         <SafeAreaView>
                           <View style={styles.container}>
                             <Image
-                              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                               
                               source={ClientIcon}
                               style={styles.navImage}
                               tintColor={"#000"}

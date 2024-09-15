@@ -179,7 +179,7 @@ function ProductContainer({
             onValueChange={(t) => onChange(id, "unit", t)}
             rightIcon={
               <Image
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                 
                 source={DownArrowIcon}
                 style={{
                   width: 18,
@@ -204,7 +204,7 @@ function ProductContainer({
         }}
         checkedIcon={
           <Image
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+             
             source={CheckBoxIconChecked}
             style={{
               width: 18,
@@ -215,7 +215,7 @@ function ProductContainer({
         }
         uncheckedIcon={
           <Image
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+             
             source={CheckBoxIconUnchecked}
             style={{
               width: 18,
@@ -238,7 +238,7 @@ function ProductContainer({
         }}
         checkedIcon={
           <Image
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+             
             source={CheckBoxIconChecked}
             style={{
               width: 18,
@@ -249,7 +249,7 @@ function ProductContainer({
         }
         uncheckedIcon={
           <Image
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+             
             source={CheckBoxIconUnchecked}
             style={{
               width: 18,
@@ -352,7 +352,7 @@ function InquiryForm(
           </Text>
           <Pressable onPress={props.toggleOpen}>
             <Image
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+               
               source={CloseIcon}
             />
           </Pressable>

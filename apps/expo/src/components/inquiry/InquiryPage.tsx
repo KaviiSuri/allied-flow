@@ -19,6 +19,7 @@ import type { RouterInputs, RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
 import { useAbility, useUser } from "~/providers/auth";
 import Toast from "react-native-toast-message";
+import { useRouter } from "expo-router";
 
 export type ProductRequest =
   RouterInputs["inquiry"]["raise"]["productRequests"][0] & {
@@ -376,7 +377,7 @@ const InquiryList = ({
 
         {/* orders */}
         {inquiries.map((inquiry) => (
-          <InquiryCard inquiry={inquiry} />
+          <InquiryCard inquiry={inquiry} key={inquiry.id} />
         ))}
       </GestureHandlerRootView>
     </View>
@@ -388,47 +389,53 @@ const InquiryCard = ({
 }: {
   inquiry: RouterOutputs["inquiry"]["list"]["items"][0];
 }) => {
+  const router = useRouter();
   return (
-    <View style={orderStyles.orderCardContainer}>
-      <View style={orderStyles.orderCard}>
-        <View style={orderStyles.innerSection}>
-          <Badge
-            IconName="checkcircleo"
-            badgeText="Quote Received"
-            bg="#f0f9f6"
-            accentColor="#047857"
-          />
-          <Pressable>
+    <TouchableOpacity
+      onPress={() => {
+        router.push(`/inquiry/${inquiry.id}`);
+        console.log("Inquiry Details", inquiry.id);
+      }}
+    >
+      <View style={orderStyles.orderCardContainer}>
+        <View style={orderStyles.orderCard}>
+          <View style={orderStyles.innerSection}>
+            <Badge
+              IconName="checkcircleo"
+              badgeText="Quote Received"
+              bg="#f0f9f6"
+              accentColor="#047857"
+            />
             <Icon name="ellipsis-v"></Icon>
-          </Pressable>
-        </View>
-        <View style={orderStyles.innerSection}>
-          <Text style={orderStyles.headerText}>{inquiry.productNames}</Text>
-        </View>
-        <View style={orderStyles.innerSectionFlexStart}>
-          <View style={{ flex: 1, gap: 4 }}>
-            <Text style={orderStyles.orderHeader}>Inquiry Number</Text>
-            <Text style={orderStyles.orderMainText}>{inquiry.id}</Text>
           </View>
-          <View style={{ flex: 1, gap: 4 }}>
-            <Text style={orderStyles.orderHeader}>Quantity</Text>
-            <Text style={orderStyles.orderMainText}>-</Text>
+          <View style={orderStyles.innerSection}>
+            <Text style={orderStyles.headerText}>{inquiry.productNames}</Text>
           </View>
-        </View>
-        <View style={orderStyles.innerSectionFlexStart}>
-          <View style={{ flex: 1, gap: 4 }}>
-            <Text style={orderStyles.orderHeader}>Date</Text>
-            <Text style={orderStyles.orderMainText}>
-              {new Date(inquiry.createdAt).toLocaleDateString()}
-            </Text>
+          <View style={orderStyles.innerSectionFlexStart}>
+            <View style={{ flex: 1, gap: 4 }}>
+              <Text style={orderStyles.orderHeader}>Inquiry Number</Text>
+              <Text style={orderStyles.orderMainText}>{inquiry.id}</Text>
+            </View>
+            <View style={{ flex: 1, gap: 4 }}>
+              <Text style={orderStyles.orderHeader}>Quantity</Text>
+              <Text style={orderStyles.orderMainText}>-</Text>
+            </View>
           </View>
-          <View style={{ flex: 1, gap: 4 }}>
-            <Text style={orderStyles.orderHeader}>Make</Text>
-            <Text style={orderStyles.orderMainText}>-</Text>
+          <View style={orderStyles.innerSectionFlexStart}>
+            <View style={{ flex: 1, gap: 4 }}>
+              <Text style={orderStyles.orderHeader}>Date</Text>
+              <Text style={orderStyles.orderMainText}>
+                {new Date(inquiry.createdAt).toLocaleDateString()}
+              </Text>
+            </View>
+            <View style={{ flex: 1, gap: 4 }}>
+              <Text style={orderStyles.orderHeader}>Make</Text>
+              <Text style={orderStyles.orderMainText}>-</Text>
+            </View>
           </View>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

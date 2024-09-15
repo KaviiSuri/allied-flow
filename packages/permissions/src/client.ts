@@ -1,7 +1,10 @@
 import type { DefinePermissions, Role } from "./config.js";
 
 export const clientPermissions: Record<Role, DefinePermissions> = {
-  SALES: (user, { can }) => {},
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  SALES: (user, { can }) => {
+    /* Empty */
+  },
   ADMIN: (user, { can }) => {
     can("read", "User", ({ teamId }) => teamId === user.teamId);
     can("update", "User", ({ teamId }) => teamId === user.teamId);
@@ -12,6 +15,12 @@ export const clientPermissions: Record<Role, DefinePermissions> = {
     can("create", "Team", ({ teamId }) => teamId === user.teamId);
     can("delete", "Team", ({ teamId }) => teamId === user.teamId);
   },
-  MANAGEMENT: (user, { can }) => {},
-  LOGISTICS: (user, { can }) => {},
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  MANAGEMENT: (user, { can }) => {
+    /* Empty */
+  },
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  LOGISTICS: (user, { can }) => {
+    /* Empty */
+  },
 };

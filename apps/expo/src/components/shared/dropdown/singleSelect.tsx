@@ -7,17 +7,11 @@ import {
   TouchableOpacity,
   Modal,
   StyleSheet,
-  LayoutChangeEvent,
   Image,
 } from "react-native";
 import { Colors } from "~/constants/Color";
 import FilledRadioIcon from "~/app/assets/images/filled-radio.png";
 import UnfilledRadioIcon from "~/app/assets/images/unfilled-radio.png";
-
-interface Option {
-  label: string;
-  value: string | number;
-}
 
 interface SingleSelectDropdownProps {
   children: ReactNode;
@@ -62,11 +56,17 @@ interface SingleSelectDropdownContextType {
 const SingleSelectDropdownContext =
   React.createContext<SingleSelectDropdownContextType>({
     open: false,
-    setOpen: () => {},
+    setOpen: () => {
+      /* do nothing */
+    },
     value: null,
-    onChange: () => {},
+    onChange: () => {
+      /* do nothing */
+    },
     dropdownPosition: { top: 0, left: 0, width: 0 },
-    setDropdownPosition: () => {},
+    setDropdownPosition: () => {
+      /* do nothing */
+    },
   });
 
 export const SingleSelectDropdown: React.FC<SingleSelectDropdownProps> = ({
@@ -134,7 +134,7 @@ export const SingleSelect: React.FC<SingleSelectProps> = ({
     if (value !== internalValue) {
       setInternalValue(value);
     }
-  }, [value]);
+  }, [value, internalValue]);
 
   const handleChange = (
     newValue: string | number,
@@ -160,6 +160,7 @@ export const SingleSelect: React.FC<SingleSelectProps> = ({
 
   const selectedChild = React.Children.toArray(children).find(
     (child): child is React.ReactElement<MenuItemProps> =>
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       React.isValidElement(child) && child.props.value === internalValue,
   );
 
@@ -207,9 +208,11 @@ export const SingleSelect: React.FC<SingleSelectProps> = ({
           >
             {React.Children.map(children, (child) =>
               React.isValidElement(child)
-                ? React.cloneElement(child, {
+                ? // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+                  React.cloneElement(child, {
                     ...child.props,
                     onPress: () => {
+                      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
                       handleChange(child.props.value, child.props.onPress);
                     },
                   })

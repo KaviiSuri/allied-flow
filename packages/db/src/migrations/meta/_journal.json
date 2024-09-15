@@ -8,6 +8,13 @@
       "when": 1720202342355,
       "tag": "0000_dapper_jubilee",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1726321665707,
+      "tag": "0001_gigantic_kabuki",
+      "breakpoints": true
     }
   ]
 }

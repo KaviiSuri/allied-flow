@@ -1,14 +1,58 @@
-import { StyleSheet, Text, View, ScrollView, Pressable } from "react-native"
-import { SearchBox } from "../shared/searchComponent"
-import React, { useState } from "react"
-import { GestureHandlerRootView } from "react-native-gesture-handler"
-import { MobileTab } from "../core/mobileTab"
-import { Badge } from "../core/badge"
-import Icon from "react-native-vector-icons/FontAwesome5"
+import { StyleSheet, Text, View, ScrollView, Pressable } from "react-native";
+import { SearchBox } from "../shared/searchComponent";
+import React, { useEffect, useMemo, useState } from "react";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { MobileTab } from "../core/mobileTab";
+import { Badge } from "../core/badge";
+import Icon from "react-native-vector-icons/FontAwesome5";
+import type { RouterInputs, RouterOutputs } from "~/utils/api";
+import { api } from "~/utils/api";
+import { PrimaryButton } from "../core/button";
 
 export const OrderPage = () => {
-  const [searchResult, setSearchResult] = useState<string>("")
-  const [filter, setFilter] = useState<string>("All")
+  const [filter, setFilter] = useState<string>("All");
+  const [statusFilter, setStatusFilter] =
+    useState<RouterInputs["orders"]["list"]["status"]>(undefined);
+
+  useEffect(() => {
+    switch (filter) {
+      case "All":
+        setStatusFilter(undefined);
+        break;
+      case "Order placed":
+        setStatusFilter("PLACED");
+        break;
+      case "Order dispatched":
+        setStatusFilter("DISPATCHED");
+        break;
+      default:
+        setStatusFilter(undefined);
+        break;
+    }
+  }, [filter]);
+
+  const { data, isError, isLoading, hasNextPage, fetchNextPage } =
+    api.orders.list.useInfiniteQuery(
+      {
+        type: "REGULAR",
+        status: statusFilter,
+      },
+      {
+        getNextPageParam: (lastPage) => {
+          const lastEntry = lastPage[lastPage.length - 1];
+          if (!lastEntry) {
+            return null;
+          }
+          return lastEntry.createdAt;
+        },
+      },
+    );
+
+  const orders = useMemo(() => {
+    return data?.pages.flatMap((page) => page) ?? [];
+  }, [data]);
+
+  const [searchResult, setSearchResult] = useState<string>("");
 
   return (
     <View style={styles.container}>
@@ -23,13 +67,25 @@ export const OrderPage = () => {
 
       {/* Scrollable content below the fixed SearchBox */}
       <ScrollView style={styles.orderBodyContainer}>
-        <OrderBody filter={filter} setFilter={setFilter} />
+        <OrderBody filter={filter} setFilter={setFilter} orders={orders} />
+
+        {hasNextPage && (
+          <PrimaryButton onPress={() => fetchNextPage} text="Load more" />
+        )}
       </ScrollView>
     </View>
-  )
-}
+  );
+};
 
-const OrderBody = ({ filter, setFilter }: { filter: string, setFilter: React.Dispatch<React.SetStateAction<string>> }) => {
+const OrderBody = ({
+  filter,
+  setFilter,
+  orders,
+}: {
+  filter: string;
+  setFilter: React.Dispatch<React.SetStateAction<string>>;
+  orders: RouterOutputs["orders"]["list"];
+}) => {
   return (
     <View style={styles.orderBodyContent}>
       <GestureHandlerRootView style={styles.container}>
@@ -40,105 +96,75 @@ const OrderBody = ({ filter, setFilter }: { filter: string, setFilter: React.Dis
           contentContainerStyle={styles.filterTabsContainer}
         >
           <View style={styles.filterTabsContainer}>
-            <MobileTab activeFilter={filter === "All" ? true : false} setFilter={setFilter} currentFilter="All" />
-            <MobileTab activeFilter={filter === "Order placed" ? true : false} setFilter={setFilter} currentFilter="Order placed" />
-            <MobileTab activeFilter={filter === "Order dispatched" ? true : false} setFilter={setFilter} currentFilter="Order dispatched" />
+            <MobileTab
+              activeFilter={filter === "All" ? true : false}
+              setFilter={setFilter}
+              currentFilter="All"
+            />
+            <MobileTab
+              activeFilter={filter === "Order placed" ? true : false}
+              setFilter={setFilter}
+              currentFilter="Order placed"
+            />
+            <MobileTab
+              activeFilter={filter === "Order dispatched" ? true : false}
+              setFilter={setFilter}
+              currentFilter="Order dispatched"
+            />
           </View>
         </ScrollView>
 
         {/* orders */}
 
-        <View style={orderStyles.orderCard}>
-          <View style={orderStyles.innerSection}>
-            <Badge IconName="checkcircleo" badgeText="Order Dispatched" bg="#f0f9f6" accentColor="#047857" />
-            <Pressable>
-              <Icon name="ellipsis-v"></Icon>
-            </Pressable>
-          </View>
-          <View style={orderStyles.innerSection}>
-            <Text style={orderStyles.headerText}>Ketone</Text>
-          </View>
-          <View style={orderStyles.innerSectionFlexStart}>
-            <View style={{ flex: 1, gap: 4 }}>
-              <Text style={orderStyles.orderHeader}>Order ID</Text>
-              <Text style={orderStyles.orderMainText}>68845-36-3</Text>
-            </View>
-            <View style={{ flex: 1, gap: 4 }}>
-              <Text style={orderStyles.orderHeader}>Inquiry Number</Text>
-              <Text style={orderStyles.orderMainText}>#AC-3066</Text>
-            </View>
-          </View>
-        </View>
-
-
-        <View style={orderStyles.orderCard}>
-          <View style={orderStyles.innerSection}>
-            <Badge IconName="checkcircleo" badgeText="Order placed" bg="#f1f5f9" accentColor="#334155" />
-            <Pressable>
-              <Icon name="ellipsis-v"></Icon>
-            </Pressable>
-          </View>
-          <View style={orderStyles.innerSection}>
-            <Text style={orderStyles.headerText}>Ketone</Text>
-          </View>
-          <View style={orderStyles.innerSectionFlexStart}>
-            <View style={{ flex: 1, gap: 4 }}>
-              <Text style={orderStyles.orderHeader}>Order ID</Text>
-              <Text style={orderStyles.orderMainText}>68845-36-3</Text>
-            </View>
-            <View style={{ flex: 1, gap: 4 }}>
-              <Text style={orderStyles.orderHeader}>Inquiry Number</Text>
-              <Text style={orderStyles.orderMainText}>#AC-3066</Text>
-            </View>
-          </View>
-        </View>
-
-        <View style={orderStyles.orderCard}>
-          <View style={orderStyles.innerSection}>
-            <Badge IconName="checkcircleo" badgeText="Order placed" bg="#f1f5f9" accentColor="#334155" />
-            <Pressable>
-              <Icon name="ellipsis-v"></Icon>
-            </Pressable>
-          </View>
-          <View style={orderStyles.innerSection}>
-            <Text style={orderStyles.headerText}>Ketone</Text>
-          </View>
-          <View style={orderStyles.innerSectionFlexStart}>
-            <View style={{ flex: 1, gap: 4 }}>
-              <Text style={orderStyles.orderHeader}>Order ID</Text>
-              <Text style={orderStyles.orderMainText}>68845-36-3</Text>
-            </View>
-            <View style={{ flex: 1, gap: 4 }}>
-              <Text style={orderStyles.orderHeader}>Inquiry Number</Text>
-              <Text style={orderStyles.orderMainText}>#AC-3066</Text>
-            </View>
-          </View>
-        </View>
-
-        <View style={orderStyles.orderCard}>
-          <View style={orderStyles.innerSection}>
-            <Badge IconName="checkcircleo" badgeText="Order Dispatched" bg="#f0f9f6" accentColor="#047857" />
-            <Pressable>
-              <Icon name="ellipsis-v"></Icon>
-            </Pressable>
-          </View>
-          <View style={orderStyles.innerSection}>
-            <Text style={orderStyles.headerText}>Ketone</Text>
-          </View>
-          <View style={orderStyles.innerSectionFlexStart}>
-            <View style={{ flex: 1, gap: 4 }}>
-              <Text style={orderStyles.orderHeader}>Order ID</Text>
-              <Text style={orderStyles.orderMainText}>68845-36-3</Text>
-            </View>
-            <View style={{ flex: 1, gap: 4 }}>
-              <Text style={orderStyles.orderHeader}>Inquiry Number</Text>
-              <Text style={orderStyles.orderMainText}>#AC-3066</Text>
-            </View>
-          </View>
-        </View>
+        {orders.map((order) => (
+          <OrderCard order={order} />
+        ))}
       </GestureHandlerRootView>
     </View>
-  )
+  );
+};
+
+function OrderCard({ order }: { order: RouterOutputs["orders"]["list"][0] }) {
+  return (
+    <View style={orderStyles.orderCard}>
+      <View style={orderStyles.innerSection}>
+        {order.status === "DISPATCHED" && (
+          <Badge
+            IconName="checkcircleo"
+            badgeText="Order Dispatched"
+            bg="#f0f9f6"
+            accentColor="#047857"
+          />
+        )}
+        {order.status === "PLACED" && (
+          <Badge
+            IconName="checkcircleo"
+            badgeText="Order placed"
+            bg="#f1f5f9"
+            accentColor="#334155"
+          />
+        )}
+        <Pressable>
+          <Icon name="ellipsis-v"></Icon>
+        </Pressable>
+      </View>
+      <View style={orderStyles.innerSection}>
+        <Text style={orderStyles.headerText}>
+          {order.orderItems.map((oi) => oi.product.name).join(", ")}
+        </Text>
+      </View>
+      <View style={orderStyles.innerSectionFlexStart}>
+        <View style={{ flex: 1, gap: 4 }}>
+          <Text style={orderStyles.orderHeader}>Order ID</Text>
+          <Text style={orderStyles.orderMainText}>{order.id}</Text>
+        </View>
+        <View style={{ flex: 1, gap: 4 }}>
+          <Text style={orderStyles.orderHeader}>Inquiry Number</Text>
+          <Text style={orderStyles.orderMainText}>{order.inquiryId}</Text>
+        </View>
+      </View>
+    </View>
+  );
 }
 
 const orderStyles = StyleSheet.create({
@@ -153,18 +179,18 @@ const orderStyles = StyleSheet.create({
   },
   innerSection: {
     flexDirection: "row",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
   },
   innerSectionFlexStart: {
     flexDirection: "row",
     justifyContent: "flex-start",
-    gap: 4
+    gap: 4,
   },
   headerText: {
     color: "#1e293b",
     fontFamily: "AvenirHeavy",
     fontSize: 16,
-    fontWeight: 800
+    fontWeight: 800,
   },
   orderHeader: {
     fontSize: 14,
@@ -177,9 +203,8 @@ const orderStyles = StyleSheet.create({
     fontFamily: "AvenirHeavy",
     color: "#334155",
     fontWeight: 500,
-  }
-})
-
+  },
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -189,7 +214,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: "#E2E8F0",
   },
   orderBodyContainer: {
     flex: 1,
@@ -204,4 +229,4 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 16,
   },
-})
+});

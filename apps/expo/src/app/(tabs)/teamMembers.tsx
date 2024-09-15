@@ -391,7 +391,7 @@ function UploadMemberPopup(props: { open: boolean; toggleOpen: () => void }) {
                 style={{
                   tintColor: "#64748B",
                 }}
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                 
                 source={CloseIcon}
               />
             </Pressable>
@@ -434,7 +434,7 @@ function UploadMemberPopup(props: { open: boolean; toggleOpen: () => void }) {
                     width: 20,
                     resizeMode: "contain",
                   }}
-                  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                   
                   source={UploadIcon}
                 ></Image>
               </Pressable>
@@ -476,7 +476,7 @@ function UploadMemberPopup(props: { open: boolean; toggleOpen: () => void }) {
                   width: 20,
                   resizeMode: "contain",
                 }}
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                 
                 source={ExcelIcon}
               ></Image>
               <Text
@@ -496,7 +496,7 @@ function UploadMemberPopup(props: { open: boolean; toggleOpen: () => void }) {
                   width: 14,
                   resizeMode: "contain",
                 }}
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                 
                 source={DownloadIcon}
               ></Image>
             </View>

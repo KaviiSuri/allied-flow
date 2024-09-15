@@ -1,6 +1,13 @@
-import type { InferSelectModel } from "drizzle-orm";
-import { relations } from "drizzle-orm";
-import { text, sqliteTable } from "drizzle-orm/sqlite-core";
+import type { InferSelectModel, SQL } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
+import {
+  text,
+  sqliteTable,
+  integer,
+  primaryKey,
+  real,
+} from "drizzle-orm/sqlite-core";
+import type { AnySQLiteColumn } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
 
 export const users = sqliteTable("users", {
@@ -57,8 +64,250 @@ export const products = sqliteTable("products", {
   desc: text("desc").notNull(),
   createdAt: text("created_at").notNull(),
   updatedAt: text("updated_at").notNull(),
+  searchName: text("search_name").notNull(),
+  searchMake: text("search_make").notNull(),
+  searchCas: text("search_cas").notNull(),
+  searchDesc: text("search_desc").notNull(),
 });
 
 export type Product = InferSelectModel<typeof products>;
 
 export const insertProductSchema = createInsertSchema(products);
+
+export const inquiries = sqliteTable("inquiries", {
+  id: text("id").primaryKey().unique(),
+  status: text("status", {
+    enum: ["NEGOTIATING", "ACCEPTED", "REJECTED"],
+  }).notNull(),
+  tnc: text("tnc").notNull(),
+  remarks: text("remarks"),
+  buyerId: text("buyer_id")
+    .notNull()
+    .references(() => teams.id),
+  sellerId: text("seller_id")
+    .notNull()
+    .references(() => teams.id),
+  createdAt: text("created_at")
+    .$defaultFn(() => new Date().toISOString())
+    .notNull(),
+  updatedAt: text("updated_at")
+    .$defaultFn(() => new Date().toISOString())
+    .notNull(),
+});
+
+export type Inquiry = InferSelectModel<typeof inquiries>;
+
+export const insertInquirySchema = createInsertSchema(inquiries);
+
+export const quotes = sqliteTable("quotes", {
+  id: text("id").primaryKey().unique(),
+  status: text("status", {
+    enum: ["REQUESTED", "NEGOTIATING", "ACCEPTED", "REJECTED", "STALE"],
+  }).notNull(),
+  inquiryId: text("inquiry_id")
+    .notNull()
+    .references(() => inquiries.id),
+  createdBy: text("created_by")
+    .notNull()
+    .references(() => users.id),
+  createdByTeam: text("created_by_team")
+    .notNull()
+    .references(() => teams.id),
+  createdAt: text("created_at")
+    .$defaultFn(() => new Date().toISOString())
+    .notNull(),
+  updatedAt: text("updated_at")
+    .$defaultFn(() => new Date().toISOString())
+    .notNull(),
+});
+
+export type Quote = InferSelectModel<typeof quotes>;
+
+export const insertQuoteSchema = createInsertSchema(quotes);
+
+export const quoteItems = sqliteTable(
+  "quote_items",
+  {
+    quoteId: text("quote_id")
+      .notNull()
+      .references(() => quotes.id),
+    productId: text("product_id")
+      .notNull()
+      .references(() => products.id),
+    price: real("price").notNull(),
+    quantity: real("quantity").notNull(),
+    unit: text("unit").notNull(),
+    prevPrice: real("prev_price"),
+    prevQuantity: real("prev_quantity"),
+    sampleRequested: integer("sample_requested", {
+      mode: "boolean",
+    }).notNull(),
+    techDocumentRequested: integer("tech_document_requested", {
+      mode: "boolean",
+    }).notNull(),
+    createdAt: text("created_at")
+      .$defaultFn(() => new Date().toISOString())
+      .notNull(),
+    updatedAt: text("updated_at")
+      .$defaultFn(() => new Date().toISOString())
+      .notNull(),
+  },
+  (table) => {
+    return {
+      pk: primaryKey({
+        columns: [table.quoteId, table.productId],
+      }),
+    };
+  },
+);
+
+export type QuoteItem = InferSelectModel<typeof quoteItems>;
+
+export const insertQuoteItemSchema = createInsertSchema(quoteItems);
+
+export const quoteItemsRelations = relations(quoteItems, ({ one }) => ({
+  quote: one(quotes, {
+    fields: [quoteItems.quoteId],
+    references: [quotes.id],
+  }),
+  product: one(products, {
+    fields: [quoteItems.productId],
+    references: [products.id],
+  }),
+}));
+
+export const quotesRelations = relations(quotes, ({ many }) => ({
+  quoteItems: many(quoteItems),
+}));
+
+export const productsRelations = relations(products, ({ many }) => ({
+  quoteItems: many(quoteItems),
+}));
+
+export const orders = sqliteTable("orders", {
+  id: text("id").primaryKey().unique(),
+  status: text("status", {
+    enum: ["PLACED", "DISPATCHED", "DELIVERED", "REJECTED"],
+  }).notNull(),
+  buyerId: text("buyer_id")
+    .notNull()
+    .references(() => teams.id),
+  sellerId: text("seller_id")
+    .notNull()
+    .references(() => teams.id),
+  createdAt: text("created_at")
+    .$defaultFn(() => new Date().toISOString())
+    .notNull(),
+  updatedAt: text("updated_at")
+    .$defaultFn(() => new Date().toISOString())
+    .notNull(),
+  inquiryId: text("inquiry_id")
+    .notNull()
+    .references(() => inquiries.id),
+  quoteId: text("quote_id")
+    .notNull()
+    .references(() => quotes.id),
+  type: text("type", {
+    enum: ["REGULAR", "SAMPLE"],
+  }).notNull(),
+});
+
+export type Order = InferSelectModel<typeof orders>;
+
+export const insertOrderSchema = createInsertSchema(orders);
+
+export const orderItems = sqliteTable(
+  "order_items",
+  {
+    orderId: text("order_id")
+      .notNull()
+      .references(() => orders.id),
+    productId: text("product_id")
+      .notNull()
+      .references(() => products.id),
+    price: real("price").notNull(),
+    quantity: real("quantity").notNull(),
+    unit: text("unit").notNull(),
+    createdAt: text("created_at")
+      .$defaultFn(() => new Date().toISOString())
+      .notNull(),
+    updatedAt: text("updated_at")
+      .$defaultFn(() => new Date().toISOString())
+      .notNull(),
+  },
+  (table) => {
+    return {
+      pk: primaryKey({
+        columns: [table.orderId, table.productId],
+      }),
+    };
+  },
+);
+
+export type OrderItem = InferSelectModel<typeof orderItems>;
+
+export const insertOrderItemSchema = createInsertSchema(orderItems);
+
+export const orderItemsRelations = relations(orderItems, ({ one }) => ({
+  order: one(orders, {
+    fields: [orderItems.orderId],
+    references: [orders.id],
+  }),
+  product: one(products, {
+    fields: [orderItems.productId],
+    references: [products.id],
+  }),
+}));
+
+export const ordersRelations = relations(orders, ({ many }) => ({
+  orderItems: many(orderItems),
+}));
+
+export const inquiryAuditLogs = sqliteTable("inquiry_audit_logs", {
+  id: text("id").primaryKey().unique(),
+  inquiryId: text("inquiry_id")
+    .notNull()
+    .references(() => inquiries.id),
+  type: text("type", {
+    enum: ["RAISE", "ACCEPT", "REJECT", "NEGOTIATE"],
+  }).notNull(),
+  performedBy: text("performed_by")
+    .notNull()
+    .references(() => users.id), // References the user who performed the action
+  jsonData: text("json_data").notNull(), // Store JSON data as text
+  message: text("message"), // Optional message
+  createdAt: text("created_at")
+    .$defaultFn(() => new Date().toISOString())
+    .notNull(),
+});
+
+export type InquiryAuditLog = InferSelectModel<typeof inquiryAuditLogs>;
+
+// Define specific types for each type of action
+interface RaiseLogData {
+  action: "RAISE";
+  newQuoteId: string;
+}
+
+interface AcceptLogData {
+  action: "ACCEPT";
+  acceptedQuoteId: string;
+}
+
+interface RejectLogData {
+  action: "REJECT";
+  rejectedReason: string;
+}
+
+interface NegotiateLogData {
+  action: "NEGOTIATE";
+  previousQuoteId: string;
+  newQuoteId: string;
+}
+
+// Define a discriminated union for `jsonData`
+export type InquiryAuditLogData =
+  | RaiseLogData
+  | AcceptLogData
+  | RejectLogData
+  | NegotiateLogData;

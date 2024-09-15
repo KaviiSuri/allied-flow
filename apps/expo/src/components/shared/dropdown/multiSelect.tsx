@@ -1,33 +1,14 @@
-import type {
-  ReactNode} from "react";
-import React, {
-  useState,
-  useRef,
-  useEffect,
-  useContext,
-} from "react";
-import type {
-  ViewStyle,
-  TextStyle} from "react-native";
+import type { ReactNode } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
+import type { ViewStyle, TextStyle } from "react-native";
 import {
   View,
   Text,
   TouchableOpacity,
   Modal,
   ScrollView,
-  StyleSheet
+  StyleSheet,
 } from "react-native";
-
-interface Option {
-  label: string;
-  value: string | number;
-}
-
-interface MultiSelectDropdownProps {
-  children: ReactNode;
-  fullWidth?: boolean;
-  style?: ViewStyle;
-}
 
 interface DropDownLabelProps {
   children: ReactNode;
@@ -61,10 +42,20 @@ interface MultiSelectDropdownContextType {
 const MultiSelectDropdownContext =
   React.createContext<MultiSelectDropdownContextType>({
     open: false,
-    setOpen: () => {},
+    setOpen: () => {
+      /* do nothing */
+    },
     dropdownPosition: { top: 0, left: 0, width: 0 },
-    setDropdownPosition: () => {},
+    setDropdownPosition: () => {
+      /* do nothing */
+    },
   });
+
+interface MultiSelectDropdownProps {
+  fullWidth?: boolean;
+  style?: ViewStyle;
+  children: ReactNode;
+}
 
 export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
   children,
@@ -114,7 +105,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
     if (JSON.stringify(value) !== JSON.stringify(internalValue)) {
       setInternalValue(value);
     }
-  }, [value]);
+  }, [value, internalValue]);
 
   const handleChange = (newValue: string | number) => {
     const updatedValue = internalValue.includes(newValue)
@@ -140,6 +131,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
     .filter(
       (child): child is React.ReactElement<MenuItemProps> =>
         React.isValidElement(child) &&
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
         internalValue.includes(child.props.value),
     )
     .map((child) => child.props.children)
@@ -176,9 +168,12 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
             <ScrollView>
               {React.Children.map(children, (child) =>
                 React.isValidElement(child)
-                  ? React.cloneElement(child, {
+                  ? // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+                    React.cloneElement(child, {
                       ...child.props,
+                      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
                       selected: internalValue.includes(child.props.value),
+                      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
                       onPress: () => handleChange(child.props.value),
                     })
                   : child,
@@ -195,7 +190,6 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
 };
 
 export const MenuItem: React.FC<MenuItemProps & { onPress?: () => void }> = ({
-  value,
   children,
   style,
   selected,

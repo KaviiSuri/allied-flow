@@ -2,14 +2,12 @@ import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   Dimensions,
-  Pressable,
   SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import { InnerScreen } from "react-native-screens";
 import Toast from "react-native-toast-message";
 import { PrimaryButton } from "~/components/core/button";
 import { DetailsTabs } from "~/components/detailsTabs";

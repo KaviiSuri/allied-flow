@@ -20,6 +20,7 @@ import { api } from "~/utils/api";
 import { useAbility, useUser } from "~/providers/auth";
 import Toast from "react-native-toast-message";
 import { useRouter } from "expo-router";
+import { createStyles } from "../layouts/BottomDrawerLayout";
 
 export type ProductRequest =
   RouterInputs["inquiry"]["raise"]["productRequests"][0] & {
@@ -247,91 +248,6 @@ export const InquiryPage = () => {
   );
 };
 
-const createStyles = StyleSheet.create({
-  border: {
-    borderWidth: 1,
-    borderColor: "red",
-  },
-  createButtonContainer: {
-    height: 46,
-    width: 46,
-    borderRadius: 24,
-    position: "absolute",
-    right: 16,
-    bottom: 50,
-  },
-  createButton: {
-    height: "100%",
-    borderRadius: 24,
-    width: "100%",
-    backgroundColor: "#2f80f5",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  text: {
-    fontSize: 28,
-    padding: 0,
-    alignItems: "center",
-    justifyContent: "center",
-    textAlign: "center",
-    color: "white",
-  },
-  modalContainer: {
-    height: 669,
-    width: "100%",
-    backgroundColor: "white",
-    position: "absolute",
-    bottom: 0,
-    right: 0,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-  },
-  modalBackground: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // translucent background
-    justifyContent: "flex-end", // content sticks to the bottom
-  },
-  formHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    borderColor: "#E2E8F0",
-    padding: 16,
-    borderBottomWidth: 1,
-  },
-  formHeaderText: {
-    fontWeight: 800,
-    fontFamily: "AvenirHeavy",
-    fontSize: 14,
-  },
-  closeButtonContainer: {
-    width: 20,
-    height: 20,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  closeButtonIcon: {
-    fontSize: 14,
-  },
-  formBody: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: "#f9f9f9",
-  },
-  formSubmitContainer: {
-    position: "absolute",
-    bottom: 0,
-    padding: 16,
-    paddingBottom: 46,
-    backgroundColor: "white",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    width: "100%",
-    borderColor: "#E2E8F0",
-    borderTopWidth: 1,
-    gap: 16,
-  },
-});
 
 const InquiryList = ({
   filter,

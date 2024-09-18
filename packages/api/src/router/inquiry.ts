@@ -72,7 +72,7 @@ export const inquiryRouter = {
     .input(
       z.object({
         inquiryId: z.string(),
-        items: z.array(productRequestSchema),
+        items: z.array(productRequestSchema.omit({ productName: true })),
       }),
     )
     .mutation(async ({ ctx, input }) => {

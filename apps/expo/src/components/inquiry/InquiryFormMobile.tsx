@@ -18,6 +18,7 @@ import { CheckBox } from "@rneui/themed";
 import type { ProductRequest } from "./InquiryPage";
 import { RouterOutputs, api } from "~/utils/api";
 import { useUser } from "~/providers/auth";
+import { useProductList } from "~/hooks/useProductById";
 
 export const InquiryForm = ({
   productRequests,
@@ -118,7 +119,7 @@ const ProductForm = ({
 }) => {
   // TODO: implement search
 
-  const { data: productList } = api.products.read.useQuery();
+  const { productList } = useProductList();
   const productNameOptions = useMemo(() => {
     return (
       productList?.map((product) => ({

@@ -71,7 +71,7 @@ const create = async (
 
 export interface NegotiateQuoteInput {
   quoteId: string;
-  updatedProductRequests: ProductRequest[];
+  updatedProductRequests: Omit<ProductRequest, "productName">[];
 }
 
 const negotiate = async (

@@ -112,10 +112,7 @@ function ProductForm(props: ProductProps) {
             Add Product
           </Text>
           <Pressable onPress={props.toggleOpen}>
-            <Image
-               
-              source={CloseIcon}
-            />
+            <Image source={CloseIcon} />
           </Pressable>
         </View>
         <View
@@ -185,7 +182,7 @@ function UpdateProductForm(props: {
   const utils = api.useUtils();
   const { mutateAsync: updateProduct } = api.products.update.useMutation({
     onSuccess: () => {
-      utils.products.read.refetch().catch(console.error);
+      utils.products.read.invalidate().catch(console.error);
     },
   });
 
@@ -208,7 +205,7 @@ function CreateProductForm(props: { open: boolean; toggleOpen: () => void }) {
   const utils = api.useUtils();
   const { mutateAsync: createProduct } = api.products.create.useMutation({
     onSuccess: () => {
-      utils.products.read.refetch().catch(console.error);
+      utils.products.read.invalidate().catch(console.error);
     },
   });
 

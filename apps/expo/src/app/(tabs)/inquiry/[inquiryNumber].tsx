@@ -1,5 +1,5 @@
 import { router, useLocalSearchParams } from "expo-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
   Dimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 import Icon from "react-native-vector-icons/AntDesign";
 import { Badge } from "~/components/core/badge";
 import { DetailsSectionMobile } from "~/components/inquiryDetails/mobile/Details";
@@ -19,31 +20,97 @@ import {
 import { BottomDrawer } from "~/components/layouts/BottomDrawerLayout";
 import { FormTextInput } from "~/components/shared/form";
 import { SearchBox } from "~/components/shared/searchComponent";
+import type { RouterOutputs } from "~/utils/api";
+import { api } from "~/utils/api";
+
+type QuoteItem = NonNullable<
+  RouterOutputs["inquiry"]["getDetails"]["latestQuote"]
+>["quoteItems"][0];
+
+type QuoteItemMap = Record<string, QuoteItem>;
 
 export default function InquiriesDetails() {
   const { inquiryNumber } = useLocalSearchParams();
+  const { data, isLoading } = api.inquiry.getDetails.useQuery(
+    {
+      inquiryId: inquiryNumber as string,
+    },
+    {},
+  );
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [activeNestedTab, setActiveNestedTab] = useState("Details");
   const [openCreateForm, setOpenCreateForm] = useState(false);
   const [remark, setRemark] = useState<string>("");
 
+  const [negoiatedItems, setNegotiatedItems] = useState<QuoteItemMap>({});
+
+  const handleQuoteItemUpdate = (quoteItem: QuoteItem) => {
+    console.log("quoteItem", quoteItem);
+    setNegotiatedItems((prev) => ({
+      ...prev,
+      [quoteItem.productId]: quoteItem,
+    }));
+  };
+
+  const utils = api.useUtils();
+  const { mutateAsync: negotiate, isPending } =
+    api.inquiry.negotiate.useMutation({
+      onSuccess: () => {
+        void utils.inquiry.getDetails
+          .invalidate({ inquiryId: inquiryNumber as string })
+          .then(() => {
+            Toast.show({
+              type: "success",
+              text1: "Negotiation successful",
+            });
+          })
+          .catch();
+      },
+    });
+
   const handleNegotiate = () => {
+    if (isPending || !data) {
+      return;
+    }
+    negotiate({
+      inquiryId: data.inquiry.id,
+      items: Object.values(negoiatedItems),
+    }).catch(() => {
+      Toast.show({
+        type: "error",
+        text1: "Negotiation failed",
+      });
+    });
     setOpenCreateForm(false);
   };
   const handleCancel = () => {
+    setNegotiatedItems({});
     setOpenCreateForm(false);
   };
 
   const renderNestedScreen = () => {
+    if (isLoading || !data) {
+      return <Text>Loading...</Text>;
+    }
     switch (activeNestedTab) {
       case "Details":
-        return <DetailsSectionMobile />;
+        return (
+          <DetailsSectionMobile
+            quote={data.latestQuote}
+            remarks={data.inquiry.remarks ?? ""}
+          />
+        );
       case "Sample":
         return <SampleSectionMobile />;
       case "Order":
         return <SampleSectionMobile />;
       default:
-        return <DetailsSectionMobile />;
+        return (
+          <DetailsSectionMobile
+            quote={data.latestQuote}
+            remarks={data.inquiry.remarks ?? ""}
+          />
+        );
     }
   };
 
@@ -215,7 +282,14 @@ export default function InquiriesDetails() {
         onPrimaryButtonPress={handleNegotiate}
         onSecondaryButtonPress={handleCancel}
       >
-        <ProductsCard />
+        {data?.latestQuote?.quoteItems.map((quoteItem) => (
+          <ProductsCard
+            key={quoteItem.productId}
+            quoteItem={quoteItem}
+            updateQuoteItem={handleQuoteItemUpdate}
+            negotiatedItem={negoiatedItems[quoteItem.productId]}
+          />
+        ))}
 
         <RemarksForm remark={remark} setRemark={setRemark} />
       </BottomDrawer>
@@ -253,13 +327,31 @@ const RemarksForm = ({
     </View>
   );
 };
-const ProductsCard = () => {
+const ProductsCard = ({
+  quoteItem,
+  updateQuoteItem,
+  negotiatedItem,
+}: {
+  quoteItem: QuoteItem;
+  negotiatedItem?: QuoteItem;
+  updateQuoteItem: (quoteItem: QuoteItem) => void;
+}) => {
+  const { data: productList, isLoading } = api.products.read.useQuery();
+  if (isLoading) {
+    return <Text>Loading...</Text>;
+  }
+  const product = productList?.find(
+    (product) => product.id === quoteItem.productId,
+  );
+  if (!product) {
+    return null;
+  }
   return (
     <View>
       <View style={orderStyles.orderCardContainer}>
         <View style={orderStyles.orderCard}>
           <View style={orderStyles.innerSection}>
-            <Text style={orderStyles.headerText}>Ketone</Text>
+            <Text style={orderStyles.headerText}>{product.name}</Text>
             <View
               style={{
                 flexDirection: "row",
@@ -275,11 +367,13 @@ const ProductsCard = () => {
           <View style={orderStyles.innerSectionFlexStart}>
             <View style={{ flex: 1, gap: 4 }}>
               <Text style={orderStyles.orderHeader}>CAS</Text>
-              <Text style={orderStyles.orderMainText}>68845-36-3</Text>
+              <Text style={orderStyles.orderMainText}>{product.cas}</Text>
             </View>
             <View style={{ flex: 1, gap: 4 }}>
               <Text style={orderStyles.orderHeader}>Quantity</Text>
-              <Text style={orderStyles.orderMainText}>-</Text>
+              <Text style={orderStyles.orderMainText}>
+                {quoteItem.quantity}
+              </Text>
             </View>
             <View style={{ flex: 1, gap: 4 }}>
               <Text style={orderStyles.orderHeader}>Make</Text>
@@ -291,6 +385,21 @@ const ProductsCard = () => {
               <FormTextInput
                 placeholder="Enter target  price"
                 label="Target Price (Per Unit)"
+                value={
+                  negotiatedItem?.price ? negotiatedItem.price.toString() : ""
+                }
+                onChangeText={(value) => {
+                  const newPrice = parseFloat(value);
+                  console.log("newPrice", newPrice);
+                  if (isNaN(newPrice)) {
+                    return;
+                  }
+                  updateQuoteItem({
+                    ...quoteItem,
+                    ...negotiatedItem,
+                    price: newPrice,
+                  });
+                }}
               />
             </View>
           </View>
@@ -299,6 +408,22 @@ const ProductsCard = () => {
               <FormTextInput
                 placeholder="Enter target  quantity"
                 label="Target Quatity (Per Unit)"
+                value={
+                  negotiatedItem?.quantity
+                    ? negotiatedItem.quantity.toString()
+                    : ""
+                }
+                onChangeText={(value) => {
+                  const newQuantity = parseFloat(value);
+                  if (isNaN(newQuantity)) {
+                    return;
+                  }
+                  updateQuoteItem({
+                    ...quoteItem,
+                    ...negotiatedItem,
+                    quantity: newQuantity,
+                  });
+                }}
               />
             </View>
           </View>

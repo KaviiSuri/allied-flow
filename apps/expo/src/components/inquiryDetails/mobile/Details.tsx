@@ -1,16 +1,27 @@
+import type { RouterOutputs } from "@repo/api";
 import { StyleSheet, Text, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
+import { useProductById } from "~/hooks/useProductById";
+import { api } from "~/utils/api";
 
-export const DetailsSectionMobile = () => {
+export const DetailsSectionMobile = ({
+  quote,
+  remarks,
+}: {
+  quote: RouterOutputs["inquiry"]["getDetails"]["latestQuote"];
+  remarks: string;
+}) => {
   return (
     <View style={{ paddingBottom: 100 }}>
-      <ProductCard />
-      <RemarksCard />
+      {quote?.quoteItems.map((quoteItem) => (
+        <ProductCard key={quoteItem.productId} quoteItem={quoteItem} />
+      ))}
+      <RemarksCard remarks={remarks} />
     </View>
   );
 };
 
-const RemarksCard = () => {
+const RemarksCard = ({ remarks }: { remarks: string }) => {
   return (
     <View>
       <View style={orderStyles.orderCardContainer}>
@@ -18,13 +29,7 @@ const RemarksCard = () => {
           <View style={orderStyles.innerSectionFlexStart}>
             <View style={{ flex: 1, gap: 4 }}>
               <Text style={orderStyles.orderHeader}>Your Remarks</Text>
-              <Text style={orderStyles.orderMainText}>
-                Terms of service are the legal agreements between a service
-                provider and a person who wants to use that service. The person
-                must agree to abide by the terms of service in order to use the
-                offered service. Terms of service can also be merely a
-                disclaimer, especially regarding the use of websites.
-              </Text>
+              <Text style={orderStyles.orderMainText}>{remarks}</Text>
             </View>
           </View>
         </View>
@@ -33,36 +38,69 @@ const RemarksCard = () => {
   );
 };
 
-const ProductCard = () => {
+const ProductCard = ({
+  quoteItem,
+}: {
+  quoteItem: NonNullable<
+    RouterOutputs["inquiry"]["getDetails"]["latestQuote"]
+  >["quoteItems"][0];
+}) => {
+  const { isLoading, product } = useProductById(quoteItem.productId);
+
+  if (isLoading) {
+    return <Text>Loading...</Text>;
+  }
+  if (!product) {
+    return null;
+  }
   return (
     <View>
       <View style={orderStyles.orderCardContainer}>
         <View style={orderStyles.orderCard}>
           <View style={orderStyles.innerSection}>
-            <Text style={orderStyles.headerText}>Ketone</Text>
+            <Text style={orderStyles.headerText}>{product.name}</Text>
             <Icon name="ellipsis-v"></Icon>
           </View>
           <View style={orderStyles.innerSectionFlexStart}>
             <View style={{ flex: 1, gap: 4 }}>
               <Text style={orderStyles.orderHeader}>CAS</Text>
-              <Text style={orderStyles.orderMainText}>68845-36-3</Text>
+              <Text style={orderStyles.orderMainText}>{product.cas}</Text>
+            </View>
+            <View style={{ flex: 1, gap: 4 }}>
+              <Text style={orderStyles.orderHeader}>Price</Text>
+              <View style={{ flexDirection: "row", gap: 4 }}>
+                <Text style={orderStyles.orderMainText}>{quoteItem.price}</Text>
+                {quoteItem.prevPrice &&
+                quoteItem.prevPrice !== quoteItem.price ? (
+                  <Text style={{ textDecorationLine: "line-through" }}>
+                    {quoteItem.prevPrice}
+                  </Text>
+                ) : null}
+              </View>
             </View>
             <View style={{ flex: 1, gap: 4 }}>
               <Text style={orderStyles.orderHeader}>Quantity</Text>
-              <Text style={orderStyles.orderMainText}>-</Text>
+              <View style={{ flexDirection: "row", gap: 4 }}>
+                <Text style={orderStyles.orderMainText}>
+                  {quoteItem.quantity}
+                </Text>
+                {quoteItem.prevQuantity &&
+                quoteItem.prevQuantity !== quoteItem.quantity ? (
+                  <Text style={{ textDecorationLine: "line-through" }}>
+                    {quoteItem.prevQuantity}
+                  </Text>
+                ) : null}
+              </View>
             </View>
             <View style={{ flex: 1, gap: 4 }}>
               <Text style={orderStyles.orderHeader}>Make</Text>
-              <Text style={orderStyles.orderMainText}>Spicy</Text>
+              <Text style={orderStyles.orderMainText}>{product.make}</Text>
             </View>
           </View>
           <View style={orderStyles.innerSectionFlexStart}>
             <View style={{ flex: 1, gap: 4 }}>
               <Text style={orderStyles.orderHeader}>Description</Text>
-              <Text style={orderStyles.orderMainText}>
-                A ketone is a compound with the structure R-C-R where R and R
-                can be carbon
-              </Text>
+              <Text style={orderStyles.orderMainText}>{product.desc}</Text>
             </View>
           </View>
         </View>

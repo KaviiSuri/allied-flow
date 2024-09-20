@@ -13,6 +13,7 @@ export default [
     icon: DashboardIcon,
     action: undefined,
     subject: undefined,
+    hideDesktop: false,
     mobileView: true,
   },
   {
@@ -21,6 +22,7 @@ export default [
     icon: InquiriesIcon,
     action: undefined,
     subject: undefined,
+    hideDesktop: false,
     mobileView: true,
   },
 
@@ -30,6 +32,7 @@ export default [
     icon: OrdersIcon,
     action: undefined,
     subject: undefined,
+    hideDesktop: false,
     mobileView: true,
   },
   {
@@ -38,6 +41,7 @@ export default [
     icon: SamplesIcon,
     action: undefined,
     subject: undefined,
+    hideDesktop: false,
     mobileView: true,
   },
   {
@@ -46,7 +50,8 @@ export default [
     icon: HomeIcon,
     action: "read",
     subject: "Product",
-    mobileView: true,
+    hideDesktop: false,
+    mobileView: false,
   },
   {
     path: "clients",
@@ -54,6 +59,7 @@ export default [
     icon: ClientIcon,
     action: "read",
     subject: "Team",
+    hideDesktop: false,
     mobileView: false,
   },
   {
@@ -62,6 +68,7 @@ export default [
     icon: UserIcon,
     action: "read",
     subject: "User",
+    hideDesktop: false,
     mobileView: false,
   },
   {
@@ -70,15 +77,19 @@ export default [
     icon: UserIcon,
     action: "read",
     subject: "User",
+    hideDesktop: true,
+    mobileView: true,
   },
   {
     path: "inquiry/sendQuote",
     name: "",
-    hide: true,
+    hideDesktop: true,
+    mobileView: false,
   },
   {
     path: "inquiry/[inquiryNumber]",
     name: "",
-    hide: true,
+    hideDesktop: true,
+    mobileView: false,
   },
 ] as const;

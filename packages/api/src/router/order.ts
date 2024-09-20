@@ -1,7 +1,12 @@
 import { TRPCError } from "@trpc/server";
 import type { TRPCRouterRecord } from "@trpc/server";
 import { protectedProcedure } from "../trpc.js";
-import { insertOrderSchema, orderItems, orders } from "@repo/db/schema";
+import {
+  inquiries,
+  insertOrderSchema,
+  orderItems,
+  orders,
+} from "@repo/db/schema";
 import { nanoid } from "nanoid";
 import { and, eq, lt } from "@repo/db";
 import { z } from "zod";
@@ -13,10 +18,10 @@ export const ordersRouter = {
       subject: "Order",
     })
     .input(
-      insertOrderSchema.omit({
-        id: true,
-        createdAt: true,
-        updatedAt: true,
+      z.object({
+        inquiryId: z.string(),
+        quoteId: z.string(),
+        type: z.enum(["REGULAR", "SAMPLE"]),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -49,6 +54,8 @@ export const ordersRouter = {
           .insert(orders)
           .values({
             ...input,
+            buyerId: inquiry.buyerId,
+            sellerId: inquiry.sellerId,
             id: nanoid(),
             status: "PLACED",
           })
@@ -74,6 +81,12 @@ export const ordersRouter = {
             updatedAt: new Date().toISOString(),
           })),
         );
+        await trx
+          .update(inquiries)
+          .set({
+            status: "ACCEPTED",
+          })
+          .where(eq(inquiries.id, input.inquiryId));
 
         return order;
       });

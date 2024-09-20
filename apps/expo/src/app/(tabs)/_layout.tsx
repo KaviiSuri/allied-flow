@@ -47,7 +47,7 @@ export default function TabLayout() {
                       !ability.can(drawer.action, drawer.subject) && {
                         display: "none",
                       }),
-                    ...(drawer.hide && {
+                    ...(!drawer.mobileView && {
                       display: "none",
                     }),
                   },

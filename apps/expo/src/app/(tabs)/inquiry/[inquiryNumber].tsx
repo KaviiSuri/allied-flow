@@ -37,6 +37,14 @@ export default function InquiriesDetails() {
     },
     {},
   );
+  const isFinalized =
+    data &&
+    data.inquiry &&
+    data.latestQuote &&
+    (["ACCEPTED", "REJECTED"].includes(data?.inquiry.status) ||
+      ["ACCEPTED", "REJECTED"].includes(data?.latestQuote?.status));
+
+  console.log("isFinalized", isFinalized);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [activeNestedTab, setActiveNestedTab] = useState("Details");
   const [openCreateForm, setOpenCreateForm] = useState(false);
@@ -83,6 +91,31 @@ export default function InquiriesDetails() {
     });
     setOpenCreateForm(false);
   };
+
+  const { mutateAsync: createOrderFromInquiry } =
+    api.orders.createFromInquiry.useMutation({
+      onSuccess: () => {
+        Toast.show({
+          type: "success",
+          text1: "Order placed successfully",
+          onPress: () => {
+            router.push("/orders");
+          },
+        });
+        utils.orders.invalidate().catch(console.error);
+      },
+    });
+
+  const handleOrder = () => {
+    if (!data || !data.inquiry || !data.latestQuote || isFinalized) {
+      return;
+    }
+    createOrderFromInquiry({
+      inquiryId: data.inquiry.id,
+      quoteId: data.latestQuote.id,
+      type: "REGULAR",
+    });
+  };
   const handleCancel = () => {
     setNegotiatedItems({});
     setOpenCreateForm(false);
@@ -113,6 +146,9 @@ export default function InquiriesDetails() {
         );
     }
   };
+
+  console.log("data", data?.inquiry.status, data?.latestQuote?.status);
+  console.log("bool");
 
   const windowHeight = Dimensions.get("window").height - 185;
 
@@ -257,7 +293,17 @@ export default function InquiriesDetails() {
             Negotiate
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[bottomStyles.primaryButton]}>
+        <TouchableOpacity
+          style={[
+            bottomStyles.primaryButton,
+            isFinalized && {
+              backgroundColor: "lightgrey",
+              borderColor: "lightgrey",
+            },
+          ]}
+          onPress={handleOrder}
+          disabled={isFinalized}
+        >
           <Text
             style={{
               color: "#fff",

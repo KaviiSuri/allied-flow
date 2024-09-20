@@ -65,7 +65,7 @@ export default function WebLayout() {
 
   useEffect(() => {
     console.log("======", ability.can("read", "User"));
-    console.log(DrawerItem)
+    console.log(DrawerItem);
   }, [ability, DrawerItem]);
 
   if (!isAuthenticated) {
@@ -120,7 +120,7 @@ export default function WebLayout() {
                         !ability.can(drawer.action, drawer.subject) && {
                           display: "none",
                         }),
-                      ...(drawer.hide && {
+                      ...(drawer.hideDesktop && {
                         display: "none",
                       }),
                     },

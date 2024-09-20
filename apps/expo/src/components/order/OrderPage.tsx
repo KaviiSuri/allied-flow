@@ -70,7 +70,13 @@ export const OrderPage = () => {
         <OrderBody filter={filter} setFilter={setFilter} orders={orders} />
 
         {hasNextPage && (
-          <PrimaryButton onPress={() => fetchNextPage} text="Load more" />
+          <View style={{ alignItems: "center", marginVertical: 16 }}>
+            <PrimaryButton
+              style={{ maxWidth: 100 }}
+              onPress={() => fetchNextPage()}
+              text="Load more"
+            />
+          </View>
         )}
       </ScrollView>
     </View>
@@ -117,7 +123,7 @@ const OrderBody = ({
         {/* orders */}
 
         {orders.map((order) => (
-          <OrderCard order={order} />
+          <OrderCard key={order.id} order={order} />
         ))}
       </GestureHandlerRootView>
     </View>

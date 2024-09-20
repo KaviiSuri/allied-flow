@@ -130,6 +130,7 @@ export const ordersRouter = {
             },
           },
         },
+        limit: input.limit,
       });
 
       return orders;

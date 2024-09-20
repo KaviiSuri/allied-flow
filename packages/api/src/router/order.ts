@@ -103,6 +103,7 @@ export const ordersRouter = {
         status: z
           .enum(["PLACED", "DISPATCHED", "DELIVERED", "REJECTED"])
           .optional(),
+        inquiryId: z.string().optional(),
         limit: z.number().min(1).max(100).default(10),
         type: z.enum(["REGULAR", "SAMPLE"]),
         cursor: z.string().optional(),
@@ -119,6 +120,7 @@ export const ordersRouter = {
               ? eq(orders.buyerId, teamId)
               : eq(orders.sellerId, teamId),
             eq(orders.type, input.type),
+            input.inquiryId ? eq(orders.inquiryId, input.inquiryId) : undefined,
             input.status ? eq(orders.status, input.status) : undefined,
             input.cursor ? lt(orders.createdAt, input.cursor) : undefined,
           ),

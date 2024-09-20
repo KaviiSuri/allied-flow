@@ -8,8 +8,17 @@ import Icon from "react-native-vector-icons/FontAwesome5";
 import type { RouterInputs, RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
 import { PrimaryButton } from "../core/button";
+import { ViewProps } from "react-native-svg/lib/typescript/fabric/utils";
 
-export const OrderPage = () => {
+export const OrderPage = ({
+  type,
+  inquiryId,
+  showHeader = true,
+}: {
+  type: "REGULAR" | "SAMPLE";
+  inquiryId?: string;
+  showHeader?: boolean;
+}) => {
   const [filter, setFilter] = useState<string>("All");
   const [statusFilter, setStatusFilter] =
     useState<RouterInputs["orders"]["list"]["status"]>(undefined);
@@ -34,8 +43,9 @@ export const OrderPage = () => {
   const { data, isError, isLoading, hasNextPage, fetchNextPage } =
     api.orders.list.useInfiniteQuery(
       {
-        type: "REGULAR",
+        type,
         status: statusFilter,
+        inquiryId,
       },
       {
         getNextPageParam: (lastPage) => {
@@ -57,17 +67,29 @@ export const OrderPage = () => {
   return (
     <View style={styles.container}>
       {/* Fixed SearchBox at the top */}
-      <View style={styles.searchBoxContainer}>
-        <SearchBox
-          placeholder="Search product, Order ID"
-          setValue={setSearchResult}
-          value={searchResult}
-        />
-      </View>
+      {showHeader && (
+        <View style={styles.searchBoxContainer}>
+          <SearchBox
+            placeholder="Search product, Order ID"
+            setValue={setSearchResult}
+            value={searchResult}
+          />
+        </View>
+      )}
 
       {/* Scrollable content below the fixed SearchBox */}
-      <ScrollView style={styles.orderBodyContainer}>
-        <OrderBody filter={filter} setFilter={setFilter} orders={orders} />
+      <ScrollView
+        style={[
+          styles.orderBodyContainer,
+          showHeader && { backgroundColor: "#f9f9f9" },
+        ]}
+      >
+        <OrderBody
+          style={[showHeader && { padding: 16 }]}
+          filter={filter}
+          setFilter={setFilter}
+          orders={orders}
+        />
 
         {hasNextPage && (
           <View style={{ alignItems: "center", marginVertical: 16 }}>
@@ -87,13 +109,15 @@ const OrderBody = ({
   filter,
   setFilter,
   orders,
+  style,
 }: {
   filter: string;
   setFilter: React.Dispatch<React.SetStateAction<string>>;
   orders: RouterOutputs["orders"]["list"];
+  style?: ViewProps["style"];
 }) => {
   return (
-    <View style={styles.orderBodyContent}>
+    <View style={[styles.orderBodyContent, style]}>
       <GestureHandlerRootView style={styles.container}>
         {/* tabs */}
         <ScrollView
@@ -224,11 +248,8 @@ const styles = StyleSheet.create({
   },
   orderBodyContainer: {
     flex: 1,
-    backgroundColor: "#f9f9f9",
   },
-  orderBodyContent: {
-    padding: 16,
-  },
+  orderBodyContent: {},
   filterTabsContainer: {
     flexDirection: "row",
     gap: 8,

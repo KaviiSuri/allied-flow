@@ -18,6 +18,7 @@ import {
   SampleSectionMobile,
 } from "~/components/inquiryDetails/mobile/Order";
 import { BottomDrawer } from "~/components/layouts/BottomDrawerLayout";
+import { OrderPage } from "~/components/order/OrderPage";
 import { FormTextInput } from "~/components/shared/form";
 import { SearchBox } from "~/components/shared/searchComponent";
 import type { RouterOutputs } from "~/utils/api";
@@ -134,9 +135,21 @@ export default function InquiriesDetails() {
           />
         );
       case "Sample":
-        return <SampleSectionMobile />;
+        return (
+          <OrderPage
+            showHeader={false}
+            type="SAMPLE"
+            inquiryId={inquiryNumber as string}
+          />
+        );
       case "Order":
-        return <SampleSectionMobile />;
+        return (
+          <OrderPage
+            showHeader={false}
+            type="REGULAR"
+            inquiryId={inquiryNumber as string}
+          />
+        );
       default:
         return (
           <DetailsSectionMobile

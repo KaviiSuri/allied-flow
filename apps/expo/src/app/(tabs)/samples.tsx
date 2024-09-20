@@ -1,4 +1,5 @@
 import { SafeAreaView, Text } from "react-native";
+import { OrderPage } from "~/components/order/OrderPage";
 import { SamplePage } from "~/components/sample/SamplesPage";
 
 export default function Samples() {
@@ -8,10 +9,10 @@ export default function Samples() {
         display: "flex",
         width: "100%",
         height: "100%",
-        backgroundColor: "white"
+        backgroundColor: "white",
       }}
     >
-      <SamplePage />
+      <OrderPage type="SAMPLE" />
     </SafeAreaView>
   );
 }

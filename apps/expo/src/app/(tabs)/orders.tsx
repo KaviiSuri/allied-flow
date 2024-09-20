@@ -8,10 +8,10 @@ export default function Orders() {
         display: "flex",
         width: "100%",
         height: "100%",
-        backgroundColor: "white"
+        backgroundColor: "white",
       }}
     >
-      <OrderPage />
+      <OrderPage type="REGULAR" />
     </SafeAreaView>
   );
 }

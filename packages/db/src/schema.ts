@@ -1,5 +1,5 @@
-import type { InferSelectModel, SQL } from "drizzle-orm";
-import { relations, sql } from "drizzle-orm";
+import type { InferSelectModel } from "drizzle-orm";
+import { relations } from "drizzle-orm";
 import {
   text,
   sqliteTable,
@@ -7,7 +7,6 @@ import {
   primaryKey,
   real,
 } from "drizzle-orm/sqlite-core";
-import type { AnySQLiteColumn } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
 
 export const users = sqliteTable("users", {
@@ -336,3 +335,38 @@ export type InquiryAuditLogData =
   | AcceptLogData
   | RejectLogData
   | NegotiateLogData;
+
+export const notifications = sqliteTable("notifications", {
+  id: text("id").primaryKey().unique(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id),
+  type: text("type", {
+    enum: [
+      "ORDER_PLACED",
+      "ORDER_DISPATCHED",
+      "ORDER_SHIPPED",
+      "INQUIRY_RECEIVED",
+      "NEW_QUOTE_RECEIVED",
+      "QUOTE_ACCEPTED",
+      "QUOTE_REJECTED",
+    ],
+  }).notNull(),
+  orderId: text("order_id"),
+  orderType: text("order_type", {
+    enum: ["REGULAR", "SAMPLE"],
+  }),
+  inquiryId: text("inquiry_id"),
+  quoteId: text("quote_id"),
+  message: text("message").notNull(),
+  createdAt: text("created_at")
+    .$defaultFn(() => new Date().toISOString())
+    .notNull(),
+  read: integer("read", {
+    mode: "boolean",
+  }).notNull(),
+});
+
+export type Notification = InferSelectModel<typeof notifications>;
+
+export const insertNotificationSchema = createInsertSchema(notifications);

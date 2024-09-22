@@ -1,28 +1,14 @@
+import { RouterOutputs } from "@repo/api";
 import React from "react";
 import type { ImageSourcePropType } from "react-native";
 import { View, Text, Image } from "react-native";
 
-export interface NotificationProps {
-  readStatus: "UNREAD" | "READ";
-  productNames: string[];
-  id: string;
-  timePlaced: Date;
-  notificationType:
-    | "ORDER_PLACED"
-    | "NEW_QUOTE_RECIEVED"
-    | "QUOTE_ACCEPTED"
-    | "QUOTE_EXPIRED"
-    | "ORDER_ACCEPTED"
-    | "ORDER_DISPATCHED"
-    | "ORDER_SHIPPED"
-    | "SAMPLE_DISPATCHED"
-    | "SAMPLE_SHIPPED"
-    | "SAMPLE_ORDER_PLACED"
-    | "INQUIRY_RAISED";
-}
+type NotificationType = NonNullable<
+  RouterOutputs["notifications"]["getAll"][number]
+>;
 
 const notificationIcons: {
-  [key in NotificationProps["notificationType"]]: {
+  [key in NotificationType["type"]]: {
     icon: ImageSourcePropType;
     background: string;
   };
@@ -32,7 +18,7 @@ const notificationIcons: {
     icon: require("../../../app/assets/images/notifications/notification-circle-green.png"),
     background: "#ECFDF5",
   },
-  NEW_QUOTE_RECIEVED: {
+  NEW_QUOTE_RECEIVED: {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     icon: require("../../../app/assets/images/notifications/notification-coins-yellow.png"),
     background: "#FFF7ED",
@@ -42,16 +28,16 @@ const notificationIcons: {
     icon: require("../../../app/assets/images/notifications/notification-file-green.png"),
     background: "#ECFDF5",
   },
-  QUOTE_EXPIRED: {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    icon: require("../../../app/assets/images/notifications/notification-circle-red.png"),
-    background: "#FEF2F2",
-  },
-  ORDER_ACCEPTED: {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    icon: require("../../../app/assets/images/notifications/notification-circle-green.png"),
-    background: "#ECFDF5",
-  },
+  // QUOTE_EXPIRED: {
+  //   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  //   icon: require("../../../app/assets/images/notifications/notification-circle-red.png"),
+  //   background: "#FEF2F2",
+  // },
+  // ORDER_ACCEPTED: {
+  //   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  //   icon: require("../../../app/assets/images/notifications/notification-circle-green.png"),
+  //   background: "#ECFDF5",
+  // },
   ORDER_DISPATCHED: {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     icon: require("../../../app/assets/images/notifications/notification-package.png"),
@@ -62,191 +48,91 @@ const notificationIcons: {
     icon: require("../../../app/assets/images/notifications/notification-truck.png"),
     background: "#ECFDF5",
   },
-  SAMPLE_DISPATCHED: {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    icon: require("../../../app/assets/images/notifications/notification-package.png"),
-    background: "#F1F5F9",
-  },
-  SAMPLE_SHIPPED: {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    icon: require("../../../app/assets/images/notifications/notification-truck.png"),
-    background: "#ECFDF5",
-  },
-  INQUIRY_RAISED: {
+  INQUIRY_RECEIVED: {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     icon: require("../../../app/assets/images/notifications/notification-file-yellow.png"),
     background: "#FFF7ED",
   },
-  SAMPLE_ORDER_PLACED: {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    icon: require("../../../app/assets/images/notifications/notification-circle-green.png"),
-    background: "#ECFDF5",
+  QUOTE_REJECTED: {
+    icon: require("../../../app/assets/images/notifications/notification-circle-red.png"),
+    background: "#FEF2F2",
   },
 };
 
-function NotificationContent(props: NotificationProps) {
-  if (props.notificationType === "ORDER_PLACED") {
+function NotificationContent({
+  notification,
+}: {
+  notification: NotificationType;
+}) {
+  if (notification.type === "ORDER_PLACED") {
     return (
       <Text style={{ fontFamily: "Avenir", fontSize: 14, fontWeight: 500 }}>
-        Order for{" "}
-        <Text style={{ fontWeight: 700 }}>
-          {props.productNames.length === 2
-            ? props.productNames[0] + ` & 1 other`
-            : props.productNames.length > 2
-              ? props.productNames[0] +
-                ` & ${props.productNames.length - 1} others`
-              : props.productNames[0]}
-        </Text>{" "}
-        with order id <Text style={{ fontWeight: 700 }}>#{props.id}</Text> has
+        Order with order id{" "}
+        <Text style={{ fontWeight: 700 }}>#{notification.orderId}</Text> has
         been successfully placed.
       </Text>
     );
-  } else if (props.notificationType === "NEW_QUOTE_RECIEVED") {
+  }
+  if (notification.type === "NEW_QUOTE_RECEIVED") {
     return (
       <Text style={{ fontFamily: "Avenir", fontSize: 14, fontWeight: 500 }}>
         New quote on inquiry number{" "}
-        <Text style={{ fontWeight: 700 }}>#{props.id}</Text> has been received.
+        <Text style={{ fontWeight: 700 }}>#{notification.inquiryId}</Text> has
+        been received.
       </Text>
     );
-  } else if (props.notificationType === "QUOTE_ACCEPTED") {
+  }
+  if (notification.type === "QUOTE_ACCEPTED") {
     return (
       <Text style={{ fontFamily: "Avenir", fontSize: 14, fontWeight: 500 }}>
         Negotiated quote on inquiry number{" "}
-        <Text style={{ fontWeight: 700 }}>#{props.id}</Text> has been accepted.
+        <Text style={{ fontWeight: 700 }}>#{notification.id}</Text> has been
+        accepted.
       </Text>
     );
-  } else if (props.notificationType === "QUOTE_EXPIRED") {
+  }
+  if (notification.type === "ORDER_DISPATCHED") {
     return (
       <Text style={{ fontFamily: "Avenir", fontSize: 14, fontWeight: 500 }}>
-        Quote on inquiry number{" "}
-        <Text style={{ fontWeight: 700 }}>#{props.id}</Text> has expired.
+        {notification.orderType === "REGULAR" ? "Order" : "Sample"}
+        with order id{" "}
+        <Text style={{ fontWeight: 700 }}>#{notification.id}</Text> has been
+        dispatched.
       </Text>
     );
-  } else if (props.notificationType === "ORDER_ACCEPTED") {
+  }
+  if (notification.type === "ORDER_SHIPPED") {
     return (
       <Text style={{ fontFamily: "Avenir", fontSize: 14, fontWeight: 500 }}>
-        Quote on inquiry number{" "}
-        <Text style={{ fontWeight: 700 }}>#{props.id}</Text> has expired.
-      </Text>
-    );
-  } else if (props.notificationType === "ORDER_DISPATCHED") {
-    return (
-      <Text style={{ fontFamily: "Avenir", fontSize: 14, fontWeight: 500 }}>
-        Order for{" "}
-        <Text style={{ fontWeight: 700 }}>
-          {props.productNames.length === 2
-            ? props.productNames[0] + ` & 1 other`
-            : props.productNames.length > 2
-              ? props.productNames[0] +
-                ` & ${props.productNames.length - 1} others`
-              : props.productNames[0]}
-        </Text>{" "}
-        with order id <Text style={{ fontWeight: 700 }}>#{props.id}</Text> has
-        been dispatched.
-      </Text>
-    );
-  } else if (props.notificationType === "ORDER_SHIPPED") {
-    return (
-      <Text style={{ fontFamily: "Avenir", fontSize: 14, fontWeight: 500 }}>
-        Order for{" "}
-        <Text style={{ fontWeight: 700 }}>
-          {props.productNames.length === 2
-            ? props.productNames[0] + ` & 1 other`
-            : props.productNames.length > 2
-              ? props.productNames[0] +
-                ` & ${props.productNames.length - 1} others`
-              : props.productNames[0]}
-        </Text>{" "}
-        with order id <Text style={{ fontWeight: 700 }}>#{props.id}</Text> has
+        {notification.orderType === "REGULAR" ? "Order" : "Sample"} for with
+        order id{" "}
+        <Text style={{ fontWeight: 700 }}>#{notification.orderId}</Text> has
         been shipped successfully.
       </Text>
     );
-  } else if (props.notificationType === "SAMPLE_DISPATCHED") {
+  }
+  if (notification.type === "INQUIRY_RECEIVED") {
     return (
       <Text style={{ fontFamily: "Avenir", fontSize: 14, fontWeight: 500 }}>
-        Sample for{" "}
-        <Text style={{ fontWeight: 700 }}>
-          {props.productNames.length === 2
-            ? props.productNames[0] + ` & 1 other`
-            : props.productNames.length > 2
-              ? props.productNames[0] +
-                ` & ${props.productNames.length - 1} others`
-              : props.productNames[0]}
-        </Text>{" "}
-        with order id <Text style={{ fontWeight: 700 }}>#{props.id}</Text> has
-        been dispatched successfully.
-      </Text>
-    );
-  } else if (props.notificationType === "SAMPLE_SHIPPED") {
-    return (
-      <Text style={{ fontFamily: "Avenir", fontSize: 14, fontWeight: 500 }}>
-        Sample for{" "}
-        <Text style={{ fontWeight: 700 }}>
-          {props.productNames.length === 2
-            ? props.productNames[0] + ` & 1 other`
-            : props.productNames.length > 2
-              ? props.productNames[0] +
-                ` & ${props.productNames.length - 1} others`
-              : props.productNames[0]}
-        </Text>{" "}
-        with order id <Text style={{ fontWeight: 700 }}>#{props.id}</Text> has
-        been shipped successfully.
-      </Text>
-    );
-    // eslint-disable-next-line no-dupe-else-if
-  } else if (props.notificationType === "SAMPLE_DISPATCHED") {
-    return (
-      <Text style={{ fontFamily: "Avenir", fontSize: 14, fontWeight: 500 }}>
-        Sample for{" "}
-        <Text style={{ fontWeight: 700 }}>
-          {props.productNames.length === 2
-            ? props.productNames[0] + ` & 1 other`
-            : props.productNames.length > 2
-              ? props.productNames[0] +
-                ` & ${props.productNames.length - 1} others`
-              : props.productNames[0]}
-        </Text>{" "}
-        with order id <Text style={{ fontWeight: 700 }}>#{props.id}</Text> has
-        been dispatched successfully.
-      </Text>
-    );
-  } else if (props.notificationType === "INQUIRY_RAISED") {
-    return (
-      <Text style={{ fontFamily: "Avenir", fontSize: 14, fontWeight: 500 }}>
-        Inquiry for{" "}
-        <Text style={{ fontWeight: 700 }}>
-          {props.productNames.length === 2
-            ? props.productNames[0] + ` & 1 other`
-            : props.productNames.length > 2
-              ? props.productNames[0] +
-                ` & ${props.productNames.length - 1} others`
-              : props.productNames[0]}
-        </Text>{" "}
-        with inquiry number <Text style={{ fontWeight: 700 }}>#{props.id}</Text>{" "}
-        has been raised successfully.
+        Inquiry for with inquiry number{" "}
+        <Text style={{ fontWeight: 700 }}>#{notification.inquiryId}</Text> has
+        been raised successfully.
       </Text>
     );
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  } else if (props.notificationType === "SAMPLE_ORDER_PLACED") {
+  }
+  if (notification.type === "QUOTE_REJECTED") {
     return (
       <Text style={{ fontFamily: "Avenir", fontSize: 14, fontWeight: 500 }}>
-        Sample order for{" "}
-        <Text style={{ fontWeight: 700 }}>
-          {props.productNames.length === 2
-            ? props.productNames[0] + ` & 1 other`
-            : props.productNames.length > 2
-              ? props.productNames[0] +
-                ` & ${props.productNames.length - 1} others`
-              : props.productNames[0]}
-        </Text>{" "}
-        with order id <Text style={{ fontWeight: 700 }}>#{props.id}</Text> has
-        been placed successfully.
+        Negotiated quote on inquiry number{" "}
+        <Text style={{ fontWeight: 700 }}>#{notification.id}</Text> has been
+        rejected.
       </Text>
     );
   }
 }
 
-function Notification(props: NotificationProps) {
+function Notification({ notification }: { notification: NotificationType }) {
   return (
     <View
       style={{
@@ -256,7 +142,7 @@ function Notification(props: NotificationProps) {
         gap: 12,
         borderBottomWidth: 1,
         borderColor: "#E2E8F0",
-        backgroundColor: props.readStatus === "UNREAD" ? "#EFF6FF" : "#FFFFFF",
+        backgroundColor: !notification.read ? "#EFF6FF" : "#FFFFFF",
         position: "relative",
       }}
     >
@@ -269,23 +155,23 @@ function Notification(props: NotificationProps) {
           right: 8,
           backgroundColor: "#2F80F5",
           position: "absolute",
-          display: props.readStatus === "UNREAD" ? "flex" : "none",
+          display: !notification.read ? "flex" : "none",
         }}
       />
       <View
         style={{
           padding: 4,
-          backgroundColor: notificationIcons[props.notificationType].background,
+          backgroundColor: notificationIcons[notification.type].background,
           borderRadius: 2,
           height: 24,
           width: 24,
         }}
       >
-        <Image source={notificationIcons[props.notificationType].icon} />
+        <Image source={notificationIcons[notification.type].icon} />
       </View>
       <View style={{ flex: 1, gap: 2, flexDirection: "column" }}>
         <View>
-          <NotificationContent {...props} />
+          <NotificationContent notification={notification} />
         </View>
         <View>
           <Text

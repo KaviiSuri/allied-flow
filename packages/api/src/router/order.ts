@@ -1,15 +1,11 @@
 import { TRPCError } from "@trpc/server";
 import type { TRPCRouterRecord } from "@trpc/server";
 import { protectedProcedure } from "../trpc.js";
-import {
-  inquiries,
-  insertOrderSchema,
-  orderItems,
-  orders,
-} from "@repo/db/schema";
+import { inquiries, orderItems, orders } from "@repo/db/schema";
 import { nanoid } from "nanoid";
 import { and, eq, lt } from "@repo/db";
 import { z } from "zod";
+import { sendNotification } from "../services/pubsub.js";
 
 export const ordersRouter = {
   createFromInquiry: protectedProcedure
@@ -88,6 +84,16 @@ export const ordersRouter = {
           })
           .where(eq(inquiries.id, input.inquiryId));
 
+        await sendNotification(trx, {
+          userId: ctx.user.id,
+          id: "",
+          read: false,
+          type: "ORDER_PLACED",
+          orderType: input.type,
+          orderId: order.id,
+          message: `Order ${order.id} has been placed`,
+          createdAt: new Date().toISOString(),
+        });
         return order;
       });
       return order;

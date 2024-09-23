@@ -38,11 +38,10 @@ export default function InquiriesDetails() {
     {},
   );
   const isFinalized =
-    data &&
-    data.inquiry &&
+    data?.inquiry &&
     data.latestQuote &&
-    (["ACCEPTED", "REJECTED"].includes(data?.inquiry.status) ||
-      ["ACCEPTED", "REJECTED"].includes(data?.latestQuote?.status));
+    (["ACCEPTED", "REJECTED"].includes(data.inquiry.status) ||
+      ["ACCEPTED", "REJECTED"].includes(data.latestQuote.status));
 
   console.log("isFinalized", isFinalized);
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -107,7 +106,7 @@ export default function InquiriesDetails() {
     });
 
   const handleOrder = () => {
-    if (!data || !data.inquiry || !data.latestQuote || isFinalized) {
+    if (!data?.inquiry || !data.latestQuote || isFinalized) {
       return;
     }
     createOrderFromInquiry({

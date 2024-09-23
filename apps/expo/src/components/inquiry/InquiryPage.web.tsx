@@ -16,6 +16,7 @@ import { InquiryForm } from "./InquiryFormMobile";
 import { useAbility, useUser } from "~/providers/auth";
 import { ProductRequest } from "./InquiryPage";
 import { SearchBox } from "../shared/searchComponent";
+import Toast from "react-native-toast-message";
 
 
 export const InquiryPage = () => {
@@ -81,7 +82,7 @@ export const InquiryPage = () => {
 
   const { mutateAsync: raiseInquiry } = api.inquiry.raise.useMutation({
     onSuccess: () => {
-      setOpenCreateForm(false);
+      setDrawerVisible(false);
       utils.inquiry.list.invalidate();
       Toast.show({
         position: "bottom",

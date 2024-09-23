@@ -43,6 +43,23 @@ export default function SentInquiries({inquiries, currentTab}:{inquiries: Router
     setQuoteVisible(!quoteVisible);
   };
 
+  useEffect(()=>{
+    console.log(inquiries)
+  },[inquiries])
+
+
+const formatProducts = (input: string): string => {
+    // Split the input string into an array
+    const entities = input.split(',').map(entity => entity.trim());
+
+    // Check the number of entities
+    if (entities.length <= 2) {
+        return input; // Return original string if 2 or fewer entities
+    } else {
+        // Return the first two entities and append "& others"
+        return `${entities[0]}, ${entities[1]} & ${entities.length-2}others`;
+    }
+}
   const [clientDetailsVisible, setClientDetailsVisible] = useState<boolean>(false);
   const [currentClientDetails, setCurrentClientDetails] = useState<IClient|null>(null);
 
@@ -142,7 +159,8 @@ export default function SentInquiries({inquiries, currentTab}:{inquiries: Router
               <TableData>
                 <Text style={{fontFamily: "Avenir"
                 }}>
-                {inquiry.productNames}
+                {/* {inquiry.productNames} */}
+                {formatProducts(inquiry.productNames)}
                 </Text>
                 </TableData>
                 {currentTab === "All" && <ActionBadge iconName="open-in-new" actionText="View Quote" handleAction={() => router.navigate(`inquiry/${inquiry.id}`)} />}

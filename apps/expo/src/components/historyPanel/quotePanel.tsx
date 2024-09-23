@@ -1,39 +1,21 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { StyleSheet, Text, TextInput, View } from "react-native"
 import { Badge } from "../core/badge"
+import { RouterOutputs } from "@repo/api"
+import { api } from "~/utils/api";
 
-export const QuotePanel = () => {
+type QuoteItem = NonNullable<
+  RouterOutputs["inquiry"]["getDetails"]["latestQuote"]
+>["quoteItems"][0];
+
+export const QuotePanel = ({latestQuote}:{latestQuote:RouterOutputs["inquiry"]["getDetails"]["latestQuote"]}) => {
   const [terms, setTerms] = useState('')
   return (
     <>
       {/* map this */}
-      <View style={[styles.quoteCard, { marginBottom: 16 }]}>
-        <View style={styles.quoteCardHeader}>
-          <Text style={styles.quoteCardHeaderText}>Ketone 1</Text>
-          <Badge IconName={"checkcircleo"} bg={"#FDF3EA"} accentColor={"#6B4323"} badgeText="Sample requested" />
-        </View>
-
-        <View style={styles.quoteCardInfo}>
-          <View style={styles.quoteCardInfoTextContainer}>
-            <Text style={styles.quoteCardInfoHeaderText}>CAS</Text>
-            <Text style={styles.quoteCardInfoText}>68845-36-3</Text>
-          </View>
-          <View style={styles.quoteCardInfoTextContainer}>
-            <Text style={styles.quoteCardInfoHeaderText}>Quantity</Text>
-            <Text style={styles.quoteCardInfoText}>3 kg</Text>
-          </View>
-          <View style={styles.quoteCardInfoTextContainer}>
-            <Text style={styles.quoteCardInfoHeaderText}>Make</Text>
-            <Text style={styles.quoteCardInfoText}>Spicy</Text>
-          </View>
-        </View>
-
-        <View style={styles.formContainer}>
-          <TextInput placeholder="Enter quote here" style={styles.inputForm} />
-          <Text>/Kg</Text>
-        </View>
-
-      </View>
+      {latestQuote?.quoteItems.map((quoteItem)=>(
+        <QuoteTableList quoteItem={quoteItem} />
+      ))}
 
 
       {/* static for tandC remarks */}
@@ -50,6 +32,48 @@ export const QuotePanel = () => {
 
       </View>
     </>
+  )
+}
+
+const QuoteTableList = ({quoteItem}:{quoteItem: QuoteItem}) => {
+  const { data: productList, isLoading } = api.products.read.useQuery();
+  if (isLoading) {
+    return <Text>Loading...</Text>;
+  }
+
+  const product = productList?.find(
+    (product) => product.id === quoteItem.productId,
+  );
+  if (!product) {
+    return null;
+  }
+  return (
+      <View key={quoteItem.productId} style={[styles.quoteCard, { marginBottom: 16 }]}>
+        <View style={styles.quoteCardHeader}>
+          <Text style={styles.quoteCardHeaderText}>{product.name}</Text>
+          <Badge IconName={"checkcircleo"} bg={"#FDF3EA"} accentColor={"#6B4323"} badgeText="Sample requested" />
+        </View>
+
+        <View style={styles.quoteCardInfo}>
+          <View style={styles.quoteCardInfoTextContainer}>
+            <Text style={styles.quoteCardInfoHeaderText}>CAS</Text>
+            <Text style={styles.quoteCardInfoText}>{product.cas}</Text>
+          </View>
+          <View style={styles.quoteCardInfoTextContainer}>
+            <Text style={styles.quoteCardInfoHeaderText}>Quantity</Text>
+            <Text style={styles.quoteCardInfoText}>{quoteItem.quantity} {quoteItem.unit}</Text>
+          </View>
+          <View style={styles.quoteCardInfoTextContainer}>
+            <Text style={styles.quoteCardInfoHeaderText}>Make</Text>
+            <Text style={styles.quoteCardInfoText}>{product.make}</Text>
+          </View>
+        </View>
+
+        <View style={styles.formContainer}>
+          <TextInput placeholder="Enter quote here" style={styles.inputForm} />
+          <Text>/{quoteItem.unit}</Text>
+        </View>
+      </View>
   )
 }
 

@@ -1,4 +1,4 @@
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   Dimensions,
@@ -13,22 +13,121 @@ import Toast from "react-native-toast-message";
 import { PrimaryButton } from "~/components/core/button";
 import { DetailsTabs } from "~/components/detailsTabs";
 import { InquiryDetailsPage } from "~/components/inquiryDetailsPage";
+import { api, RouterOutputs } from "~/utils/api";
 
 const windowHeight = Dimensions.get("window").height - 64;
 
+type QuoteItem = NonNullable<
+  RouterOutputs["inquiry"]["getDetails"]["latestQuote"]
+>["quoteItems"][0];
+
+type QuoteItemMap = Record<string, QuoteItem>;
 export default function InquiriesDetails() {
+  const { inquiryNumber } = useLocalSearchParams();
+  const { data, isLoading } = api.inquiry.getDetails.useQuery(
+    {
+      inquiryId: inquiryNumber as string,
+    },
+    {},
+  );
+  const isFinalized =
+    data?.inquiry &&
+    data.latestQuote &&
+    (["ACCEPTED", "REJECTED"].includes(data.inquiry.status) ||
+      ["ACCEPTED", "REJECTED"].includes(data.latestQuote.status));
+
+  console.log("isFinalized", isFinalized);
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [activeNestedTab, setActiveNestedTab] = useState("Details");
+  const [openCreateForm, setOpenCreateForm] = useState(false);
+
+  const [negoiatedItems, setNegotiatedItems] = useState<QuoteItemMap>({});
+
+  const handleQuoteItemUpdate = (quoteItem: QuoteItem) => {
+    console.log("quoteItem", quoteItem);
+    setNegotiatedItems((prev) => ({
+      ...prev,
+      [quoteItem.productId]: quoteItem,
+    }));
+  };
+
+  const utils = api.useUtils();
+  const { mutateAsync: negotiate, isPending } =
+    api.inquiry.negotiate.useMutation({
+      onSuccess: () => {
+        void utils.inquiry.getDetails
+          .invalidate({ inquiryId: inquiryNumber as string })
+          .then(() => {
+            Toast.show({
+              type: "success",
+              text1: "Negotiation successful",
+            });
+          })
+          .catch();
+      },
+    });
+
+  const handleNegotiate = () => {
+    if (isPending || !data) {
+      return;
+    }
+    negotiate({
+      inquiryId: data.inquiry.id,
+      items: Object.values(negoiatedItems),
+    }).catch(() => {
+      Toast.show({
+        type: "error",
+        text1: "Negotiation failed",
+      });
+    });
+    setOpenCreateForm(false);
+  };
+
+  const { mutateAsync: createOrderFromInquiry } =
+    api.orders.createFromInquiry.useMutation({
+      onSuccess: () => {
+        Toast.show({
+          type: "success",
+          text1: "Order placed successfully",
+          onPress: () => {
+            router.push("/orders");
+          },
+        });
+        utils.orders.invalidate().catch(console.error);
+      },
+    });
+
+  const handleOrder = () => {
+    if (!data || !data.inquiry || !data.latestQuote || isFinalized) {
+      return;
+    }
+    createOrderFromInquiry({
+      inquiryId: data.inquiry.id,
+      quoteId: data.latestQuote.id,
+      type: "REGULAR",
+    });
+  };
+  const handleCancel = () => {
+    setNegotiatedItems({});
+    setOpenCreateForm(false);
+  };
 
   const renderNestedScreen = () => {
     switch (activeNestedTab) {
       case "Details":
-        return <InquiryDetails />;
+        return <InquiryDetails
+            quote={data?.latestQuote}
+            remarks={data?.inquiry.remarks ?? ""}
+         />;
       case "Sample":
         return <Sample />;
       case "Order":
         return <Sample />;
       default:
-        return <InquiryDetails />;
+        return <InquiryDetails
+              quote={data?.latestQuote}
+              remarks={data?.inquiry.remarks ?? ""}
+         />;
     }
   };
   useEffect(() => {
@@ -111,7 +210,7 @@ export default function InquiriesDetails() {
             <PrimaryButton
               text="Send Quote"
               onPress={() => {
-                router.navigate("/inquiry/sendQuote");
+                router.navigate(`/inquiry/sendQuote/${data?.inquiry.id}`);
               }}
             />
           </View>
@@ -122,7 +221,13 @@ export default function InquiriesDetails() {
   );
 }
 
-const InquiryDetails = () => {
+const InquiryDetails = ({
+  quote,
+  remarks
+}:{
+  quote: RouterOutputs["inquiry"]["getDetails"]["latestQuote"],
+  remarks: string
+}) => {
   return (
     <View style={styles.tabContentContainer}>
       <ScrollView
@@ -134,7 +239,7 @@ const InquiryDetails = () => {
           backgroundColor: "#f9f9f9",
         }}
       >
-        <InquiryDetailsPage />
+        <InquiryDetailsPage quote={quote} />
         {/* Customers Remarks */}
         <View style={styles.extraContainers}>
           <Text
@@ -156,11 +261,7 @@ const InquiryDetails = () => {
               fontFamily: "Avenir",
             }}
           >
-            Terms of service are the legal agreements between a service provider
-            and a person who wants to use that service. The person must agree to
-            abide by the terms of service in order to use the offered service.
-            Terms of service can also be merely a disclaimer, especially
-            regarding the use of websites.
+            {remarks}
           </Text>
         </View>
 

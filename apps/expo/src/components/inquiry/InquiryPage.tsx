@@ -21,6 +21,8 @@ import { useAbility, useUser } from "~/providers/auth";
 import Toast from "react-native-toast-message";
 import { useRouter } from "expo-router";
 import { createStyles } from "../layouts/BottomDrawerLayout";
+import { clientFilterList, sellerFilterList } from "~/constants/filterLists";
+import { ActionBadgeMobile } from "../core/actionBadge";
 
 export type ProductRequest =
   RouterInputs["inquiry"]["raise"]["productRequests"][0] & {
@@ -118,9 +120,12 @@ export const InquiryPage = () => {
       sellerId,
     });
   }
+
   return (
     <View style={[styles.container, { backgroundColor: "white" }]}>
       {/* Fixed SearchBox at the top */}
+      {
+        user?.team.type === "CLIENT" &&
       <View style={styles.searchBoxContainer}>
         <SearchBox
           placeholder="Search inquiry external"
@@ -128,6 +133,7 @@ export const InquiryPage = () => {
           value={searchResult}
         />
       </View>
+      }
 
       {/* Scrollable content below the fixed SearchBox */}
       <ScrollView style={styles.orderBodyContainer}>
@@ -135,6 +141,7 @@ export const InquiryPage = () => {
           filter={filter}
           setFilter={setFilter}
           inquiries={inquiries}
+          filterList={user?.team.type === "CLIENT" ? clientFilterList : sellerFilterList}
         />
       </ScrollView>
 
@@ -253,10 +260,12 @@ const InquiryList = ({
   filter,
   setFilter,
   inquiries,
+  filterList
 }: {
   inquiries: RouterOutputs["inquiry"]["list"]["items"];
   filter: string;
   setFilter: React.Dispatch<React.SetStateAction<string>>;
+  filterList: string[]
 }) => {
   return (
     <View style={styles.orderBodyContent}>
@@ -268,32 +277,19 @@ const InquiryList = ({
           contentContainerStyle={styles.filterTabsContainer}
         >
           <View style={styles.filterTabsContainer}>
+            {filterList.map((filterName:string)=>(
             <MobileTab
-              activeFilter={filter === "All" ? true : false}
+              activeFilter={filter === filterName ? true : false}
               setFilter={setFilter}
-              currentFilter="All"
+              currentFilter={filterName}
             />
-            <MobileTab
-              activeFilter={filter === "Quotes received" ? true : false}
-              setFilter={setFilter}
-              currentFilter="Quotes received"
-            />
-            <MobileTab
-              activeFilter={filter === "Pending" ? true : false}
-              setFilter={setFilter}
-              currentFilter="Pending"
-            />
-            <MobileTab
-              activeFilter={filter === "Quote expired" ? true : false}
-              setFilter={setFilter}
-              currentFilter="Quote expired"
-            />
+            ))}
           </View>
         </ScrollView>
 
         {/* orders */}
         {inquiries.map((inquiry) => (
-          <InquiryCard inquiry={inquiry} key={inquiry.id} />
+          <InquiryCard inquiry={inquiry} key={inquiry.id} filter={filter} />
         ))}
       </GestureHandlerRootView>
     </View>
@@ -302,17 +298,14 @@ const InquiryList = ({
 
 const InquiryCard = ({
   inquiry,
+  filter
 }: {
   inquiry: RouterOutputs["inquiry"]["list"]["items"][0];
+  filter: string
 }) => {
   const router = useRouter();
   return (
-    <TouchableOpacity
-      onPress={() => {
-        router.push(`/inquiry/${inquiry.id}`);
-        console.log("Inquiry Details", inquiry.id);
-      }}
-    >
+    <View>
       <View style={orderStyles.orderCardContainer}>
         <View style={orderStyles.orderCard}>
           <View style={orderStyles.innerSection}>
@@ -350,8 +343,23 @@ const InquiryCard = ({
             </View>
           </View>
         </View>
+        <View style={orderStyles.actionContainer}>
+          {
+            filter === "All" && <ActionBadgeMobile iconName="open-in-new" actionText="View Quote" handleAction={
+              () => router.navigate(`inquiry/${inquiry.id}`)
+            } />}
+          {filter === "New" && <ActionBadgeMobile iconName="open-in-new" actionText="Send Quote" handleAction={
+              () => router.navigate(`inquiry/sendQuote/${inquiry.id}`)
+            } />}
+
+          {filter === "Sent" && <ActionBadgeMobile iconName="open-in-new" actionText="View Quote" handleAction={() => router.navigate(`inquiry/${inquiry.id}`)} />}
+          {
+            filter === "Negotiation" && <ActionBadgeMobile iconName="alarm-light-outline" actionText="Follow Up" handleAction={
+              () => router.navigate(`inquiry/${inquiry.id}`)
+            } />}
+        </View>
       </View>
-    </TouchableOpacity>
+    </View>
   );
 };
 

@@ -41,15 +41,15 @@ export default function TabLayout() {
                   },
                   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                   tabBarItemStyle: {
+                    ...(!drawer.mobileView && {
+                      display: "none",
+                    }),
                     // @ts-expect-error types broken here
                     ...(drawer.action &&
                       drawer.subject &&
                       !ability.can(drawer.action, drawer.subject) && {
                         display: "none",
                       }),
-                    ...(!drawer.mobileView && {
-                      display: "none",
-                    }),
                   },
                   title: drawer.name,
                   tabBarIcon: ({ color }) => (

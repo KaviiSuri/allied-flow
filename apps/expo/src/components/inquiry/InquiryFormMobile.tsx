@@ -63,9 +63,13 @@ export const InquiryForm = ({
   }, [user]);
 
   return (
-    <View>
+    <View style={{
+      paddingBottom: 150
+    }}>
       {user?.team.type === "SELLER" && (
+        <View style={{paddingVertical: 16,paddingHorizontal: 16}}> 
         <FormDropDown
+          label="Client"
           paddingBottom={false}
           onValueChange={(value) => {
             setClientId(value);
@@ -74,6 +78,7 @@ export const InquiryForm = ({
           options={clientNameOptions}
           rightIcon={<Icon name="down" />}
         />
+        </View>
       )}
       {productRequests.length > 0 &&
         productRequests.map((product) => (
@@ -368,6 +373,7 @@ const inquiryFormStyles = StyleSheet.create({
     paddingVertical: 16,
     gap: 16,
     borderRadius: 8,
+    marginTop: 20,
   },
   formTitles: {
     color: "#344054",

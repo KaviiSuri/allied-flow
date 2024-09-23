@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import {
   Dimensions,
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -104,7 +105,9 @@ export default function InquiriesDetails() {
             </TouchableOpacity>
           </View>
 
-          <View>
+          <View style={{
+            paddingBottom: 12,
+          }}>
             <PrimaryButton
               text="Send Quote"
               onPress={() => {
@@ -122,11 +125,12 @@ export default function InquiriesDetails() {
 const InquiryDetails = () => {
   return (
     <View style={styles.tabContentContainer}>
-      <View
+      <ScrollView
         style={{
           height: "100%",
           width: "75%",
           padding: 20,
+          paddingBottom: 100,
           backgroundColor: "#f9f9f9",
         }}
       >
@@ -209,7 +213,7 @@ const InquiryDetails = () => {
             Payment Terms - ABCD
           </Text>
         </View>
-      </View>
+      </ScrollView>
       <View
         style={{
           height: "100%",
@@ -223,12 +227,32 @@ const InquiryDetails = () => {
 };
 
 const Sample = () => {
-  return <View style={styles.tabContentContainer}>Sample</View>;
+  return(
+    <View style={styles.tabContentContainer}>
+      <ScrollView
+        style={{
+          height: "100%",
+          width: "75%",
+          padding: 20,
+          paddingBottom: 100,
+          backgroundColor: "#f9f9f9",
+        }}
+      >
+        <InquiryDetailsPage />
+        {/* Customers Remarks */}
+      </ScrollView>
+      <View
+        style={{
+          height: "100%",
+          width: "25%",
+        }}
+      >
+        <DetailsTabs />
+      </View>
+    </View>
+  )
 };
 
-const Order = () => {
-  return <View style={styles.tabContentContainer}>Sample</View>;
-};
 
 //styles
 const styles = StyleSheet.create({

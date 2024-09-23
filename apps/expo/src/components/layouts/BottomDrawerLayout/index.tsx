@@ -23,11 +23,11 @@ export const BottomDrawer = ({
   children: JSX.Element[] | JSX.Element;
   openCreateForm: boolean;
   setOpenCreateForm: React.Dispatch<React.SetStateAction<boolean>>;
-  primaryButtonText: string;
-  secondaryButtonText: string;
+  primaryButtonText?: string;
+  secondaryButtonText?: string;
   header: string;
-  onPrimaryButtonPress: () => void;
-  onSecondaryButtonPress: () => void;
+  onPrimaryButtonPress?: () => void;
+  onSecondaryButtonPress?: () => void;
 }) => {
   return (
     <Modal
@@ -57,6 +57,7 @@ export const BottomDrawer = ({
         </ScrollView>
 
         <GestureHandlerRootView style={createStyles.formSubmitContainer}>
+          {secondaryButtonText &&
           <TouchableOpacity
             style={{
               paddingHorizontal: 12,
@@ -85,6 +86,8 @@ export const BottomDrawer = ({
               {secondaryButtonText}
             </Text>
           </TouchableOpacity>
+          }
+          {primaryButtonText &&
           <TouchableOpacity
             style={{
               paddingHorizontal: 12,
@@ -111,6 +114,7 @@ export const BottomDrawer = ({
               {primaryButtonText}
             </Text>
           </TouchableOpacity>
+          }
         </GestureHandlerRootView>
       </View>
     </Modal>

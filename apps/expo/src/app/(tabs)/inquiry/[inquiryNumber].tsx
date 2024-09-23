@@ -11,14 +11,13 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import Icon from "react-native-vector-icons/AntDesign";
-import { Badge } from "~/components/core/badge";
 import { DetailsSectionMobile } from "~/components/inquiryDetails/mobile/Details";
 import {
   orderStyles,
-  SampleSectionMobile,
 } from "~/components/inquiryDetails/mobile/Order";
 import { BottomDrawer } from "~/components/layouts/BottomDrawerLayout";
 import { OrderPage } from "~/components/order/OrderPage";
+import { BadgeStatus } from "~/components/shared/badge";
 import { FormTextInput } from "~/components/shared/form";
 import { SearchBox } from "~/components/shared/searchComponent";
 import type { RouterOutputs } from "~/utils/api";
@@ -175,6 +174,7 @@ export default function InquiriesDetails() {
           <TouchableOpacity
             onPress={() => {
               router.back();
+              router.push("/inquiries");
             }}
           >
             <Icon name="arrowleft" size={24} color="black" />
@@ -188,11 +188,8 @@ export default function InquiriesDetails() {
             </Text>
           )}
           <View style={{ width: 118 }}>
-            <Badge
-              IconName="checkcircleo"
-              badgeText="QuoteReceived"
-              bg="#f0f9f6"
-              accentColor="#047857"
+            <BadgeStatus
+            status="RECEIVED"
             />
           </View>
         </View>
@@ -356,7 +353,7 @@ export default function InquiriesDetails() {
   );
 }
 
-const RemarksForm = ({
+export const RemarksForm = ({
   remark,
   setRemark,
 }: {
@@ -386,7 +383,7 @@ const RemarksForm = ({
     </View>
   );
 };
-const ProductsCard = ({
+export const ProductsCard = ({
   quoteItem,
   updateQuoteItem,
   negotiatedItem,

@@ -10,6 +10,7 @@ function TableData(props: PropsWithChildren<{ numberOfLines?: number, ellipsizeM
     fontSize: 14,
     fontWeight: 500,
     flex: 1,
+    flexDirection: "row",
   };
 
   return <Text numberOfLines={props.numberOfLines} ellipsizeMode={props.ellipsizeMode} style={[defaultStyles, props.style]}>{props.children}</Text>;

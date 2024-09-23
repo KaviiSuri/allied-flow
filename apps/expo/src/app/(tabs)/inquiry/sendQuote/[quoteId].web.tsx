@@ -1,4 +1,3 @@
-import { ScreenHeight } from "@rneui/themed/dist/config";
 import { Dimensions, StyleSheet, Text, View } from "react-native";
 import { PrimaryButton } from "~/components/core/button";
 import { HistoryPanelTable } from "~/components/historyPanel";

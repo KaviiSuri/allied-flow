@@ -141,6 +141,7 @@ export default function InquiriesDetails() {
           <InquiryDetails
             quote={data?.latestQuote}
             remarks={data?.inquiry.remarks ?? ""}
+            tnc={data?.inquiry.tnc ?? ""}
           />
         );
     }
@@ -248,7 +249,7 @@ export default function InquiriesDetails() {
             />
             <PrimaryButton
               text="Place Order"
-              disabled={!(data?.inquiry.status === "ACCEPTED")}
+              disabled={!(data?.inquiry.status !== "ACCEPTED")}
               onPress={handleOrder}
             />
           </View>
@@ -262,7 +263,9 @@ export default function InquiriesDetails() {
 const InquiryDetails = ({
   quote,
   remarks,
+  tnc,
 }: {
+  tnc: string;
   quote: RouterOutputs["inquiry"]["getDetails"]["latestQuote"];
   remarks: string;
 }) => {
@@ -323,33 +326,7 @@ const InquiryDetails = ({
               fontFamily: "Avenir",
             }}
           >
-            Terms of service are the legal agreements between a service provider
-            and a person who wants to use that service. The person must agree to
-            abide by the terms of service in order to use the offered service.
-            Terms of service can also be merely a disclaimer, especially
-            regarding the use of websites.
-          </Text>
-          <Text
-            style={{
-              color: "#334155",
-              fontWeight: 500,
-              lineHeight: 24,
-              fontFamily: "Avenir",
-              paddingTop: 8,
-            }}
-          >
-            Inco Terms - ABCD
-          </Text>
-          <Text
-            style={{
-              color: "#334155",
-              fontWeight: 500,
-              lineHeight: 24,
-              fontFamily: "Avenir",
-              paddingTop: 8,
-            }}
-          >
-            Payment Terms - ABCD
+            {tnc}
           </Text>
         </View>
       </ScrollView>
@@ -529,9 +506,12 @@ function ProductRow({
         }}
       >
         <FormTextInput
-          placeholder="Enter target  price"
-          label="Target Price (Per Unit)"
+          placeholder="Price"
+          label=""
           value={negotiatedItem?.price ? negotiatedItem.price.toString() : ""}
+          style={{
+            maxWidth: 100,
+          }}
           onChangeText={(value) => {
             const newPrice = parseFloat(value);
             if (isNaN(newPrice)) {

@@ -6,13 +6,17 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
 import Toast from "react-native-toast-message";
-import { PrimaryButton } from "~/components/core/button";
+import { PrimaryButton, SecondaryButton } from "~/components/core/button";
 import { DetailsTabs } from "~/components/detailsTabs";
 import { InquiryDetailsPage } from "~/components/inquiryDetailsPage";
+import { CenterModalComponent } from "~/components/layouts/CenterModal";
+import { FormTextInput } from "~/components/shared/form";
+import { Table, TableData, TableHeading, TableRow } from "~/components/shared/table";
 import { api, RouterOutputs } from "~/utils/api";
 
 const windowHeight = Dimensions.get("window").height - 64;
@@ -39,7 +43,7 @@ export default function InquiriesDetails() {
   console.log("isFinalized", isFinalized);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [activeNestedTab, setActiveNestedTab] = useState("Details");
-  const [openCreateForm, setOpenCreateForm] = useState(false);
+  const [negotiationVisible, setNegotiationVisible] = useState(false);
 
   const [negoiatedItems, setNegotiatedItems] = useState<QuoteItemMap>({});
 
@@ -80,7 +84,7 @@ export default function InquiriesDetails() {
         text1: "Negotiation failed",
       });
     });
-    setOpenCreateForm(false);
+    setNegotiationVisible(false);
   };
 
   const { mutateAsync: createOrderFromInquiry } =
@@ -109,25 +113,29 @@ export default function InquiriesDetails() {
   };
   const handleCancel = () => {
     setNegotiatedItems({});
-    setOpenCreateForm(false);
+    setNegotiationVisible(false);
   };
 
   const renderNestedScreen = () => {
     switch (activeNestedTab) {
       case "Details":
-        return <InquiryDetails
+        return (
+          <InquiryDetails
             quote={data?.latestQuote}
             remarks={data?.inquiry.remarks ?? ""}
-         />;
+          />
+        );
       case "Sample":
         return <Sample />;
       case "Order":
         return <Sample />;
       default:
-        return <InquiryDetails
-              quote={data?.latestQuote}
-              remarks={data?.inquiry.remarks ?? ""}
-         />;
+        return (
+          <InquiryDetails
+            quote={data?.latestQuote}
+            remarks={data?.inquiry.remarks ?? ""}
+          />
+        );
     }
   };
   useEffect(() => {
@@ -145,6 +153,13 @@ export default function InquiriesDetails() {
         position: "relative",
       }}
     >
+      <CenterModalComponent
+        visible={negotiationVisible}
+        setVisible={setNegotiationVisible}
+      >
+        <NegotiationTable />
+        <FormTextInput label="Remarks" placeholder="Enter remarks here" />
+      </CenterModalComponent>
       <View style={{ paddingVertical: 12, height: windowHeight }}>
         <View style={styles.tabContainer}>
           <View style={{ flexDirection: "row" }}>
@@ -204,11 +219,22 @@ export default function InquiriesDetails() {
             </TouchableOpacity>
           </View>
 
-          <View style={{
-            paddingBottom: 12,
-          }}>
+          <View
+            style={{
+              paddingBottom: 12,
+              flexDirection: "row",
+              gap: 16,
+            }}
+          >
+            <SecondaryButton
+              text="Update Quote"
+              onPress={() => {
+                setNegotiationVisible(true);
+              }}
+            />
             <PrimaryButton
-              text="Send Quote"
+              text="Place Order"
+              disabled={!(data?.inquiry.status === "ACCEPTED")}
               onPress={() => {
                 router.navigate(`/inquiry/sendQuote/${data?.inquiry.id}`);
               }}
@@ -223,10 +249,10 @@ export default function InquiriesDetails() {
 
 const InquiryDetails = ({
   quote,
-  remarks
-}:{
-  quote: RouterOutputs["inquiry"]["getDetails"]["latestQuote"],
-  remarks: string
+  remarks,
+}: {
+  quote: RouterOutputs["inquiry"]["getDetails"]["latestQuote"];
+  remarks: string;
 }) => {
   return (
     <View style={styles.tabContentContainer}>
@@ -328,7 +354,7 @@ const InquiryDetails = ({
 };
 
 const Sample = () => {
-  return(
+  return (
     <View style={styles.tabContentContainer}>
       <ScrollView
         style={{
@@ -351,9 +377,81 @@ const Sample = () => {
         <DetailsTabs />
       </View>
     </View>
-  )
+  );
 };
 
+const NegotiationTable = () => {
+  return (
+    <Table style={styles.tableContainer}>
+      <TableHeading style={{ backgroundColor: "#F1F5F9" }}>
+        <TableData
+          style={{
+            fontSize: 14,
+            color: "#1E293B",
+            fontWeight: 500,
+            flex: 1,
+            borderRightWidth: 1,
+            borderColor: "#DCDFEA",
+          }}
+        >
+          Product Name
+        </TableData>
+        <TableData
+          style={{
+            fontSize: 14,
+            color: "#1E293B",
+            fontWeight: 500,
+            flex: 1,
+            borderRightWidth: 1,
+            borderColor: "#DCDFEA",
+          }}
+        >
+          Quantity
+        </TableData>
+        <TableData
+          style={{
+            fontSize: 14,
+            color: "#1E293B",
+            fontWeight: 500,
+            flex: 1,
+            borderRightWidth: 1,
+            borderColor: "#DCDFEA",
+          }}
+        >
+          Target Price
+        </TableData>
+        <TableData
+          style={{
+            fontSize: 14,
+            color: "#1E293B",
+            fontWeight: 500,
+            flex: 1,
+            borderRightWidth: 1,
+            borderColor: "#DCDFEA",
+          }}
+        >
+          Revised Price
+        </TableData>
+      </TableHeading>
+      {/* random data  */}
+
+        <TableRow style={styles.tableRow} id={'1'} key={1}>
+          <TableData style={{ fontSize: 14, color: "#1E293B", fontWeight: 400, flex: 1, borderRightWidth: 1, borderColor: "#DCDFEA" }}>
+            Ketone
+          </TableData>
+          <TableData style={{ fontSize: 14, color: "#1E293B", fontWeight: 400, flex: 1, borderRightWidth: 1, borderColor: "#DCDFEA" }}>
+            3kg
+          </TableData>
+          <TableData style={{ fontSize: 14, color: "#1E293B", fontWeight: 400, flex: 1, borderRightWidth: 1, borderColor: "#DCDFEA" }}>
+            Rs 1000 
+          </TableData>
+          <TableData style={{ fontSize: 14, color: "#1E293B", fontWeight: 400, flex: 1, borderRightWidth: 1, borderColor: "#DCDFEA" }}>
+            <TextInput></TextInput>
+          </TableData>
+        </TableRow>
+    </Table>
+  );
+};
 
 //styles
 const styles = StyleSheet.create({
@@ -392,5 +490,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 16,
     borderColor: "#DCDFEA",
+  },
+  tableContainer: {
+    borderRadius: 8,
+    backgroundColor: "white",
+  },
+  tableRow: {
+    flex: 1,
   },
 });

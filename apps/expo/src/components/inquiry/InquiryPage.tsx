@@ -92,7 +92,7 @@ export const InquiryPage = () => {
   const { mutateAsync: raiseInquiry } = api.inquiry.raise.useMutation({
     onSuccess: () => {
       setOpenCreateForm(false);
-      utils.inquiry.list.invalidate();
+      utils.inquiry.list.invalidate().catch(console.error);
       Toast.show({
         position: "bottom",
         type: "success",
@@ -111,7 +111,7 @@ export const InquiryPage = () => {
     if (!seller) {
       return;
     }
-    let sellerId = user.team.id;
+    const sellerId = user.team.id;
     await raiseInquiry({
       tnc: "",
       remarks,
@@ -124,16 +124,15 @@ export const InquiryPage = () => {
   return (
     <View style={[styles.container, { backgroundColor: "white" }]}>
       {/* Fixed SearchBox at the top */}
-      {
-        user?.team.type === "CLIENT" &&
-      <View style={styles.searchBoxContainer}>
-        <SearchBox
-          placeholder="Search inquiry external"
-          setValue={setSearchResult}
-          value={searchResult}
-        />
-      </View>
-      }
+      {user?.team.type === "CLIENT" && (
+        <View style={styles.searchBoxContainer}>
+          <SearchBox
+            placeholder="Search inquiry external"
+            setValue={setSearchResult}
+            value={searchResult}
+          />
+        </View>
+      )}
 
       {/* Scrollable content below the fixed SearchBox */}
       <ScrollView style={styles.orderBodyContainer}>
@@ -141,7 +140,9 @@ export const InquiryPage = () => {
           filter={filter}
           setFilter={setFilter}
           inquiries={inquiries}
-          filterList={user?.team.type === "CLIENT" ? clientFilterList : sellerFilterList}
+          filterList={
+            user?.team.type === "CLIENT" ? clientFilterList : sellerFilterList
+          }
         />
       </ScrollView>
 
@@ -255,17 +256,16 @@ export const InquiryPage = () => {
   );
 };
 
-
 const InquiryList = ({
   filter,
   setFilter,
   inquiries,
-  filterList
+  filterList,
 }: {
   inquiries: RouterOutputs["inquiry"]["list"]["items"];
   filter: string;
   setFilter: React.Dispatch<React.SetStateAction<string>>;
-  filterList: string[]
+  filterList: string[];
 }) => {
   return (
     <View style={styles.orderBodyContent}>
@@ -277,12 +277,12 @@ const InquiryList = ({
           contentContainerStyle={styles.filterTabsContainer}
         >
           <View style={styles.filterTabsContainer}>
-            {filterList.map((filterName:string)=>(
-            <MobileTab
-              activeFilter={filter === filterName ? true : false}
-              setFilter={setFilter}
-              currentFilter={filterName}
-            />
+            {filterList.map((filterName: string) => (
+              <MobileTab
+                activeFilter={filter === filterName ? true : false}
+                setFilter={setFilter}
+                currentFilter={filterName}
+              />
             ))}
           </View>
         </ScrollView>
@@ -298,10 +298,10 @@ const InquiryList = ({
 
 const InquiryCard = ({
   inquiry,
-  filter
+  filter,
 }: {
   inquiry: RouterOutputs["inquiry"]["list"]["items"][0];
-  filter: string
+  filter: string;
 }) => {
   const router = useRouter();
   return (
@@ -344,19 +344,37 @@ const InquiryCard = ({
           </View>
         </View>
         <View style={orderStyles.actionContainer}>
-          {
-            filter === "All" && <ActionBadgeMobile iconName="open-in-new" actionText="View Quote" handleAction={
-              () => router.navigate(`inquiry/${inquiry.id}`)
-            } />}
-          {filter === "New" && <ActionBadgeMobile iconName="open-in-new" actionText="Send Quote" handleAction={
-              () => router.navigate(`inquiry/sendQuote/${inquiry.id}`)
-            } />}
+          {inquiry.status === "NEGOTIATING" && (
+            <ActionBadgeMobile
+              iconName="open-in-new"
+              actionText="View Quote"
+              handleAction={() => router.navigate(`inquiry/${inquiry.id}`)}
+            />
+          )}
+          {inquiry.status === "RAISED" && (
+            <ActionBadgeMobile
+              iconName="open-in-new"
+              actionText="Send Quote"
+              handleAction={() =>
+                router.navigate(`inquiry/sendQuote/${inquiry.id}`)
+              }
+            />
+          )}
 
-          {filter === "Sent" && <ActionBadgeMobile iconName="open-in-new" actionText="View Quote" handleAction={() => router.navigate(`inquiry/${inquiry.id}`)} />}
-          {
-            filter === "Negotiation" && <ActionBadgeMobile iconName="alarm-light-outline" actionText="Follow Up" handleAction={
-              () => router.navigate(`inquiry/${inquiry.id}`)
-            } />}
+          {(inquiry.status === "ACCEPTED" || inquiry.status === "REJECTED") && (
+            <ActionBadgeMobile
+              iconName="open-in-new"
+              actionText="View Quote"
+              handleAction={() => router.navigate(`inquiry/${inquiry.id}`)}
+            />
+          )}
+          {/* (filter === "Negotiation" && (
+            <ActionBadgeMobile
+              iconName="alarm-light-outline"
+              actionText="Follow Up"
+              handleAction={() => router.navigate(`inquiry/${inquiry.id}`)}
+            />
+          )*/}
         </View>
       </View>
     </View>

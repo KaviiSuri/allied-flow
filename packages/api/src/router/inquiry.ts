@@ -34,7 +34,7 @@ export const inquiryRouter = {
             remarks: input.remarks,
             buyerId: input.buyerId,
             sellerId: input.sellerId,
-            status: "NEGOTIATING",
+            status: "RAISED",
             productNames: input.productRequests
               .map((productRequest) => productRequest.productName)
               .join(", "),

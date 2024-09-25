@@ -12,9 +12,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import Icon from "react-native-vector-icons/AntDesign";
 import { DetailsSectionMobile } from "~/components/inquiryDetails/mobile/Details";
-import {
-  orderStyles,
-} from "~/components/inquiryDetails/mobile/Order";
+import { orderStyles } from "~/components/inquiryDetails/mobile/Order";
 import { BottomDrawer } from "~/components/layouts/BottomDrawerLayout";
 import { OrderPage } from "~/components/order/OrderPage";
 import { BadgeStatus } from "~/components/shared/badge";
@@ -187,9 +185,7 @@ export default function InquiriesDetails() {
             </Text>
           )}
           <View style={{ width: 118 }}>
-            <BadgeStatus
-            status="RECEIVED"
-            />
+            <BadgeStatus status="RECEIVED" />
           </View>
         </View>
         <View

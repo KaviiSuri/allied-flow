@@ -73,6 +73,7 @@ export const inquiryRouter = {
       z.object({
         inquiryId: z.string(),
         items: z.array(productRequestSchema.omit({ productName: true })),
+        tnc: z.string().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -106,6 +107,14 @@ export const inquiryRouter = {
           ctx.user.id,
           ctx.user.teamId,
         );
+
+        await trx
+          .update(inquiries)
+          .set({
+            tnc: input.tnc,
+            status: "NEGOTIATING",
+          })
+          .where(eq(inquiries.id, input.inquiryId));
         return quote;
       });
 

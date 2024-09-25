@@ -1,22 +1,36 @@
-import { useEffect, useState } from "react"
-import { StyleSheet, Text, TextInput, View } from "react-native"
-import { Badge } from "../core/badge"
-import { RouterOutputs } from "@repo/api"
+import { useState } from "react";
+import { StyleSheet, Text, TextInput, View } from "react-native";
+import { Badge } from "../core/badge";
+import type { RouterOutputs } from "@repo/api";
 import { api } from "~/utils/api";
 
 type QuoteItem = NonNullable<
   RouterOutputs["inquiry"]["getDetails"]["latestQuote"]
 >["quoteItems"][0];
 
-export const QuotePanel = ({latestQuote}:{latestQuote:RouterOutputs["inquiry"]["getDetails"]["latestQuote"]}) => {
-  const [terms, setTerms] = useState('')
+export const QuotePanel = ({
+  latestQuote,
+  updateQuoteItem,
+  negotiatedItems,
+  terms,
+  setTerms,
+}: {
+  latestQuote: RouterOutputs["inquiry"]["getDetails"]["latestQuote"];
+  updateQuoteItem: (quoteItem: QuoteItem) => void;
+  negotiatedItems: Record<string, QuoteItem>;
+  terms: string;
+  setTerms: (terms: string) => void;
+}) => {
   return (
     <>
       {/* map this */}
-      {latestQuote?.quoteItems.map((quoteItem)=>(
-        <QuoteTableList quoteItem={quoteItem} />
+      {latestQuote?.quoteItems.map((quoteItem) => (
+        <QuoteTableList
+          quoteItem={quoteItem}
+          negotiationItem={negotiatedItems[quoteItem.productId]}
+          updateQuoteItem={updateQuoteItem}
+        />
       ))}
-
 
       {/* static for tandC remarks */}
       <View style={styles.quoteCard}>
@@ -29,13 +43,20 @@ export const QuotePanel = ({latestQuote}:{latestQuote:RouterOutputs["inquiry"]["
           value={terms}
           placeholder="Enter remark here..."
         />
-
       </View>
     </>
-  )
-}
+  );
+};
 
-const QuoteTableList = ({quoteItem}:{quoteItem: QuoteItem}) => {
+const QuoteTableList = ({
+  quoteItem,
+  updateQuoteItem,
+  negotiationItem,
+}: {
+  quoteItem: QuoteItem;
+  updateQuoteItem: (quoteItem: QuoteItem) => void;
+  negotiationItem?: QuoteItem;
+}) => {
   const { data: productList, isLoading } = api.products.read.useQuery();
   if (isLoading) {
     return <Text>Loading...</Text>;
@@ -48,34 +69,60 @@ const QuoteTableList = ({quoteItem}:{quoteItem: QuoteItem}) => {
     return null;
   }
   return (
-      <View key={quoteItem.productId} style={[styles.quoteCard, { marginBottom: 16 }]}>
-        <View style={styles.quoteCardHeader}>
-          <Text style={styles.quoteCardHeaderText}>{product.name}</Text>
-          <Badge IconName={"checkcircleo"} bg={"#FDF3EA"} accentColor={"#6B4323"} badgeText="Sample requested" />
-        </View>
+    <View
+      key={quoteItem.productId}
+      style={[styles.quoteCard, { marginBottom: 16 }]}
+    >
+      <View style={styles.quoteCardHeader}>
+        <Text style={styles.quoteCardHeaderText}>{product.name}</Text>
+        <Badge
+          IconName={"checkcircleo"}
+          bg={"#FDF3EA"}
+          accentColor={"#6B4323"}
+          badgeText="Sample requested"
+        />
+      </View>
 
-        <View style={styles.quoteCardInfo}>
-          <View style={styles.quoteCardInfoTextContainer}>
-            <Text style={styles.quoteCardInfoHeaderText}>CAS</Text>
-            <Text style={styles.quoteCardInfoText}>{product.cas}</Text>
-          </View>
-          <View style={styles.quoteCardInfoTextContainer}>
-            <Text style={styles.quoteCardInfoHeaderText}>Quantity</Text>
-            <Text style={styles.quoteCardInfoText}>{quoteItem.quantity} {quoteItem.unit}</Text>
-          </View>
-          <View style={styles.quoteCardInfoTextContainer}>
-            <Text style={styles.quoteCardInfoHeaderText}>Make</Text>
-            <Text style={styles.quoteCardInfoText}>{product.make}</Text>
-          </View>
+      <View style={styles.quoteCardInfo}>
+        <View style={styles.quoteCardInfoTextContainer}>
+          <Text style={styles.quoteCardInfoHeaderText}>CAS</Text>
+          <Text style={styles.quoteCardInfoText}>{product.cas}</Text>
         </View>
-
-        <View style={styles.formContainer}>
-          <TextInput placeholder="Enter quote here" style={styles.inputForm} />
-          <Text>/{quoteItem.unit}</Text>
+        <View style={styles.quoteCardInfoTextContainer}>
+          <Text style={styles.quoteCardInfoHeaderText}>Quantity</Text>
+          <Text style={styles.quoteCardInfoText}>
+            {quoteItem.quantity} {quoteItem.unit}
+          </Text>
+        </View>
+        <View style={styles.quoteCardInfoTextContainer}>
+          <Text style={styles.quoteCardInfoHeaderText}>Make</Text>
+          <Text style={styles.quoteCardInfoText}>{product.make}</Text>
         </View>
       </View>
-  )
-}
+
+      <View style={styles.formContainer}>
+        <TextInput
+          placeholder="Enter quote here"
+          style={styles.inputForm}
+          value={negotiationItem?.price ? negotiationItem.price.toString() : ""}
+          onChangeText={(value) => {
+            const newPrice = parseFloat(value);
+            console.log("newPrice", newPrice);
+            if (isNaN(newPrice)) {
+              return;
+            }
+            updateQuoteItem({
+              ...quoteItem,
+              ...negotiationItem,
+              price: newPrice,
+            });
+          }}
+        />
+        <Text>/{quoteItem.unit}</Text>
+      </View>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   quoteCard: {
@@ -103,7 +150,7 @@ const styles = StyleSheet.create({
     borderColor: "#D0D5DD",
     borderWidth: 1,
     borderRadius: 8,
-    marginTop: 8
+    marginTop: 8,
   },
   termsText: {
     color: "#344054",
@@ -114,12 +161,12 @@ const styles = StyleSheet.create({
   quoteCardInfo: {
     flexDirection: "row",
     width: "100%",
-    columnGap: 4
+    columnGap: 4,
   },
   quoteCardInfoTextContainer: {
     flex: 1,
     alignItems: "flex-start",
-    justifyContent: "space-evenly"
+    justifyContent: "space-evenly",
   },
   quoteCardInfoHeaderText: {
     fontWeight: 500,
@@ -131,14 +178,14 @@ const styles = StyleSheet.create({
     fontWeight: 500,
     fontFamily: "Avenir",
     fontSize: 14,
-    color: "#334155"
+    color: "#334155",
   },
   formContainer: {
     width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    columnGap: 12
+    columnGap: 12,
   },
   inputForm: {
     paddingHorizontal: 12,
@@ -146,6 +193,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#CBD5E1",
     flex: 1,
-    borderRadius: 8
-  }
-})
+    borderRadius: 8,
+  },
+});

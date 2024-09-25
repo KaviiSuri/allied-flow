@@ -1,16 +1,96 @@
-import { router } from "expo-router";
-import { useState } from "react";
-import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { router, useLocalSearchParams } from "expo-router";
+import { useState, useEffect } from "react";
+import {
+  Dimensions,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import Toast from "react-native-toast-message";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/AntDesign";
 import { QuotePanel } from "~/components/historyPanel/quotePanel";
 import { BottomDrawer } from "~/components/layouts/BottomDrawerLayout";
 import { SearchBox } from "~/components/shared/searchComponent";
+import type { RouterOutputs } from "~/utils/api";
+import { api } from "~/utils/api";
+import { PrimaryButton } from "~/components/core/button";
 
 const windowHeight = Dimensions.get("window").height - 185;
+
+type QuoteItem = NonNullable<
+  RouterOutputs["inquiry"]["getDetails"]["latestQuote"]
+>["quoteItems"][0];
+
+type QuoteItemMap = Record<string, QuoteItem>;
+
 export default function SendQuote() {
-  const [searchQuery, setSearchQuery] = useState<string>("")
-  const [openCreateForm,setOpenCreateForm] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [openCreateForm, setOpenCreateForm] = useState<boolean>(false);
+  const { quoteId } = useLocalSearchParams();
+  const { data, isLoading } = api.inquiry.getDetails.useQuery(
+    {
+      inquiryId: quoteId as string,
+    },
+    {},
+  );
+  const [negoiatedItems, setNegotiatedItems] = useState<QuoteItemMap>({});
+
+  const [terms, setTerms] = useState("");
+
+  useEffect(() => {
+    if (!data?.latestQuote) {
+      return;
+    }
+
+    const negotiatedItems: QuoteItemMap = {};
+    data.latestQuote.quoteItems.forEach((quoteItem) => {
+      negotiatedItems[quoteItem.productId] = quoteItem;
+    });
+
+    setNegotiatedItems(negotiatedItems);
+  }, [data]);
+
+  const handleQuoteItemUpdate = (quoteItem: QuoteItem) => {
+    console.log("quoteItem", quoteItem);
+    setNegotiatedItems((prev) => ({
+      ...prev,
+      [quoteItem.productId]: quoteItem,
+    }));
+  };
+  const utils = api.useUtils();
+  const { mutateAsync: negotiate, isPending } =
+    api.inquiry.negotiate.useMutation({
+      onSuccess: () => {
+        void utils.inquiry.getDetails
+          .invalidate({ inquiryId: quoteId as string })
+          .then(() => {
+            Toast.show({
+              type: "success",
+              text1: "Negotiation successful",
+            });
+            router.navigate(`/inquiry/${data?.inquiry.id}`);
+          })
+          .catch();
+      },
+    });
+  const handleSave = () => {
+    if (isPending || !data) {
+      return;
+    }
+    negotiate({
+      inquiryId: data.inquiry.id,
+      items: Object.values(negoiatedItems),
+      tnc: terms,
+    }).catch(() => {
+      Toast.show({
+        type: "error",
+        text1: "Negotiation failed",
+      });
+    });
+  };
   return (
     <View style={{ height: windowHeight }}>
       <SafeAreaView
@@ -26,11 +106,8 @@ export default function SendQuote() {
           >
             <Icon name="arrowleft" size={24} color="black" />
           </TouchableOpacity>
-            <Text style={styles.titleHeader}>
-              Send quote
-            </Text>
-          <View style={{ width: 118 }}>
-          </View>
+          <Text style={styles.titleHeader}>Send quote</Text>
+          <View style={{ width: 118 }}></View>
         </View>
         <View
           style={{
@@ -52,7 +129,16 @@ export default function SendQuote() {
           height: "100%",
         }}
       >
-        <QuoteDetails />
+        {data && (
+          <QuoteDetails
+            latestQuote={data.latestQuote}
+            negotiatedItems={negoiatedItems}
+            updateQuoteItem={handleQuoteItemUpdate}
+            terms={terms}
+            setTerms={setTerms}
+            handleSave={handleSave}
+          />
+        )}
       </ScrollView>
       {/* Modal Negotiation */}
       <BottomDrawer
@@ -66,12 +152,32 @@ export default function SendQuote() {
   );
 }
 
-
-const QuoteDetails = () => {
+const QuoteDetails = ({
+  latestQuote,
+  updateQuoteItem,
+  negotiatedItems,
+  terms,
+  setTerms,
+  handleSave,
+}: {
+  latestQuote: RouterOutputs["inquiry"]["getDetails"]["latestQuote"];
+  updateQuoteItem: (quoteItem: QuoteItem) => void;
+  negotiatedItems: QuoteItemMap;
+  terms: string;
+  setTerms: (terms: string) => void;
+  handleSave: () => void;
+}) => {
   return (
     <>
       <View style={styles.quotePanel}>
-        <QuotePanel />
+        <QuotePanel
+          latestQuote={latestQuote}
+          updateQuoteItem={updateQuoteItem}
+          negotiatedItems={negotiatedItems}
+          terms={terms}
+          setTerms={setTerms}
+        />
+        <PrimaryButton text="Submit" onPress={handleSave} />
       </View>
     </>
   );

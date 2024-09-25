@@ -49,6 +49,10 @@ export default function InquiriesDetails() {
 
   const [negoiatedItems, setNegotiatedItems] = useState<QuoteItemMap>({});
 
+  useEffect(() => {
+    setNegotiatedItems({});
+  }, [inquiryNumber]);
+
   const handleQuoteItemUpdate = (quoteItem: QuoteItem) => {
     console.log("quoteItem", quoteItem);
     setNegotiatedItems((prev) => ({

@@ -61,6 +61,10 @@ export default function InquiriesDetails() {
     }));
   };
 
+  useEffect(() => {
+    setNegotiatedItems({});
+  }, [inquiryNumber]);
+
   const utils = api.useUtils();
   const { mutateAsync: negotiate, isPending } =
     api.inquiry.negotiate.useMutation({

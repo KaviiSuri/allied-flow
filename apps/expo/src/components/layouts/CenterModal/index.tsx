@@ -33,11 +33,11 @@ export const CenterModalComponent = ({
           <TouchableWithoutFeedback>
             <View style={styles.modalContent}>
               {/* header */}
-              <View>
+              <View style={{ flexDirection: "row", gap: 16 }}>
                 <Icon name="arrow-switch" size={24} color="black" />
                 <View>
-                  <Text>Title</Text>
-                  <Text>Subtitle</Text>
+                  <Text style={{fontFamily:"AvenirHeavy", fontSize: 18, fontWeight: 600}}>ABC Chemicals requested a price update</Text>
+                  <Text style={{fontFamily:"Avenir", fontSize: 14, fontWeight: 400, color: "#64748B"}}>2023-06-14 12:00 PM</Text>
                 </View>
               </View>
               {/* content */}
@@ -96,6 +96,7 @@ const styles = StyleSheet.create({
   modalContent: {
     width: Dimensions.get("window").width * 0.5,
     padding: 20,
+    gap: 16,
     backgroundColor: "white",
     borderRadius: 10,
     shadowColor: "#000",

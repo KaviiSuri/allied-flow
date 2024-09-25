@@ -9,7 +9,7 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import { SearchBox } from "../shared/searchComponent";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { MobileTab } from "../core/mobileTab";
 import { Badge } from "../core/badge";
@@ -55,6 +55,10 @@ export const InquiryPage = () => {
 
   const [productRequests, setProductRequests] = useState<ProductRequest[]>([]);
 
+  useEffect(() => {
+    setProductRequests([]);
+  }, []);
+
   const handleAddProductRequest = () => {
     setProductRequests([
       ...productRequests,
@@ -92,6 +96,7 @@ export const InquiryPage = () => {
   const { mutateAsync: raiseInquiry } = api.inquiry.raise.useMutation({
     onSuccess: () => {
       setOpenCreateForm(false);
+      setProductRequests([]);
       utils.inquiry.list.invalidate().catch(console.error);
       Toast.show({
         position: "bottom",
@@ -151,7 +156,10 @@ export const InquiryPage = () => {
         <GestureHandlerRootView style={styles.container}>
           <TouchableOpacity
             style={createStyles.createButton}
-            onPress={() => setOpenCreateForm(true)}
+            onPress={() => {
+              setOpenCreateForm(true);
+              setProductRequests([]);
+            }}
           >
             <Text style={createStyles.text}>+</Text>
           </TouchableOpacity>

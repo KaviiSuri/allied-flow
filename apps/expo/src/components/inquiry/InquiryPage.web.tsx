@@ -10,7 +10,7 @@ import {
 } from "react-native";
 const windowHeight = Dimensions.get("window").height - 64;
 import { PrimaryButton, SecondaryButton } from "~/components/core/button";
-import { api} from "~/utils/api";
+import { api } from "~/utils/api";
 import SentInquiries from "~/app/screens/sentInquiries";
 import { InquiryForm } from "./InquiryFormMobile";
 import { useAbility, useUser } from "~/providers/auth";
@@ -18,9 +18,10 @@ import { ProductRequest } from "./InquiryPage";
 import { SearchBox } from "../shared/searchComponent";
 import Toast from "react-native-toast-message";
 
-
 export const InquiryPage = () => {
-  const [activeNestedTab, setActiveNestedTab] = useState<"All"|"New"|"Sent"|"Negotiation">("All");
+  const [activeNestedTab, setActiveNestedTab] = useState<
+    "All" | "New" | "Sent" | "Negotiation"
+  >("All");
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [searchResult, setSearchResult] = useState<string>("");
   // const [filter, setFilter] = useState<string>("All");
@@ -83,7 +84,7 @@ export const InquiryPage = () => {
   const { mutateAsync: raiseInquiry } = api.inquiry.raise.useMutation({
     onSuccess: () => {
       setDrawerVisible(false);
-      utils.inquiry.list.invalidate();
+      utils.inquiry.list.invalidate().catch(console.error);
       Toast.show({
         position: "bottom",
         type: "success",
@@ -117,13 +118,15 @@ export const InquiryPage = () => {
   };
 
   const renderNestedScreen = () => {
-    return(<SentInquiries currentTab={activeNestedTab} inquiries={inquiries}/>)
+    return <SentInquiries currentTab={activeNestedTab} inquiries={inquiries} />;
   };
 
   return (
     <View>
-    <ScrollView style={{ flex: 1 , backgroundColor: "#f9f9f9"}}>
-      <CreateInquiryForm open={drawerVisible} toggleOpen={toggleDrawer}
+      <ScrollView style={{ flex: 1, backgroundColor: "#f9f9f9" }}>
+        <CreateInquiryForm
+          open={drawerVisible}
+          toggleOpen={toggleDrawer}
           productRequests={productRequests}
           handleAddProductRequest={handleAddProductRequest}
           deleteProductRequest={deleteProductRequest}
@@ -133,148 +136,154 @@ export const InquiryPage = () => {
           clientId={clientId}
           setClientId={setClientId}
           handleSave={handleSave}
-       />
-      <View
-        style={{
-          flexDirection: "row",
-          paddingHorizontal: 10,
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <View style={{ flexDirection: "row",gap: 12 }}>
-          <TouchableOpacity
-            style={[{
-                paddingVertical: 12,
-                paddingHorizontal: 4
-            },
-              activeNestedTab === "All" && {
-                borderBottomWidth: 2,
-                borderColor: "#2F80F5",
-              }]}
-            onPress={() => setActiveNestedTab("All")}
-          >
-            <Text
+        />
+        <View
+          style={{
+            flexDirection: "row",
+            paddingHorizontal: 10,
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <View style={{ flexDirection: "row", gap: 12 }}>
+            <TouchableOpacity
+              style={[
+                {
+                  paddingVertical: 12,
+                  paddingHorizontal: 4,
+                },
+                activeNestedTab === "All" && {
+                  borderBottomWidth: 2,
+                  borderColor: "#2F80F5",
+                },
+              ]}
+              onPress={() => setActiveNestedTab("All")}
+            >
+              <Text
+                style={{
+                  fontFamily: "Avenir",
+                  color: activeNestedTab == "All" ? "#475569" : "#64748B",
+                  fontSize: 16,
+                  fontWeight: 400,
+                  marginHorizontal: 6,
+                }}
+              >
+                All
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                {
+                  paddingVertical: 12,
+                  paddingHorizontal: 4,
+                },
+                activeNestedTab === "New" && {
+                  borderBottomWidth: 2,
+                  borderColor: "#2F80F5",
+                },
+              ]}
+              onPress={() => setActiveNestedTab("New")}
+            >
+              <Text
+                style={{
+                  fontFamily: "Avenir",
+                  color: activeNestedTab == "New" ? "#475569" : "#64748B",
+                  fontSize: 16,
+                  fontWeight: 400,
+                  marginHorizontal: 6,
+                }}
+              >
+                New
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                {
+                  paddingVertical: 12,
+                  paddingHorizontal: 4,
+                },
+                activeNestedTab === "Sent" && {
+                  borderBottomWidth: 2,
+                  borderColor: "#2F80F5",
+                },
+              ]}
+              onPress={() => setActiveNestedTab("Sent")}
+            >
+              <Text
+                style={{
+                  fontFamily: "Avenir",
+                  color: activeNestedTab == "Sent" ? "#475569" : "#64748B",
+                  fontSize: 16,
+                  fontWeight: 400,
+                  marginHorizontal: 6,
+                }}
+              >
+                Sent
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                {
+                  paddingVertical: 12,
+                  paddingHorizontal: 4,
+                },
+                activeNestedTab === "Negotiation" && {
+                  borderBottomWidth: 2,
+                  borderColor: "#2F80F5",
+                },
+              ]}
+              onPress={() => setActiveNestedTab("Negotiation")}
+            >
+              <Text
+                style={{
+                  fontFamily: "Avenir",
+                  color:
+                    activeNestedTab == "Negotiation" ? "#475569" : "#64748B",
+                  fontSize: 16,
+                  fontWeight: 400,
+                  marginHorizontal: 6,
+                }}
+              >
+                Negotiation
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View style={{ padding: 10 }}>
+            <View
               style={{
-                fontFamily: "Avenir",
-                color: activeNestedTab == "All" ? "#475569" : "#64748B",
-                fontSize: 16,
-                fontWeight: 400,
-                marginHorizontal: 6,
+                flexDirection: "row",
+                gap: 16,
+                alignItems: "center",
               }}
             >
-              All
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[{
-                paddingVertical: 12,
-                paddingHorizontal: 4
-            },
-              activeNestedTab === "New" && {
-                borderBottomWidth: 2,
-                borderColor: "#2F80F5",
-              }]}
-            onPress={() => setActiveNestedTab("New")}
-          >
-            <Text
-              style={{
-                fontFamily: "Avenir",
-                color: activeNestedTab == "New" ? "#475569" : "#64748B",
-                fontSize: 16,
-                fontWeight: 400,
-                marginHorizontal: 6,
-              }}
-            >
-              New
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[{
-                paddingVertical: 12,
-                paddingHorizontal: 4
-            },
-              activeNestedTab === "Sent" && {
-                borderBottomWidth: 2,
-                borderColor: "#2F80F5",
-              }]}
-            onPress={() => setActiveNestedTab("Sent")}
-          >
-            <Text
-              style={{
-                fontFamily: "Avenir",
-                color: activeNestedTab == "Sent" ? "#475569" : "#64748B",
-                fontSize: 16,
-                fontWeight: 400,
-                marginHorizontal: 6,
-              }}
-            >
-             Sent 
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[{
-                paddingVertical: 12,
-                paddingHorizontal: 4
-            },
-              activeNestedTab === "Negotiation" && {
-                borderBottomWidth: 2,
-                borderColor: "#2F80F5",
-              }]}
-            onPress={() => setActiveNestedTab("Negotiation")}
-          >
-            <Text
-              style={{
-                fontFamily: "Avenir",
-                color: activeNestedTab == "Negotiation" ? "#475569" : "#64748B",
-                fontSize: 16,
-                fontWeight: 400,
-                marginHorizontal: 6,
-              }}
-            >
-              Negotiation
-            </Text>
-          </TouchableOpacity>
-        </View>
-        <View style={{ padding: 10 }}>
-          <View
-            style={{
-              flexDirection: "row",
-              gap: 16,
-              alignItems: "center",
-            }}
-          >
-          <SearchBox
-            placeholder="Search inquiry external"
-            setValue={setSearchResult}
-            value={searchResult}
-          />
-            <PrimaryButton text="Raise an inquiry" onPress={toggleDrawer} />
+              <SearchBox
+                placeholder="Search inquiry external"
+                setValue={setSearchResult}
+                value={searchResult}
+              />
+              <PrimaryButton text="Raise an inquiry" onPress={toggleDrawer} />
+            </View>
           </View>
         </View>
-      </View>
-      {renderNestedScreen()}
-    </ScrollView>
+        {renderNestedScreen()}
+      </ScrollView>
     </View>
   );
 };
 
-
-
-
-
-function CreateInquiryForm(props: { open: boolean; 
-  toggleOpen: () => void,
-  productRequests: ProductRequest[],
-  handleAddProductRequest : () => void,
-  deleteProductRequest: (id : string) => void,
-  updateProductRequest: (ProductRequest: ProductRequest) => void,
-  remarks: string,
-  updateRemarks: React.Dispatch<React.SetStateAction<string>>,
-  clientId: string | null,
-  setClientId: React.Dispatch<React.SetStateAction<string|null>>,
-  handleSave: () => void
- }) {
+function CreateInquiryForm(props: {
+  open: boolean;
+  toggleOpen: () => void;
+  productRequests: ProductRequest[];
+  handleAddProductRequest: () => void;
+  deleteProductRequest: (id: string) => void;
+  updateProductRequest: (ProductRequest: ProductRequest) => void;
+  remarks: string;
+  updateRemarks: React.Dispatch<React.SetStateAction<string>>;
+  clientId: string | null;
+  setClientId: React.Dispatch<React.SetStateAction<string | null>>;
+  handleSave: () => void;
+}) {
   return (
     <Animated.View
       style={{
@@ -305,17 +314,17 @@ function CreateInquiryForm(props: { open: boolean;
           backgroundColor: "#F9F9F9",
         }}
       >
-        <ScrollView style={{flex: 1}}>
+        <ScrollView style={{ flex: 1 }}>
           <InquiryForm
-              productRequests={props.productRequests}
-              handleAddProductRequest={props.handleAddProductRequest}
-              deleteProductRequest={props.deleteProductRequest}
-              updateProductRequest={props.updateProductRequest}
-              remarks={props.remarks}
-              updateRemarks={props.updateRemarks}
-              clientId={props.clientId}
-              setClientId={props.setClientId}
-            />
+            productRequests={props.productRequests}
+            handleAddProductRequest={props.handleAddProductRequest}
+            deleteProductRequest={props.deleteProductRequest}
+            updateProductRequest={props.updateProductRequest}
+            remarks={props.remarks}
+            updateRemarks={props.updateRemarks}
+            clientId={props.clientId}
+            setClientId={props.setClientId}
+          />
         </ScrollView>
         <View
           style={{
@@ -335,6 +344,7 @@ function CreateInquiryForm(props: { open: boolean;
           />
         </View>
       </View>
-      </Animated.View>
+    </Animated.View>
   );
 }
+

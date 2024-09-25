@@ -13,10 +13,16 @@ export const CenterModalComponent = ({
   visible,
   setVisible,
   children,
+  onUpdateRequest,
+  onAcceptRequest,
+  onRejectRequest,
 }: {
   visible: boolean;
   setVisible: React.Dispatch<React.SetStateAction<boolean>>;
   children: React.ReactNode;
+  onUpdateRequest: () => void;
+  onAcceptRequest: () => void;
+  onRejectRequest: () => void;
 }) => {
   return (
     <Modal
@@ -36,8 +42,25 @@ export const CenterModalComponent = ({
               <View style={{ flexDirection: "row", gap: 16 }}>
                 <Icon name="arrow-switch" size={24} color="black" />
                 <View>
-                  <Text style={{fontFamily:"AvenirHeavy", fontSize: 18, fontWeight: 600}}>ABC Chemicals requested a price update</Text>
-                  <Text style={{fontFamily:"Avenir", fontSize: 14, fontWeight: 400, color: "#64748B"}}>2023-06-14 12:00 PM</Text>
+                  <Text
+                    style={{
+                      fontFamily: "AvenirHeavy",
+                      fontSize: 18,
+                      fontWeight: 600,
+                    }}
+                  >
+                    Requested a price update
+                  </Text>
+                  <Text
+                    style={{
+                      fontFamily: "Avenir",
+                      fontSize: 14,
+                      fontWeight: 400,
+                      color: "#64748B",
+                    }}
+                  >
+                    2023-06-14 12:00 PM
+                  </Text>
                 </View>
               </View>
               {/* content */}
@@ -49,10 +72,19 @@ export const CenterModalComponent = ({
                   justifyContent: "space-between",
                 }}
               >
-                <SecondaryButton text="Reject Request" />
+                <SecondaryButton
+                  text="Reject Request"
+                  onPress={onRejectRequest}
+                />
                 <View style={{ flexDirection: "row", gap: 16 }}>
-                  <SecondaryButton text="Update Request" />
-                  <PrimaryButton text="Accept Request" />
+                  <SecondaryButton
+                    text="Update Request"
+                    onPress={onUpdateRequest}
+                  />
+                  <PrimaryButton
+                    text="Accept Request"
+                    onPress={onAcceptRequest}
+                  />
                 </View>
               </View>
             </View>

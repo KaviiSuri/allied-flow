@@ -16,8 +16,15 @@ import { DetailsTabs } from "~/components/detailsTabs";
 import { InquiryDetailsPage } from "~/components/inquiryDetailsPage";
 import { CenterModalComponent } from "~/components/layouts/CenterModal";
 import { FormTextInput } from "~/components/shared/form";
-import { Table, TableData, TableHeading, TableRow } from "~/components/shared/table";
-import { api, RouterOutputs } from "~/utils/api";
+import {
+  Table,
+  TableData,
+  TableHeading,
+  TableRow,
+} from "~/components/shared/table";
+import { useProductById } from "~/hooks/useProductById";
+import type { RouterOutputs } from "~/utils/api";
+import { api } from "~/utils/api";
 
 const windowHeight = Dimensions.get("window").height - 64;
 
@@ -45,10 +52,9 @@ export default function InquiriesDetails() {
   const [activeNestedTab, setActiveNestedTab] = useState("Details");
   const [negotiationVisible, setNegotiationVisible] = useState(false);
 
-  const [negoiatedItems, setNegotiatedItems] = useState<QuoteItemMap>({});
+  const [negotiatedItems, setNegotiatedItems] = useState<QuoteItemMap>({});
 
   const handleQuoteItemUpdate = (quoteItem: QuoteItem) => {
-    console.log("quoteItem", quoteItem);
     setNegotiatedItems((prev) => ({
       ...prev,
       [quoteItem.productId]: quoteItem,
@@ -72,12 +78,13 @@ export default function InquiriesDetails() {
     });
 
   const handleNegotiate = () => {
+    console.log("negotiatedItems", negotiatedItems);
     if (isPending || !data) {
       return;
     }
     negotiate({
       inquiryId: data.inquiry.id,
-      items: Object.values(negoiatedItems),
+      items: Object.values(negotiatedItems),
     }).catch(() => {
       Toast.show({
         type: "error",
@@ -87,7 +94,7 @@ export default function InquiriesDetails() {
     setNegotiationVisible(false);
   };
 
-  const { mutateAsync: createOrderFromInquiry } =
+  const { mutate: createOrderFromInquiry } =
     api.orders.createFromInquiry.useMutation({
       onSuccess: () => {
         Toast.show({
@@ -102,7 +109,7 @@ export default function InquiriesDetails() {
     });
 
   const handleOrder = () => {
-    if (!data || !data.inquiry || !data.latestQuote || isFinalized) {
+    if (!data?.inquiry || !data.latestQuote || isFinalized) {
       return;
     }
     createOrderFromInquiry({
@@ -156,8 +163,15 @@ export default function InquiriesDetails() {
       <CenterModalComponent
         visible={negotiationVisible}
         setVisible={setNegotiationVisible}
+        onUpdateRequest={handleNegotiate}
+        onAcceptRequest={handleOrder}
+        onRejectRequest={handleCancel}
       >
-        <NegotiationTable />
+        <NegotiationTable
+          quoteItems={data?.latestQuote?.quoteItems ?? []}
+          negotiationItems={negotiatedItems}
+          handleQuoteItemUpdate={handleQuoteItemUpdate}
+        />
         <FormTextInput label="Remarks" placeholder="Enter remarks here" />
       </CenterModalComponent>
       <View style={{ paddingVertical: 12, height: windowHeight }}>
@@ -235,9 +249,7 @@ export default function InquiriesDetails() {
             <PrimaryButton
               text="Place Order"
               disabled={!(data?.inquiry.status === "ACCEPTED")}
-              onPress={() => {
-                router.navigate(`/inquiry/sendQuote/${data?.inquiry.id}`);
-              }}
+              onPress={handleOrder}
             />
           </View>
         </View>
@@ -380,7 +392,15 @@ const Sample = () => {
   );
 };
 
-const NegotiationTable = () => {
+const NegotiationTable = ({
+  negotiationItems,
+  quoteItems,
+  handleQuoteItemUpdate,
+}: {
+  negotiationItems: QuoteItemMap;
+  quoteItems: QuoteItem[];
+  handleQuoteItemUpdate: (quoteItem: QuoteItem) => void;
+}) => {
   return (
     <Table style={styles.tableContainer}>
       <TableHeading style={{ backgroundColor: "#F1F5F9" }}>
@@ -435,23 +455,99 @@ const NegotiationTable = () => {
       </TableHeading>
       {/* random data  */}
 
-        <TableRow style={styles.tableRow} id={'1'} key={1}>
-          <TableData style={{ fontSize: 14, color: "#1E293B", fontWeight: 400, flex: 1, borderRightWidth: 1, borderColor: "#DCDFEA" }}>
-            Ketone
-          </TableData>
-          <TableData style={{ fontSize: 14, color: "#1E293B", fontWeight: 400, flex: 1, borderRightWidth: 1, borderColor: "#DCDFEA" }}>
-            3kg
-          </TableData>
-          <TableData style={{ fontSize: 14, color: "#1E293B", fontWeight: 400, flex: 1, borderRightWidth: 1, borderColor: "#DCDFEA" }}>
-            Rs 1000 
-          </TableData>
-          <TableData style={{ fontSize: 14, color: "#1E293B", fontWeight: 400, flex: 1, borderRightWidth: 1, borderColor: "#DCDFEA" }}>
-            <TextInput></TextInput>
-          </TableData>
-        </TableRow>
+      {quoteItems.map((quoteItem) => (
+        <ProductRow
+          key={quoteItem.productId}
+          quoteItem={quoteItem}
+          negotiatedItem={negotiationItems[quoteItem.productId]}
+          updateQuoteItem={handleQuoteItemUpdate}
+        />
+      ))}
     </Table>
   );
 };
+
+function ProductRow({
+  quoteItem,
+  negotiatedItem,
+  updateQuoteItem,
+}: {
+  quoteItem: QuoteItem;
+  negotiatedItem?: QuoteItem;
+  updateQuoteItem: (quoteItem: QuoteItem) => void;
+}) {
+  const { product } = useProductById(quoteItem.productId);
+  if (!product) {
+    return null;
+  }
+  return (
+    <TableRow style={styles.tableRow} id={"1"} key={quoteItem.productId}>
+      <TableData
+        style={{
+          fontSize: 14,
+          color: "#1E293B",
+          fontWeight: 400,
+          flex: 1,
+          borderRightWidth: 1,
+          borderColor: "#DCDFEA",
+        }}
+      >
+        {product.name}
+      </TableData>
+      <TableData
+        style={{
+          fontSize: 14,
+          color: "#1E293B",
+          fontWeight: 400,
+          flex: 1,
+          borderRightWidth: 1,
+          borderColor: "#DCDFEA",
+        }}
+      >
+        {quoteItem.quantity} {quoteItem.unit}
+      </TableData>
+      <TableData
+        style={{
+          fontSize: 14,
+          color: "#1E293B",
+          fontWeight: 400,
+          flex: 1,
+          borderRightWidth: 1,
+          borderColor: "#DCDFEA",
+        }}
+      >
+        Rs {quoteItem.price}
+      </TableData>
+      <TableData
+        style={{
+          fontSize: 14,
+          color: "#1E293B",
+          fontWeight: 400,
+          flex: 1,
+          borderRightWidth: 1,
+          borderColor: "#DCDFEA",
+        }}
+      >
+        <FormTextInput
+          placeholder="Enter target  price"
+          label="Target Price (Per Unit)"
+          value={negotiatedItem?.price ? negotiatedItem.price.toString() : ""}
+          onChangeText={(value) => {
+            const newPrice = parseFloat(value);
+            if (isNaN(newPrice)) {
+              return;
+            }
+            updateQuoteItem({
+              ...quoteItem,
+              ...negotiatedItem,
+              price: newPrice,
+            });
+          }}
+        />
+      </TableData>
+    </TableRow>
+  );
+}
 
 //styles
 const styles = StyleSheet.create({

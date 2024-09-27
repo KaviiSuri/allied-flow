@@ -193,23 +193,6 @@ function NotificationContent(props: NotificationProps) {
         been shipped successfully.
       </Text>
     );
-    // eslint-disable-next-line no-dupe-else-if
-  } else if (props.notificationType === "SAMPLE_DISPATCHED") {
-    return (
-      <Text style={{ fontFamily: "Avenir", fontSize: 14, fontWeight: 500 }}>
-        Sample for{" "}
-        <Text style={{ fontWeight: 700 }}>
-          {props.productNames.length === 2
-            ? props.productNames[0] + ` & 1 other`
-            : props.productNames.length > 2
-              ? props.productNames[0] +
-                ` & ${props.productNames.length - 1} others`
-              : props.productNames[0]}
-        </Text>{" "}
-        with order id <Text style={{ fontWeight: 700 }}>#{props.id}</Text> has
-        been dispatched successfully.
-      </Text>
-    );
   } else if (props.notificationType === "INQUIRY_RAISED") {
     return (
       <Text style={{ fontFamily: "Avenir", fontSize: 14, fontWeight: 500 }}>

@@ -134,6 +134,7 @@ export default function InquiriesDetails() {
           <InquiryDetails
             quote={data?.latestQuote}
             remarks={data?.inquiry.remarks ?? ""}
+            tnc={data?.inquiry.tnc ?? ""}
           />
         );
       case "Sample":
@@ -358,7 +359,6 @@ const Sample = () => {
           backgroundColor: "#f9f9f9",
         }}
       >
-        <InquiryDetailsPage />
         {/* Customers Remarks */}
       </ScrollView>
       <View

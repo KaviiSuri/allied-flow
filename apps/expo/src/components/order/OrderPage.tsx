@@ -8,7 +8,7 @@ import Icon from "react-native-vector-icons/FontAwesome5";
 import type { RouterInputs, RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
 import { PrimaryButton } from "../core/button";
-import { ViewProps } from "react-native-svg/lib/typescript/fabric/utils";
+import type { ViewProps } from "react-native-svg/lib/typescript/fabric/utils";
 
 export const OrderPage = ({
   type,

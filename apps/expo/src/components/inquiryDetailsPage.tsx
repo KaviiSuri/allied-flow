@@ -1,7 +1,7 @@
 import { StyleSheet, Text } from "react-native"
 import { Table, TableData, TableHeading, TableRow } from "./shared/table"
 import { useEffect } from "react"
-import { RouterOutputs } from "@repo/api"
+import type { RouterOutputs } from "@repo/api"
 import { api } from "~/utils/api"
 
 

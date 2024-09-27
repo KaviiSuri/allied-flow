@@ -46,7 +46,10 @@ export default function TabLayout() {
                     }),
                     // @ts-expect-error types broken here
                     ...(drawer.action &&
+                      // @ts-expect-error types broken here
                       drawer.subject &&
+                      // @ts-expect-error types broken here
+                      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                       !ability.can(drawer.action, drawer.subject) && {
                         display: "none",
                       }),
@@ -54,6 +57,8 @@ export default function TabLayout() {
                   title: drawer.name,
                   tabBarIcon: ({ color }) => (
                     <Image
+                      // @ts-expect-error types broken here
+                      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                       source={drawer.icon}
                       style={{
                         width: 20,

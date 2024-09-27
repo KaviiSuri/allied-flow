@@ -93,7 +93,7 @@ export default function InquiriesDetails() {
     setOpenCreateForm(false);
   };
 
-  const { mutateAsync: createOrderFromInquiry } =
+  const { mutate: createOrderFromInquiry } =
     api.orders.createFromInquiry.useMutation({
       onSuccess: () => {
         Toast.show({
@@ -337,14 +337,16 @@ export default function InquiriesDetails() {
         onPrimaryButtonPress={handleNegotiate}
         onSecondaryButtonPress={handleCancel}
       >
-        {data?.latestQuote?.quoteItems.map((quoteItem) => (
-          <ProductsCard
-            key={quoteItem.productId}
-            quoteItem={quoteItem}
-            updateQuoteItem={handleQuoteItemUpdate}
-            negotiatedItem={negoiatedItems[quoteItem.productId]}
-          />
-        ))}
+        <>
+          {data?.latestQuote?.quoteItems.map((quoteItem) => (
+            <ProductsCard
+              key={quoteItem.productId}
+              quoteItem={quoteItem}
+              updateQuoteItem={handleQuoteItemUpdate}
+              negotiatedItem={negoiatedItems[quoteItem.productId]}
+            />
+          ))}
+        </>
 
         <RemarksForm remark={remark} setRemark={setRemark} />
       </BottomDrawer>

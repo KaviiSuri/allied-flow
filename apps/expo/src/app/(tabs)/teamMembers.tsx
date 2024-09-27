@@ -18,7 +18,7 @@ import {
   TableData,
 } from "~/components/shared/table";
 import { useEffect, useRef, useState } from "react";
-import DocumentPicker from 'react-native-document-picker';
+import DocumentPicker from "react-native-document-picker";
 import type { RouterInputs, RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
 import { PrimaryButton, SecondaryButton } from "~/components/core/button";
@@ -62,14 +62,14 @@ function MemberForm(
     toggleOpen: () => void;
     isLoading?: boolean;
   } & (
-      | {
+    | {
         handleSave: (_user: CreateUser) => Promise<void>;
       }
-      | {
+    | {
         user: User;
         handleSave: (_user: UpdateUser) => Promise<void>;
       }
-    ),
+  ),
 ) {
   const [email, setEmail] = useState<string>(
     isUpdateUserProps(props) ? props.user.email : "",
@@ -156,10 +156,7 @@ function MemberForm(
             Add member
           </Text>
           <Pressable onPress={props.toggleOpen}>
-            <Image
-               
-              source={CloseIcon}
-            />
+            <Image source={CloseIcon} />
           </Pressable>
         </View>
         <View style={{ flex: 1, padding: 20 }}>
@@ -197,10 +194,9 @@ function MemberForm(
               label="Role"
               options={RoleOptions}
               value={role}
-              onValueChange={(e) => setRole(e)}
+              onValueChange={(e) => setRole(e as Role)}
               rightIcon={
                 <Image
-                   
                   source={DownArrowIcon}
                   style={{
                     width: 18,
@@ -265,8 +261,8 @@ function UpdateMemberForm(props: {
 }
 
 const handleFileDrop = () => {
-  console.log('Upload');
-}
+  console.log("Upload");
+};
 
 // const handleFileDrop = async () => {
 //   try {
@@ -292,7 +288,13 @@ const handleFileDrop = () => {
 //   }
 // };
 
-const DragAndDrop = ({ onDrop, children }) => {
+const DragAndDrop = ({
+  onDrop,
+  children,
+}: {
+  onDrop: () => void;
+  children: React.ReactNode;
+}) => {
   const panResponder = useRef(
     PanResponder.create({
       onMoveShouldSetPanResponder: () => true,
@@ -300,21 +302,23 @@ const DragAndDrop = ({ onDrop, children }) => {
         // Check if the drop location is valid and trigger the onDrop event
         onDrop();
       },
-    })
+    }),
   ).current;
 
   return (
-    <View {...panResponder.panHandlers} style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <View
+      {...panResponder.panHandlers}
+      style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+    >
       {children}
     </View>
   );
 };
 
 function UploadMemberPopup(props: { open: boolean; toggleOpen: () => void }) {
-
   const openFilePicker = () => {
     console.log("open");
-  }
+  };
 
   // const openFilePicker = async () => {
   //   try {
@@ -391,7 +395,6 @@ function UploadMemberPopup(props: { open: boolean; toggleOpen: () => void }) {
                 style={{
                   tintColor: "#64748B",
                 }}
-                 
                 source={CloseIcon}
               />
             </Pressable>
@@ -434,14 +437,12 @@ function UploadMemberPopup(props: { open: boolean; toggleOpen: () => void }) {
                     width: 20,
                     resizeMode: "contain",
                   }}
-                   
                   source={UploadIcon}
                 ></Image>
               </Pressable>
               <Text>Click to upload or drag and drop</Text>
             </View>
           </DragAndDrop>
-
 
           <Text
             style={{
@@ -476,7 +477,6 @@ function UploadMemberPopup(props: { open: boolean; toggleOpen: () => void }) {
                   width: 20,
                   resizeMode: "contain",
                 }}
-                 
                 source={ExcelIcon}
               ></Image>
               <Text
@@ -496,19 +496,21 @@ function UploadMemberPopup(props: { open: boolean; toggleOpen: () => void }) {
                   width: 14,
                   resizeMode: "contain",
                 }}
-                 
                 source={DownloadIcon}
               ></Image>
             </View>
-            <View style={{
-              borderTopWidth: 1,
-              flexDirection: "row",
-              justifyContent: "flex-end",
-              alignItems: "center",
-              marginTop: 16,
-              borderColor: "#E2E8F0"
-            }}>
-              <Pressable onPress={props.toggleOpen}
+            <View
+              style={{
+                borderTopWidth: 1,
+                flexDirection: "row",
+                justifyContent: "flex-end",
+                alignItems: "center",
+                marginTop: 16,
+                borderColor: "#E2E8F0",
+              }}
+            >
+              <Pressable
+                onPress={props.toggleOpen}
                 style={{
                   backgroundColor: "#FFF",
                   paddingHorizontal: 12,
@@ -518,7 +520,7 @@ function UploadMemberPopup(props: { open: boolean; toggleOpen: () => void }) {
                   justifyContent: "center",
                   margin: 16,
                   borderRadius: 8,
-                  borderColor: "#D0D5DD"
+                  borderColor: "#D0D5DD",
                 }}
               >
                 <Text
@@ -531,21 +533,22 @@ function UploadMemberPopup(props: { open: boolean; toggleOpen: () => void }) {
                 >
                   Cancel
                 </Text>
-
-
               </Pressable>
-              <Pressable onPress={props.toggleOpen} style={{
-                backgroundColor: "#2F80F5",
-                paddingHorizontal: 12,
-                paddingVertical: 8,
-                borderWidth: 1,
-                alignItems: "center",
-                justifyContent: "center",
-                marginVertical: 16,
-                marginRight: 16,
-                borderRadius: 8,
-                borderColor: "#2F80F5",
-              }}>
+              <Pressable
+                onPress={props.toggleOpen}
+                style={{
+                  backgroundColor: "#2F80F5",
+                  paddingHorizontal: 12,
+                  paddingVertical: 8,
+                  borderWidth: 1,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginVertical: 16,
+                  marginRight: 16,
+                  borderRadius: 8,
+                  borderColor: "#2F80F5",
+                }}
+              >
                 <Text
                   style={{
                     fontSize: 16,

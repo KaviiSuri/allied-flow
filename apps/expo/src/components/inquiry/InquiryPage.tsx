@@ -3,7 +3,6 @@ import {
   Text,
   View,
   ScrollView,
-  Pressable,
   TouchableOpacity,
   Modal,
   TouchableWithoutFeedback,
@@ -81,7 +80,7 @@ export const InquiryPage = () => {
 
   const updateProductRequest = (productRequest: ProductRequest) => {
     setProductRequests(
-      productRequests.map((product: any) =>
+      productRequests.map((product) =>
         product.id === productRequest.id
           ? {
               ...product,

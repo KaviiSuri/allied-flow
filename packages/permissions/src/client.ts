@@ -1,7 +1,7 @@
 import type { DefinePermissions, Role } from "./config.js";
 
 export const clientPermissions: Record<Role, DefinePermissions> = {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   SALES: (user, { can }) => {
     /* Empty */
     can("list", "Inquiry");
@@ -27,7 +27,7 @@ export const clientPermissions: Record<Role, DefinePermissions> = {
     can("reject", "Inquiry");
     can("getDetails", "Inquiry");
   },
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   MANAGEMENT: (user, { can }) => {
     /* Empty */
     can("list", "Inquiry");
@@ -37,7 +37,7 @@ export const clientPermissions: Record<Role, DefinePermissions> = {
     can("reject", "Inquiry");
     can("getDetails", "Inquiry");
   },
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   LOGISTICS: (user, { can }) => {
     /* Empty */
     can("list", "Inquiry");

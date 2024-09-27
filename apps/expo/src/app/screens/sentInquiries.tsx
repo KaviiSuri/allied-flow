@@ -8,7 +8,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { RouterOutputs } from "~/utils/api";
+import type { RouterOutputs } from "~/utils/api";
 import { useAbility } from "~/providers/auth";
 import {
   Table,

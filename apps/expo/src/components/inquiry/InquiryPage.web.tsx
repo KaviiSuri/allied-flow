@@ -14,7 +14,7 @@ import { api } from "~/utils/api";
 import SentInquiries from "~/app/screens/sentInquiries";
 import { InquiryForm } from "./InquiryFormMobile";
 import { useAbility, useUser } from "~/providers/auth";
-import { ProductRequest } from "./InquiryPage";
+import type { ProductRequest } from "./InquiryPage";
 import { SearchBox } from "../shared/searchComponent";
 import Toast from "react-native-toast-message";
 
@@ -69,7 +69,7 @@ export const InquiryPage = () => {
 
   const updateProductRequest = (productRequest: ProductRequest) => {
     setProductRequests(
-      productRequests.map((product: any) =>
+      productRequests.map((product) =>
         product.id === productRequest.id
           ? {
               ...product,
@@ -347,4 +347,3 @@ function CreateInquiryForm(props: {
     </Animated.View>
   );
 }
-

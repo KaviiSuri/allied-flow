@@ -8,7 +8,7 @@ function RightDrawerLayout(props: PropsWithChildren<{ style?: ViewStyle,
   visible: boolean,
   toggleVisible: () => void
   }>) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   return (
     <Animated.View
       style={{

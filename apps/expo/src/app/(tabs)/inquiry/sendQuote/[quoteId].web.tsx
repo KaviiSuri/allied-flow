@@ -5,7 +5,8 @@ import Toast from "react-native-toast-message";
 import { PrimaryButton } from "~/components/core/button";
 import { HistoryPanelTable } from "~/components/historyPanel";
 import { QuotePanel } from "~/components/historyPanel/quotePanel";
-import { api, RouterOutputs } from "~/utils/api";
+import type { RouterOutputs } from "~/utils/api";
+import { api } from "~/utils/api";
 
 type QuoteItem = NonNullable<
   RouterOutputs["inquiry"]["getDetails"]["latestQuote"]

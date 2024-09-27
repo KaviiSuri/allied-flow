@@ -1,10 +1,10 @@
 import type { TRPCRouterRecord } from "@trpc/server";
 import { TRPCError } from "@trpc/server";
-import { protectedProcedure } from "../trpc";
+import { protectedProcedure } from "../trpc.js";
 import { z } from "zod";
 import { inquiries } from "@repo/db/schema";
 import { nanoid } from "nanoid";
-import { productRequestSchema, quotesService } from "../services/quote";
+import { productRequestSchema, quotesService } from "../services/quote.js";
 import { and, eq, or, lte, lt } from "@repo/db";
 
 // Define the schema for raising an inquiry

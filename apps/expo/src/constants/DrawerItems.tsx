@@ -5,7 +5,7 @@ import SamplesIcon from "../app/assets/images/samples-icon.png";
 import HomeIcon from "../app/assets/images/home-icon.png";
 import ClientIcon from "../app/assets/images/client-icon.png";
 import UserIcon from "../app/assets/images/user-icon.png";
-import NotificationIcon from "../app/assets/images/notification-button.png"
+import NotificationIcon from "../app/assets/images/notification-button.png";
 
 export default [
   {

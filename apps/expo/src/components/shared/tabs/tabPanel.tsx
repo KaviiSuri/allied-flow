@@ -10,7 +10,11 @@ interface TabPanelProps {
   style?: StyleProp<ViewStyle>;
 }
 
-export const TabPanel: React.FC<TabPanelProps> = ({ value, children, style }) => {
+export const TabPanel: React.FC<TabPanelProps> = ({
+  value,
+  children,
+  style,
+}) => {
   const { value: activeValue } = useTabContext();
 
   if (value !== activeValue) return null;

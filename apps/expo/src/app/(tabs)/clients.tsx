@@ -15,7 +15,7 @@ import {
   TableData,
 } from "~/components/shared/table";
 import { useState } from "react";
-import type { RouterInputs, RouterOutputs} from "~/utils/api";
+import type { RouterInputs, RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
 import { PrimaryButton, SecondaryButton } from "~/components/core/button";
 import { FormTextInput } from "~/components/shared/form/";

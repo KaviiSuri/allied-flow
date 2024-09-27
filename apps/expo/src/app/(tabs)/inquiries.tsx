@@ -1,9 +1,5 @@
-import { InquiryPage } from "~/components/inquiry/InquiryPage"
-
+import { InquiryPage } from "~/components/inquiry/InquiryPage";
 
 export default () => {
-  return (
-    <InquiryPage />
-  )
-}
-
+  return <InquiryPage />;
+};

@@ -14,7 +14,7 @@ interface FormDropDownProps {
   onValueChange: (e: any) => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value?: any;
-  paddingBottom?: boolean,
+  paddingBottom?: boolean;
 }
 
 export const FormDropDown: React.FC<FormDropDownProps> = ({
@@ -23,12 +23,12 @@ export const FormDropDown: React.FC<FormDropDownProps> = ({
   rightIcon,
   onValueChange,
   value: _defaultValue,
-  paddingBottom
+  paddingBottom,
 }) => {
   return (
     <View>
       <SingleSelectDropdown style={{ justifyContent: "space-between" }}>
-        {label &&
+        {label && (
           <Text
             style={[
               {
@@ -38,13 +38,13 @@ export const FormDropDown: React.FC<FormDropDownProps> = ({
                 color: "#475467",
               },
               paddingBottom && {
-                paddingBottom: 8
-              }
+                paddingBottom: 8,
+              },
             ]}
           >
             {label}
           </Text>
-        }
+        )}
         <SingleSelect
           style={{ flexDirection: "row", alignItems: "center" }}
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment

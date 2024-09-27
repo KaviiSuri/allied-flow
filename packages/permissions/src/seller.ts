@@ -47,7 +47,7 @@ export const sellerPermissions: Record<Role, DefinePermissions> = {
     can("update", "Order");
     can("delete", "Order");
   },
-   
+
   SALES: (user, { can }) => {
     /* Empty */
     can("list", "Inquiry");
@@ -57,7 +57,7 @@ export const sellerPermissions: Record<Role, DefinePermissions> = {
     can("reject", "Inquiry");
     can("getDetails", "Inquiry");
   },
-   
+
   LOGISTICS: (user, { can }) => {
     /* Empty */
     can("list", "Order");

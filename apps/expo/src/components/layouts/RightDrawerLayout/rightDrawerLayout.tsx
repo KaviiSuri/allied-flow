@@ -3,12 +3,14 @@ import type { PropsWithChildren } from "react";
 import { Animated, Dimensions, Pressable, View } from "react-native";
 import type { ViewStyle } from "react-native";
 
-const windowHeight = Dimensions.get("window").height ;
-function RightDrawerLayout(props: PropsWithChildren<{ style?: ViewStyle,
-  visible: boolean,
-  toggleVisible: () => void
-  }>) {
-   
+const windowHeight = Dimensions.get("window").height;
+function RightDrawerLayout(
+  props: PropsWithChildren<{
+    style?: ViewStyle;
+    visible: boolean;
+    toggleVisible: () => void;
+  }>,
+) {
   return (
     <Animated.View
       style={{
@@ -39,9 +41,9 @@ function RightDrawerLayout(props: PropsWithChildren<{ style?: ViewStyle,
           backgroundColor: "#F9F9F9",
         }}
       >
-          {props.children}
+        {props.children}
       </View>
-      </Animated.View>
+    </Animated.View>
   );
 }
 

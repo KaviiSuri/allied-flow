@@ -259,7 +259,6 @@ function OrderItem({ order }: { order: RouterOutputs["orders"]["list"][0] }) {
 
 const styles = StyleSheet.create({
   dropdown: {
-     
     borderColor: Colors.border,
     // borderWidth: 1,
     borderRadius: 10,

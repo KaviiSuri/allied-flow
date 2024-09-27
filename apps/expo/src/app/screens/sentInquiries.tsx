@@ -316,4 +316,3 @@ const clientDetailsStyles = StyleSheet.create({
     fontWeight: 800,
   },
 });
-

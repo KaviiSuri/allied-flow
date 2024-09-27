@@ -1,7 +1,6 @@
 import type { DefinePermissions, Role } from "./config.js";
 
 export const clientPermissions: Record<Role, DefinePermissions> = {
-   
   SALES: (user, { can }) => {
     /* Empty */
     can("list", "Inquiry");
@@ -27,7 +26,7 @@ export const clientPermissions: Record<Role, DefinePermissions> = {
     can("reject", "Inquiry");
     can("getDetails", "Inquiry");
   },
-   
+
   MANAGEMENT: (user, { can }) => {
     /* Empty */
     can("list", "Inquiry");
@@ -37,7 +36,7 @@ export const clientPermissions: Record<Role, DefinePermissions> = {
     can("reject", "Inquiry");
     can("getDetails", "Inquiry");
   },
-   
+
   LOGISTICS: (user, { can }) => {
     /* Empty */
     can("list", "Inquiry");

@@ -1,13 +1,14 @@
 import type { TRPCRouterRecord } from "@trpc/server";
 import { z } from "zod";
 import { on } from "events";
-import { protectedProcedure } from "../trpc";
-import type { Notification } from "../services/pubsub";
+import { protectedProcedure } from "../trpc.js";
+import type { Notification } from "../services/pubsub.js";
+import { devices } from "@repo/db/schema";
 import {
   getAllNotifications,
   markNotificationAsRead,
   subscribeToNotifications,
-} from "../services/pubsub";
+} from "../services/pubsub.js";
 
 export const notificationsRouter = {
   onNotificationSent: protectedProcedure.subscription(async function* ({
@@ -42,5 +43,21 @@ export const notificationsRouter = {
       return ctx.db.transaction(async (trx) => {
         return markNotificationAsRead(trx, ctx.user.id, input.notificationId);
       });
+    }),
+
+  registerDevice: protectedProcedure
+    .input(
+      z.object({
+        expoPushToken: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db
+        .insert(devices)
+        .values({
+          userId: ctx.user.id,
+          expoPushToken: input.expoPushToken,
+        })
+        .execute();
     }),
 } satisfies TRPCRouterRecord;

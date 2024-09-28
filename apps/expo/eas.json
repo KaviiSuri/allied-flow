@@ -7,6 +7,19 @@
       "node": "18.16.1",
       "ios": {
         "resourceClass": "m-medium"
+        "bundleIdentifier": "com.aacipl.spot",
+        "infoPlist": {
+          "NSUserTrackingUsageDescription": "This identifier will be used to send you push notifications.",
+          "UIBackgroundModes": ["fetch", "remote-notification"]
+        }
+      },
+      "android": {
+        "permissions": ["RECEIVE_BOOT_COMPLETED", "VIBRATE"],
+        "notification": {
+          "icon": "./assets/icon.png",
+          "color": "#ffffff",
+          "sound": true
+        }
       }
     },
     "development": {

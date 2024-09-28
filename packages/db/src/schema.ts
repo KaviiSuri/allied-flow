@@ -30,11 +30,13 @@ export type UserWithTeam = InferSelectModel<typeof users> & {
   team: InferSelectModel<typeof teams>;
 };
 
-export const usersRelations = relations(users, ({ one }) => ({
+export const usersRelations = relations(users, ({ one, many }) => ({
   team: one(teams, {
     fields: [users.teamId],
     references: [teams.id],
   }),
+  devices: many(devices),
+  notifications: many(notifications),
 }));
 
 export const teams = sqliteTable("teams", {
@@ -370,3 +372,21 @@ export const notifications = sqliteTable("notifications", {
 export type Notification = InferSelectModel<typeof notifications>;
 
 export const insertNotificationSchema = createInsertSchema(notifications);
+
+export const devices = sqliteTable("devices", {
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id),
+  expoPushToken: text("expo_push_token").notNull().primaryKey().unique(),
+});
+
+export type Device = InferSelectModel<typeof devices>;
+
+export const insertDeviceSchema = createInsertSchema(devices);
+
+export const deviceRelations = relations(devices, ({ one }) => ({
+  user: one(users, {
+    fields: [devices.userId],
+    references: [users.id],
+  }),
+}));

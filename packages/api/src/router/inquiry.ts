@@ -1,10 +1,10 @@
 import type { TRPCRouterRecord } from "@trpc/server";
 import { TRPCError } from "@trpc/server";
-import { protectedProcedure } from "../trpc";
+import { protectedProcedure } from "../trpc.js";
 import { z } from "zod";
 import { inquiries } from "@repo/db/schema";
 import { nanoid } from "nanoid";
-import { productRequestSchema, quotesService } from "../services/quote";
+import { productRequestSchema, quotesService } from "../services/quote.js";
 import { and, eq, or, lte, lt } from "@repo/db";
 
 // Define the schema for raising an inquiry
@@ -34,7 +34,7 @@ export const inquiryRouter = {
             remarks: input.remarks,
             buyerId: input.buyerId,
             sellerId: input.sellerId,
-            status: "NEGOTIATING",
+            status: "RAISED",
             productNames: input.productRequests
               .map((productRequest) => productRequest.productName)
               .join(", "),
@@ -73,6 +73,7 @@ export const inquiryRouter = {
       z.object({
         inquiryId: z.string(),
         items: z.array(productRequestSchema.omit({ productName: true })),
+        tnc: z.string().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -106,6 +107,14 @@ export const inquiryRouter = {
           ctx.user.id,
           ctx.user.teamId,
         );
+
+        await trx
+          .update(inquiries)
+          .set({
+            tnc: input.tnc,
+            status: "NEGOTIATING",
+          })
+          .where(eq(inquiries.id, input.inquiryId));
         return quote;
       });
 

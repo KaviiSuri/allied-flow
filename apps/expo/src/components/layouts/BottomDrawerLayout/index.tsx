@@ -23,11 +23,11 @@ export const BottomDrawer = ({
   children: JSX.Element[] | JSX.Element;
   openCreateForm: boolean;
   setOpenCreateForm: React.Dispatch<React.SetStateAction<boolean>>;
-  primaryButtonText: string;
-  secondaryButtonText: string;
+  primaryButtonText?: string;
+  secondaryButtonText?: string;
   header: string;
-  onPrimaryButtonPress: () => void;
-  onSecondaryButtonPress: () => void;
+  onPrimaryButtonPress?: () => void;
+  onSecondaryButtonPress?: () => void;
 }) => {
   return (
     <Modal
@@ -57,60 +57,64 @@ export const BottomDrawer = ({
         </ScrollView>
 
         <GestureHandlerRootView style={createStyles.formSubmitContainer}>
-          <TouchableOpacity
-            style={{
-              paddingHorizontal: 12,
-              paddingVertical: 8,
-              backgroundColor: "#FFFFFF",
-              borderRadius: 8,
-              borderColor: "#D0D5DD",
-              borderWidth: 1,
-              shadowOffset: { height: 1, width: 0 },
-              shadowOpacity: 0.05,
-              shadowColor: "#101828",
-              flex: 1,
-            }}
-            onPress={onSecondaryButtonPress}
-          >
-            <Text
+          {secondaryButtonText && (
+            <TouchableOpacity
               style={{
-                fontWeight: 600,
-                fontSize: 14,
-                fontFamily: "Avenir",
-                color: "#344054",
+                paddingHorizontal: 12,
+                paddingVertical: 8,
+                backgroundColor: "#FFFFFF",
+                borderRadius: 8,
+                borderColor: "#D0D5DD",
+                borderWidth: 1,
+                shadowOffset: { height: 1, width: 0 },
+                shadowOpacity: 0.05,
+                shadowColor: "#101828",
                 flex: 1,
-                textAlign: "center",
               }}
+              onPress={onSecondaryButtonPress}
             >
-              {secondaryButtonText}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              paddingHorizontal: 12,
-              paddingVertical: 8,
-              backgroundColor: "#2F80F5",
-              borderRadius: 8,
-              shadowOffset: { height: 1, width: 0 },
-              shadowOpacity: 0.05,
-              shadowColor: "#101828",
-              flex: 1,
-            }}
-            onPress={onPrimaryButtonPress}
-          >
-            <Text
+              <Text
+                style={{
+                  fontWeight: 600,
+                  fontSize: 14,
+                  fontFamily: "Avenir",
+                  color: "#344054",
+                  flex: 1,
+                  textAlign: "center",
+                }}
+              >
+                {secondaryButtonText}
+              </Text>
+            </TouchableOpacity>
+          )}
+          {primaryButtonText && (
+            <TouchableOpacity
               style={{
-                fontWeight: 600,
-                fontSize: 14,
-                color: "white",
-                fontFamily: "Avenir",
+                paddingHorizontal: 12,
+                paddingVertical: 8,
+                backgroundColor: "#2F80F5",
+                borderRadius: 8,
+                shadowOffset: { height: 1, width: 0 },
+                shadowOpacity: 0.05,
+                shadowColor: "#101828",
                 flex: 1,
-                textAlign: "center",
               }}
+              onPress={onPrimaryButtonPress}
             >
-              {primaryButtonText}
-            </Text>
-          </TouchableOpacity>
+              <Text
+                style={{
+                  fontWeight: 600,
+                  fontSize: 14,
+                  color: "white",
+                  fontFamily: "Avenir",
+                  flex: 1,
+                  textAlign: "center",
+                }}
+              >
+                {primaryButtonText}
+              </Text>
+            </TouchableOpacity>
+          )}
         </GestureHandlerRootView>
       </View>
     </Modal>

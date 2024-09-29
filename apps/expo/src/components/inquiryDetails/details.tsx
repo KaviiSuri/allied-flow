@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native"
+import { StyleSheet, Text, View } from "react-native";
 
 export const DetailsSection = () => {
   return (
@@ -10,7 +10,10 @@ export const DetailsSection = () => {
         </View>
         <View style={styles.section}>
           <Text style={styles.sectionHeader}>Company Address</Text>
-          <Text style={styles.sectionContent}>39 avenue street - 06310 - grasse -  Associate allied chemicals europe- Alpes-maritime, France</Text>
+          <Text style={styles.sectionContent}>
+            39 avenue street - 06310 - grasse - Associate allied chemicals
+            europe- Alpes-maritime, France
+          </Text>
         </View>
         <View style={styles.section}>
           <Text style={styles.sectionHeader}>Inquiry number</Text>
@@ -20,15 +23,13 @@ export const DetailsSection = () => {
           <Text style={styles.sectionHeader}>GST Number</Text>
           <Text style={styles.sectionContent}>9AAACH7409R1ZZ</Text>
         </View>
-
       </View>
     </>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-  },
+  sectionContainer: {},
   section: {
     marginBottom: 12,
   },
@@ -44,7 +45,6 @@ const styles = StyleSheet.create({
     fontWeight: 500,
     lineHeight: 20,
     fontFamily: "Avenir",
-    color: "#1E293B"
-  }
-
-})
+    color: "#1E293B",
+  },
+});

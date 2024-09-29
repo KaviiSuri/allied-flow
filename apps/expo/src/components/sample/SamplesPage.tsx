@@ -1,14 +1,14 @@
-import { StyleSheet, Text, View, ScrollView, Pressable } from "react-native"
-import { SearchBox } from "../shared/searchComponent"
-import React, { useState } from "react"
-import { GestureHandlerRootView } from "react-native-gesture-handler"
-import { MobileTab } from "../core/mobileTab"
-import { Badge } from "../core/badge"
-import Icon from "react-native-vector-icons/FontAwesome5"
+import { StyleSheet, Text, View, ScrollView, Pressable } from "react-native";
+import { SearchBox } from "../shared/searchComponent";
+import React, { useState } from "react";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { MobileTab } from "../core/mobileTab";
+import { Badge } from "../core/badge";
+import Icon from "react-native-vector-icons/FontAwesome5";
 
 export const SamplePage = () => {
-  const [searchResult, setSearchResult] = useState<string>("")
-  const [filter, setFilter] = useState<string>("All")
+  const [searchResult, setSearchResult] = useState<string>("");
+  const [filter, setFilter] = useState<string>("All");
 
   return (
     <View style={styles.container}>
@@ -26,10 +26,16 @@ export const SamplePage = () => {
         <OrderBody filter={filter} setFilter={setFilter} />
       </ScrollView>
     </View>
-  )
-}
+  );
+};
 
-const OrderBody = ({ filter, setFilter }: { filter: string, setFilter: React.Dispatch<React.SetStateAction<string>> }) => {
+const OrderBody = ({
+  filter,
+  setFilter,
+}: {
+  filter: string;
+  setFilter: React.Dispatch<React.SetStateAction<string>>;
+}) => {
   return (
     <View style={styles.orderBodyContent}>
       <GestureHandlerRootView style={styles.container}>
@@ -40,9 +46,21 @@ const OrderBody = ({ filter, setFilter }: { filter: string, setFilter: React.Dis
           contentContainerStyle={styles.filterTabsContainer}
         >
           <View style={styles.filterTabsContainer}>
-            <MobileTab activeFilter={filter === "All" ? true : false} setFilter={setFilter} currentFilter="All" />
-            <MobileTab activeFilter={filter === "Sample Order placed" ? true : false} setFilter={setFilter} currentFilter="Sample Order placed" />
-            <MobileTab activeFilter={filter === "Sample dispatched" ? true : false} setFilter={setFilter} currentFilter="Sample dispatched" />
+            <MobileTab
+              activeFilter={filter === "All" ? true : false}
+              setFilter={setFilter}
+              currentFilter="All"
+            />
+            <MobileTab
+              activeFilter={filter === "Sample Order placed" ? true : false}
+              setFilter={setFilter}
+              currentFilter="Sample Order placed"
+            />
+            <MobileTab
+              activeFilter={filter === "Sample dispatched" ? true : false}
+              setFilter={setFilter}
+              currentFilter="Sample dispatched"
+            />
           </View>
         </ScrollView>
 
@@ -50,7 +68,12 @@ const OrderBody = ({ filter, setFilter }: { filter: string, setFilter: React.Dis
 
         <View style={orderStyles.orderCard}>
           <View style={orderStyles.innerSection}>
-            <Badge IconName="checkcircleo" badgeText="Sample Dispatched" bg="#f0f9f6" accentColor="#047857" />
+            <Badge
+              IconName="checkcircleo"
+              badgeText="Sample Dispatched"
+              bg="#f0f9f6"
+              accentColor="#047857"
+            />
             <Pressable>
               <Icon name="ellipsis-v"></Icon>
             </Pressable>
@@ -69,11 +92,15 @@ const OrderBody = ({ filter, setFilter }: { filter: string, setFilter: React.Dis
             </View>
           </View>
         </View>
-
 
         <View style={orderStyles.orderCard}>
           <View style={orderStyles.innerSection}>
-            <Badge IconName="checkcircleo" badgeText="Sample Order placed" bg="#f1f5f9" accentColor="#334155" />
+            <Badge
+              IconName="checkcircleo"
+              badgeText="Sample Order placed"
+              bg="#f1f5f9"
+              accentColor="#334155"
+            />
             <Pressable>
               <Icon name="ellipsis-v"></Icon>
             </Pressable>
@@ -92,11 +119,10 @@ const OrderBody = ({ filter, setFilter }: { filter: string, setFilter: React.Dis
             </View>
           </View>
         </View>
-
       </GestureHandlerRootView>
     </View>
-  )
-}
+  );
+};
 
 const orderStyles = StyleSheet.create({
   orderCard: {
@@ -110,18 +136,18 @@ const orderStyles = StyleSheet.create({
   },
   innerSection: {
     flexDirection: "row",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
   },
   innerSectionFlexStart: {
     flexDirection: "row",
     justifyContent: "flex-start",
-    gap: 4
+    gap: 4,
   },
   headerText: {
     color: "#1e293b",
     fontFamily: "AvenirHeavy",
     fontSize: 16,
-    fontWeight: 800
+    fontWeight: 800,
   },
   orderHeader: {
     fontSize: 14,
@@ -134,9 +160,8 @@ const orderStyles = StyleSheet.create({
     fontFamily: "AvenirHeavy",
     color: "#334155",
     fontWeight: 500,
-  }
-})
-
+  },
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -146,7 +171,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: "#E2E8F0",
   },
   orderBodyContainer: {
     flex: 1,
@@ -161,4 +186,4 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 16,
   },
-})
+});

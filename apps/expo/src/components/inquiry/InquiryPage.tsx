@@ -3,13 +3,12 @@ import {
   Text,
   View,
   ScrollView,
-  Pressable,
   TouchableOpacity,
   Modal,
   TouchableWithoutFeedback,
 } from "react-native";
 import { SearchBox } from "../shared/searchComponent";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { MobileTab } from "../core/mobileTab";
 import { Badge } from "../core/badge";
@@ -21,6 +20,8 @@ import { useAbility, useUser } from "~/providers/auth";
 import Toast from "react-native-toast-message";
 import { useRouter } from "expo-router";
 import { createStyles } from "../layouts/BottomDrawerLayout";
+import { clientFilterList, sellerFilterList } from "~/constants/filterLists";
+import { ActionBadgeMobile } from "../core/actionBadge";
 
 export type ProductRequest =
   RouterInputs["inquiry"]["raise"]["productRequests"][0] & {
@@ -53,6 +54,10 @@ export const InquiryPage = () => {
 
   const [productRequests, setProductRequests] = useState<ProductRequest[]>([]);
 
+  useEffect(() => {
+    setProductRequests([]);
+  }, []);
+
   const handleAddProductRequest = () => {
     setProductRequests([
       ...productRequests,
@@ -75,7 +80,7 @@ export const InquiryPage = () => {
 
   const updateProductRequest = (productRequest: ProductRequest) => {
     setProductRequests(
-      productRequests.map((product: any) =>
+      productRequests.map((product) =>
         product.id === productRequest.id
           ? {
               ...product,
@@ -90,7 +95,8 @@ export const InquiryPage = () => {
   const { mutateAsync: raiseInquiry } = api.inquiry.raise.useMutation({
     onSuccess: () => {
       setOpenCreateForm(false);
-      utils.inquiry.list.invalidate();
+      setProductRequests([]);
+      utils.inquiry.list.invalidate().catch(console.error);
       Toast.show({
         position: "bottom",
         type: "success",
@@ -109,7 +115,7 @@ export const InquiryPage = () => {
     if (!seller) {
       return;
     }
-    let sellerId = user.team.id;
+    const sellerId = user.team.id;
     await raiseInquiry({
       tnc: "",
       remarks,
@@ -118,16 +124,19 @@ export const InquiryPage = () => {
       sellerId,
     });
   }
+
   return (
     <View style={[styles.container, { backgroundColor: "white" }]}>
       {/* Fixed SearchBox at the top */}
-      <View style={styles.searchBoxContainer}>
-        <SearchBox
-          placeholder="Search inquiry external"
-          setValue={setSearchResult}
-          value={searchResult}
-        />
-      </View>
+      {user?.team.type === "CLIENT" && (
+        <View style={styles.searchBoxContainer}>
+          <SearchBox
+            placeholder="Search inquiry external"
+            setValue={setSearchResult}
+            value={searchResult}
+          />
+        </View>
+      )}
 
       {/* Scrollable content below the fixed SearchBox */}
       <ScrollView style={styles.orderBodyContainer}>
@@ -135,6 +144,9 @@ export const InquiryPage = () => {
           filter={filter}
           setFilter={setFilter}
           inquiries={inquiries}
+          filterList={
+            user?.team.type === "CLIENT" ? clientFilterList : sellerFilterList
+          }
         />
       </ScrollView>
 
@@ -143,7 +155,10 @@ export const InquiryPage = () => {
         <GestureHandlerRootView style={styles.container}>
           <TouchableOpacity
             style={createStyles.createButton}
-            onPress={() => setOpenCreateForm(true)}
+            onPress={() => {
+              setOpenCreateForm(true);
+              setProductRequests([]);
+            }}
           >
             <Text style={createStyles.text}>+</Text>
           </TouchableOpacity>
@@ -248,15 +263,16 @@ export const InquiryPage = () => {
   );
 };
 
-
 const InquiryList = ({
   filter,
   setFilter,
   inquiries,
+  filterList,
 }: {
   inquiries: RouterOutputs["inquiry"]["list"]["items"];
   filter: string;
   setFilter: React.Dispatch<React.SetStateAction<string>>;
+  filterList: string[];
 }) => {
   return (
     <View style={styles.orderBodyContent}>
@@ -268,32 +284,19 @@ const InquiryList = ({
           contentContainerStyle={styles.filterTabsContainer}
         >
           <View style={styles.filterTabsContainer}>
-            <MobileTab
-              activeFilter={filter === "All" ? true : false}
-              setFilter={setFilter}
-              currentFilter="All"
-            />
-            <MobileTab
-              activeFilter={filter === "Quotes received" ? true : false}
-              setFilter={setFilter}
-              currentFilter="Quotes received"
-            />
-            <MobileTab
-              activeFilter={filter === "Pending" ? true : false}
-              setFilter={setFilter}
-              currentFilter="Pending"
-            />
-            <MobileTab
-              activeFilter={filter === "Quote expired" ? true : false}
-              setFilter={setFilter}
-              currentFilter="Quote expired"
-            />
+            {filterList.map((filterName: string) => (
+              <MobileTab
+                activeFilter={filter === filterName ? true : false}
+                setFilter={setFilter}
+                currentFilter={filterName}
+              />
+            ))}
           </View>
         </ScrollView>
 
         {/* orders */}
         {inquiries.map((inquiry) => (
-          <InquiryCard inquiry={inquiry} key={inquiry.id} />
+          <InquiryCard inquiry={inquiry} key={inquiry.id} filter={filter} />
         ))}
       </GestureHandlerRootView>
     </View>
@@ -302,17 +305,14 @@ const InquiryList = ({
 
 const InquiryCard = ({
   inquiry,
+  filter,
 }: {
   inquiry: RouterOutputs["inquiry"]["list"]["items"][0];
+  filter: string;
 }) => {
   const router = useRouter();
   return (
-    <TouchableOpacity
-      onPress={() => {
-        router.push(`/inquiry/${inquiry.id}`);
-        console.log("Inquiry Details", inquiry.id);
-      }}
-    >
+    <View>
       <View style={orderStyles.orderCardContainer}>
         <View style={orderStyles.orderCard}>
           <View style={orderStyles.innerSection}>
@@ -350,8 +350,41 @@ const InquiryCard = ({
             </View>
           </View>
         </View>
+        <View style={orderStyles.actionContainer}>
+          {inquiry.status === "NEGOTIATING" && (
+            <ActionBadgeMobile
+              iconName="open-in-new"
+              actionText="View Quote"
+              handleAction={() => router.navigate(`inquiry/${inquiry.id}`)}
+            />
+          )}
+          {inquiry.status === "RAISED" && (
+            <ActionBadgeMobile
+              iconName="open-in-new"
+              actionText="Send Quote"
+              handleAction={() =>
+                router.navigate(`inquiry/sendQuote/${inquiry.id}`)
+              }
+            />
+          )}
+
+          {(inquiry.status === "ACCEPTED" || inquiry.status === "REJECTED") && (
+            <ActionBadgeMobile
+              iconName="open-in-new"
+              actionText="View Quote"
+              handleAction={() => router.navigate(`inquiry/${inquiry.id}`)}
+            />
+          )}
+          {/* (filter === "Negotiation" && (
+            <ActionBadgeMobile
+              iconName="alarm-light-outline"
+              actionText="Follow Up"
+              handleAction={() => router.navigate(`inquiry/${inquiry.id}`)}
+            />
+          )*/}
+        </View>
       </View>
-    </TouchableOpacity>
+    </View>
   );
 };
 

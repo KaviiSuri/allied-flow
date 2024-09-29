@@ -8,6 +8,7 @@ function PrimaryButton(props: {
   text: string;
   isLoading?: boolean;
   style?: TouchableOpacityProps["style"];
+  disabled?: boolean;
 }) {
   return (
     <TouchableOpacity
@@ -24,6 +25,7 @@ function PrimaryButton(props: {
         props.style,
       ]}
       onPress={props.onPress}
+      disabled={props.disabled}
     >
       <Text
         style={{

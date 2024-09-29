@@ -16,7 +16,8 @@ import CheckBoxIconUnchecked from "~/app/assets/images/checkbox-icon-unchecked.p
 import { FormDropDown } from "../shared/form/formDropDown";
 import { CheckBox } from "@rneui/themed";
 import type { ProductRequest } from "./InquiryPage";
-import { RouterOutputs, api } from "~/utils/api";
+import type { RouterOutputs } from "~/utils/api";
+import { api } from "~/utils/api";
 import { useUser } from "~/providers/auth";
 import { useProductList } from "~/hooks/useProductById";
 
@@ -63,17 +64,24 @@ export const InquiryForm = ({
   }, [user]);
 
   return (
-    <View>
+    <View
+      style={{
+        paddingBottom: 150,
+      }}
+    >
       {user?.team.type === "SELLER" && (
-        <FormDropDown
-          paddingBottom={false}
-          onValueChange={(value) => {
-            setClientId(value);
-          }}
-          value={clientId}
-          options={clientNameOptions}
-          rightIcon={<Icon name="down" />}
-        />
+        <View style={{ paddingVertical: 16, paddingHorizontal: 16 }}>
+          <FormDropDown
+            label="Client"
+            paddingBottom={false}
+            onValueChange={(value) => {
+              setClientId(value as string);
+            }}
+            value={clientId}
+            options={clientNameOptions}
+            rightIcon={<Icon name="down" />}
+          />
+        </View>
       )}
       {productRequests.length > 0 &&
         productRequests.map((product) => (
@@ -168,6 +176,7 @@ const ProductForm = ({
       key={product.productId}
       style={inquiryFormStyles.formContainer}
     >
+      {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition */}
       {product && (
         <>
           <View
@@ -246,7 +255,8 @@ const ProductForm = ({
               value={
                 isNaN(product.quantity)
                   ? "0"
-                  : product.quantity.toString() ?? "0"
+                  : // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                    product.quantity.toString() ?? "0"
               }
               onChangeText={(t) => {
                 const quantity = parseFloat(t);
@@ -271,7 +281,7 @@ const ProductForm = ({
                 onValueChange={(t) => {
                   onChange({
                     ...product,
-                    unit: t,
+                    unit: t as string,
                   });
                 }}
                 rightIcon={<Icon name="down" />}
@@ -368,6 +378,7 @@ const inquiryFormStyles = StyleSheet.create({
     paddingVertical: 16,
     gap: 16,
     borderRadius: 8,
+    marginTop: 20,
   },
   formTitles: {
     color: "#344054",

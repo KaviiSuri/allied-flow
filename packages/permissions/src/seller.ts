@@ -47,7 +47,7 @@ export const sellerPermissions: Record<Role, DefinePermissions> = {
     can("update", "Order");
     can("delete", "Order");
   },
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   SALES: (user, { can }) => {
     /* Empty */
     can("list", "Inquiry");
@@ -57,7 +57,7 @@ export const sellerPermissions: Record<Role, DefinePermissions> = {
     can("reject", "Inquiry");
     can("getDetails", "Inquiry");
   },
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   LOGISTICS: (user, { can }) => {
     /* Empty */
     can("list", "Order");

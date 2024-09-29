@@ -1,16 +1,14 @@
 import {
-  Animated,
   Dimensions,
-  Image,
   Modal,
   Pressable,
   SafeAreaView,
   ScrollView,
+  StyleSheet,
   Text,
-  TextInput,
   View,
 } from "react-native";
-import { api } from "~/utils/api";
+import type { RouterOutputs } from "~/utils/api";
 import { useAbility } from "~/providers/auth";
 import {
   Table,
@@ -18,29 +16,57 @@ import {
   TableRow,
   TableData,
 } from "~/components/shared/table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { router } from "expo-router";
+import { BadgeStatus } from "~/components/shared/badge";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import RightDrawerLayout from "~/components/layouts/RightDrawerLayout/rightDrawerLayout";
+import { ActionBadge } from "~/components/core/actionBadge";
 const windowHeight = Dimensions.get("window").height - 64;
 
+interface IClient {
+  id: string;
+  address: string;
+  createdAt: string;
+  gstNo: string | null;
+  name: string;
+  type: "CLIENT" | "SELLER";
+  updatedAt: string;
+}
 
-
-
-
-export default function SentInquiries() {
-  const ability = useAbility();
-
+export default function SentInquiries({
+  inquiries,
+  currentTab,
+}: {
+  inquiries: RouterOutputs["inquiry"]["list"]["items"][0][];
+  currentTab: "All" | "New" | "Sent" | "Negotiation";
+}) {
+  // const ability = useAbility();
   const [quoteVisible, setQuoteVisible] = useState(false);
-  // const [drawerVisible, setDrawerVisible] = useState(false);
-
-  // const toggleDrawer = () => {
-  //   setDrawerVisible(!drawerVisible);
-  // };
   const toggleQuoteVisible = () => {
     setQuoteVisible(!quoteVisible);
   };
-  function viewQuote(): void {
-    console.log("View Quote");
-  }
+
+  useEffect(() => {
+    console.log(inquiries);
+  }, [inquiries]);
+
+  const formatProducts = (input: string): string => {
+    // Split the input string into an array
+    const entities = input.split(",").map((entity) => entity.trim());
+
+    // Check the number of entities
+    if (entities.length <= 2) {
+      return input; // Return original string if 2 or fewer entities
+    } else {
+      // Return the first two entities and append "& others"
+      return `${entities[0]}, ${entities[1]} & ${entities.length - 2}others`;
+    }
+  };
+  const [clientDetailsVisible, setClientDetailsVisible] =
+    useState<boolean>(false);
+  const [currentClientDetails, setCurrentClientDetails] =
+    useState<IClient | null>(null);
 
   return (
     <SafeAreaView
@@ -69,7 +95,17 @@ export default function SentInquiries() {
           </Pressable>
         </View>
       </Modal>
-
+      {currentClientDetails !== null && (
+        <RightDrawerLayout
+          visible={clientDetailsVisible}
+          toggleVisible={() => setClientDetailsVisible(!clientDetailsVisible)}
+        >
+          <ClientDetails
+            currentClientDetails={currentClientDetails}
+            setClientDetailsVisible={() => setClientDetailsVisible(false)}
+          />
+        </RightDrawerLayout>
+      )}
       <View style={{ padding: 16, height: windowHeight }}>
         <Table style={{ backgroundColor: "#fff" }}>
           <TableHeading>
@@ -92,46 +128,191 @@ export default function SentInquiries() {
               Status
             </TableData>
           </TableHeading>
-          <Pressable
-            onPress={() => {
-              //push Inquiry details screen
-              router.push("inquiry/123");
-            }}
-          >
-            <TableRow>
-              <TableData>#AC-3066</TableData>
-              <TableData>23/03/2024</TableData>
-              <TableData>John Enterprise</TableData>
-              <TableData>Chemical 1, Chemical 2 and others</TableData>
-
-              <Pressable
-                style={{
-                  paddingHorizontal: 16,
-                  paddingVertical: 7,
-                  justifyContent: "center",
-                  gap: 16,
-                  flex: 1,
-                }}
-                onPress={toggleQuoteVisible}
-              >
-                <Text
-                  style={{
-                    color: "#2F80F5",
-                    fontSize: 14,
-                    fontWeight: 500,
-                    fontFamily: "Avenir",
-                  }}
-                >
-                  View Quote
-                </Text>
-              </Pressable>
-
-              <TableData>Quote Received</TableData>
-            </TableRow>
-          </Pressable>
+          <View>
+            {inquiries.map(
+              (inquiry: RouterOutputs["inquiry"]["list"]["items"][0]) => {
+                return (
+                  <TableRow>
+                    <TableData>
+                      <Text style={{ fontFamily: "Avenir" }}>{inquiry.id}</Text>
+                    </TableData>
+                    <TableData>
+                      {/* <Text style={{fontFamily: "Avenir"}}> */}
+                      {new Date(inquiry.createdAt).toLocaleDateString()}
+                      {/* </Text> */}
+                    </TableData>
+                    <Pressable
+                      style={{
+                        flex: 1,
+                        paddingHorizontal: 16,
+                        paddingVertical: 14,
+                        flexDirection: "row",
+                        alignItems: "flex-start",
+                        gap: 4,
+                      }}
+                      onPress={() => {
+                        setClientDetailsVisible(true);
+                        setCurrentClientDetails(inquiry.buyer);
+                        console.log(currentClientDetails);
+                      }}
+                    >
+                      <Icon
+                        style={{ paddingTop: 4 }}
+                        name="office-building-outline"
+                      />
+                      <Text
+                        style={{
+                          fontFamily: "Avenir",
+                          textDecorationColor: "black",
+                          textDecorationLine: "underline",
+                        }}
+                      >
+                        {inquiry.buyer.name}
+                      </Text>
+                    </Pressable>
+                    <TableData>
+                      <Text style={{ fontFamily: "Avenir" }}>
+                        {/* {inquiry.productNames} */}
+                        {formatProducts(inquiry.productNames)}
+                      </Text>
+                    </TableData>
+                    {inquiry.status === "NEGOTIATING" && (
+                      <ActionBadge
+                        iconName="open-in-new"
+                        actionText="View Quote"
+                        handleAction={() =>
+                          router.navigate(`inquiry/${inquiry.id}`)
+                        }
+                      />
+                    )}
+                    {inquiry.status === "RAISED" && (
+                      <ActionBadge
+                        iconName="open-in-new"
+                        actionText="Send Quote"
+                        handleAction={() =>
+                          router.navigate(`inquiry/sendQuote/${inquiry.id}`)
+                        }
+                      />
+                    )}
+                    {(inquiry.status === "ACCEPTED" ||
+                      inquiry.status === "REJECTED") && (
+                      <ActionBadge
+                        iconName="open-in-new"
+                        actionText="View Quote"
+                        handleAction={() =>
+                          router.navigate(`inquiry/${inquiry.id}`)
+                        }
+                      />
+                    )}
+                    {/*currentTab === "Negotiation" && (
+                      <ActionBadge
+                        iconName="alarm-light-outline"
+                        actionText="Follow Up"
+                        handleAction={() =>
+                          router.navigate(`inquiry/${inquiry.id}`)
+                        }
+                      />
+                    )*/}
+                    <TableData>
+                      <BadgeStatus status={inquiry.status} />
+                    </TableData>
+                  </TableRow>
+                );
+              },
+            )}
+          </View>
         </Table>
       </View>
     </SafeAreaView>
   );
 }
 
+const ClientDetails = ({
+  currentClientDetails,
+  setClientDetailsVisible,
+}: {
+  currentClientDetails: IClient | null;
+  setClientDetailsVisible: () => void;
+}) => {
+  return (
+    <>
+      <View style={clientDetailsStyles.sectionHeader}>
+        <Text style={clientDetailsStyles.sectionHeaderText}>
+          {currentClientDetails?.name}
+        </Text>
+        <Pressable onPress={setClientDetailsVisible}>
+          <Icon name="close" style={clientDetailsStyles.sectionHeaderText} />
+        </Pressable>
+      </View>
+      <ScrollView style={clientDetailsStyles.clientBody}>
+        <View style={clientDetailsStyles.clientCard}>
+          <Text style={clientDetailsStyles.clientCardHeader}>Company Name</Text>
+          <Text style={clientDetailsStyles.clientCardHeaderText}>
+            {currentClientDetails?.name}
+          </Text>
+        </View>
+        <View style={clientDetailsStyles.clientCard}>
+          <Text style={clientDetailsStyles.clientCardHeader}>
+            Company Address
+          </Text>
+          <Text style={clientDetailsStyles.clientCardHeaderText}>
+            {currentClientDetails?.address}
+          </Text>
+        </View>
+        {currentClientDetails?.gstNo && (
+          <View style={clientDetailsStyles.clientCard}>
+            <Text style={clientDetailsStyles.clientCardHeader}>GST Number</Text>
+            <Text style={clientDetailsStyles.clientCardHeaderText}>
+              {currentClientDetails.gstNo}
+            </Text>
+          </View>
+        )}
+      </ScrollView>
+    </>
+  );
+};
+
+const clientDetailsStyles = StyleSheet.create({
+  sectionHeader: {
+    justifyContent: "space-between",
+    backgroundColor: "#fff",
+    borderBottomColor: "#e2e8f0",
+    borderBottomWidth: 1,
+    flexDirection: "row",
+    padding: 20,
+    alignItems: "center",
+  },
+  sectionHeaderText: {
+    fontFamily: "AvenirHeavy",
+    fontWeight: 800,
+    fontSize: 18,
+    color: "#1e293b",
+  },
+  clientBody: {
+    flex: 1,
+    backgroundColor: "#f9f9f9",
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+  },
+  clientCard: {
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    borderWidth: 1,
+    padding: 16,
+    borderColor: "#e2e8f0",
+    gap: 8,
+    marginBottom: 16,
+  },
+  clientCardHeader: {
+    fontSize: 16,
+    color: "#475467",
+    fontFamily: "Avenir",
+    fontWeight: 500,
+  },
+  clientCardHeaderText: {
+    fontSize: 18,
+    color: "#1e293b",
+    fontFamily: "AvenirHeavy",
+    fontWeight: 800,
+  },
+});

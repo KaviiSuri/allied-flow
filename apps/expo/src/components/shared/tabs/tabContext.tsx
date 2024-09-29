@@ -13,7 +13,10 @@ interface TabProviderProps {
   defaultValue: string;
 }
 
-export const TabProvider: React.FC<TabProviderProps> = ({ children, defaultValue }) => {
+export const TabProvider: React.FC<TabProviderProps> = ({
+  children,
+  defaultValue,
+}) => {
   const [value, setValue] = useState(defaultValue);
 
   return (

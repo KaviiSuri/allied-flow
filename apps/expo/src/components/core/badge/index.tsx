@@ -1,20 +1,42 @@
-import { StyleSheet, Text, View } from "react-native"
-import Icon from "react-native-vector-icons/AntDesign"
+import { StyleSheet, Text, View } from "react-native";
+import Icon from "react-native-vector-icons/AntDesign";
 
-export const Badge = ({ IconName, badgeText, bg, accentColor }: { IconName: string, badgeText: string, bg: string, accentColor: string }) => {
+export const Badge = ({
+  IconName,
+  badgeText,
+  bg,
+  accentColor,
+}: {
+  IconName: string;
+  badgeText: string;
+  bg: string;
+  accentColor: string;
+}) => {
   return (
-    <View style={[styles.badgeContainer, {
-      backgroundColor: bg,
-      borderColor: accentColor
-    }]}>
-      <Icon name={IconName} style={[{
-        color: accentColor,
-        fontWeight: 500
-      }]} />
-      <Text style={[styles.badgeText, { color: accentColor }]}>{badgeText}</Text>
+    <View
+      style={[
+        styles.badgeContainer,
+        {
+          backgroundColor: bg,
+          borderColor: accentColor,
+        },
+      ]}
+    >
+      <Icon
+        name={IconName}
+        style={[
+          {
+            color: accentColor,
+            fontWeight: 500,
+          },
+        ]}
+      />
+      <Text style={[styles.badgeText, { color: accentColor }]}>
+        {badgeText}
+      </Text>
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   badgeContainer: {
@@ -30,6 +52,6 @@ const styles = StyleSheet.create({
     fontWeight: 500,
     fontSize: 12,
     textAlign: "center",
-    fontFamily: "Avenir"
-  }
-})
+    fontFamily: "Avenir",
+  },
+});

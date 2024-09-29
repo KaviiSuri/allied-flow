@@ -1,33 +1,154 @@
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   Dimensions,
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
 import Toast from "react-native-toast-message";
-import { PrimaryButton } from "~/components/core/button";
+import { PrimaryButton, SecondaryButton } from "~/components/core/button";
 import { DetailsTabs } from "~/components/detailsTabs";
 import { InquiryDetailsPage } from "~/components/inquiryDetailsPage";
+import { CenterModalComponent } from "~/components/layouts/CenterModal";
+import { FormTextInput } from "~/components/shared/form";
+import {
+  Table,
+  TableData,
+  TableHeading,
+  TableRow,
+} from "~/components/shared/table";
+import { useProductById } from "~/hooks/useProductById";
+import type { RouterOutputs } from "~/utils/api";
+import { api } from "~/utils/api";
 
 const windowHeight = Dimensions.get("window").height - 64;
 
+type QuoteItem = NonNullable<
+  RouterOutputs["inquiry"]["getDetails"]["latestQuote"]
+>["quoteItems"][0];
+
+type QuoteItemMap = Record<string, QuoteItem>;
 export default function InquiriesDetails() {
+  const { inquiryNumber } = useLocalSearchParams();
+  const { data, isLoading } = api.inquiry.getDetails.useQuery(
+    {
+      inquiryId: inquiryNumber as string,
+    },
+    {},
+  );
+  const isFinalized =
+    data?.inquiry &&
+    data.latestQuote &&
+    (["ACCEPTED", "REJECTED"].includes(data.inquiry.status) ||
+      ["ACCEPTED", "REJECTED"].includes(data.latestQuote.status));
+
+  console.log("isFinalized", isFinalized);
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [activeNestedTab, setActiveNestedTab] = useState("Details");
+  const [negotiationVisible, setNegotiationVisible] = useState(false);
+
+  const [negotiatedItems, setNegotiatedItems] = useState<QuoteItemMap>({});
+
+  const handleQuoteItemUpdate = (quoteItem: QuoteItem) => {
+    setNegotiatedItems((prev) => ({
+      ...prev,
+      [quoteItem.productId]: quoteItem,
+    }));
+  };
+
+  useEffect(() => {
+    setNegotiatedItems({});
+  }, [inquiryNumber]);
+
+  const utils = api.useUtils();
+  const { mutateAsync: negotiate, isPending } =
+    api.inquiry.negotiate.useMutation({
+      onSuccess: () => {
+        void utils.inquiry.getDetails
+          .invalidate({ inquiryId: inquiryNumber as string })
+          .then(() => {
+            Toast.show({
+              type: "success",
+              text1: "Negotiation successful",
+            });
+          })
+          .catch();
+      },
+    });
+
+  const handleNegotiate = () => {
+    console.log("negotiatedItems", negotiatedItems);
+    if (isPending || !data) {
+      return;
+    }
+    negotiate({
+      inquiryId: data.inquiry.id,
+      items: Object.values(negotiatedItems),
+    }).catch(() => {
+      Toast.show({
+        type: "error",
+        text1: "Negotiation failed",
+      });
+    });
+    setNegotiationVisible(false);
+  };
+
+  const { mutate: createOrderFromInquiry } =
+    api.orders.createFromInquiry.useMutation({
+      onSuccess: () => {
+        Toast.show({
+          type: "success",
+          text1: "Order placed successfully",
+          onPress: () => {
+            router.push("/orders");
+          },
+        });
+        utils.orders.invalidate().catch(console.error);
+      },
+    });
+
+  const handleOrder = () => {
+    if (!data?.inquiry || !data.latestQuote || isFinalized) {
+      return;
+    }
+    createOrderFromInquiry({
+      inquiryId: data.inquiry.id,
+      quoteId: data.latestQuote.id,
+      type: "REGULAR",
+    });
+  };
+  const handleCancel = () => {
+    setNegotiatedItems({});
+    setNegotiationVisible(false);
+  };
 
   const renderNestedScreen = () => {
     switch (activeNestedTab) {
       case "Details":
-        return <InquiryDetails />;
+        return (
+          <InquiryDetails
+            quote={data?.latestQuote}
+            remarks={data?.inquiry.remarks ?? ""}
+            tnc={data?.inquiry.tnc ?? ""}
+          />
+        );
       case "Sample":
         return <Sample />;
       case "Order":
         return <Sample />;
       default:
-        return <InquiryDetails />;
+        return (
+          <InquiryDetails
+            quote={data?.latestQuote}
+            remarks={data?.inquiry.remarks ?? ""}
+            tnc={data?.inquiry.tnc ?? ""}
+          />
+        );
     }
   };
   useEffect(() => {
@@ -45,6 +166,20 @@ export default function InquiriesDetails() {
         position: "relative",
       }}
     >
+      <CenterModalComponent
+        visible={negotiationVisible}
+        setVisible={setNegotiationVisible}
+        onUpdateRequest={handleNegotiate}
+        onAcceptRequest={handleOrder}
+        onRejectRequest={handleCancel}
+      >
+        <NegotiationTable
+          quoteItems={data?.latestQuote?.quoteItems ?? []}
+          negotiationItems={negotiatedItems}
+          handleQuoteItemUpdate={handleQuoteItemUpdate}
+        />
+        <FormTextInput label="Remarks" placeholder="Enter remarks here" />
+      </CenterModalComponent>
       <View style={{ paddingVertical: 12, height: windowHeight }}>
         <View style={styles.tabContainer}>
           <View style={{ flexDirection: "row" }}>
@@ -104,12 +239,23 @@ export default function InquiriesDetails() {
             </TouchableOpacity>
           </View>
 
-          <View>
-            <PrimaryButton
-              text="Send Quote"
+          <View
+            style={{
+              paddingBottom: 12,
+              flexDirection: "row",
+              gap: 16,
+            }}
+          >
+            <SecondaryButton
+              text="Update Quote"
               onPress={() => {
-                router.navigate("/inquiry/sendQuote");
+                setNegotiationVisible(true);
               }}
+            />
+            <PrimaryButton
+              text="Place Order"
+              disabled={!(data?.inquiry.status !== "ACCEPTED")}
+              onPress={handleOrder}
             />
           </View>
         </View>
@@ -119,18 +265,27 @@ export default function InquiriesDetails() {
   );
 }
 
-const InquiryDetails = () => {
+const InquiryDetails = ({
+  quote,
+  remarks,
+  tnc,
+}: {
+  tnc: string;
+  quote: RouterOutputs["inquiry"]["getDetails"]["latestQuote"];
+  remarks: string;
+}) => {
   return (
     <View style={styles.tabContentContainer}>
-      <View
+      <ScrollView
         style={{
           height: "100%",
           width: "75%",
           padding: 20,
+          paddingBottom: 100,
           backgroundColor: "#f9f9f9",
         }}
       >
-        <InquiryDetailsPage />
+        <InquiryDetailsPage quote={quote} />
         {/* Customers Remarks */}
         <View style={styles.extraContainers}>
           <Text
@@ -152,11 +307,7 @@ const InquiryDetails = () => {
               fontFamily: "Avenir",
             }}
           >
-            Terms of service are the legal agreements between a service provider
-            and a person who wants to use that service. The person must agree to
-            abide by the terms of service in order to use the offered service.
-            Terms of service can also be merely a disclaimer, especially
-            regarding the use of websites.
+            {remarks}
           </Text>
         </View>
 
@@ -180,36 +331,10 @@ const InquiryDetails = () => {
               fontFamily: "Avenir",
             }}
           >
-            Terms of service are the legal agreements between a service provider
-            and a person who wants to use that service. The person must agree to
-            abide by the terms of service in order to use the offered service.
-            Terms of service can also be merely a disclaimer, especially
-            regarding the use of websites.
-          </Text>
-          <Text
-            style={{
-              color: "#334155",
-              fontWeight: 500,
-              lineHeight: 24,
-              fontFamily: "Avenir",
-              paddingTop: 8,
-            }}
-          >
-            Inco Terms - ABCD
-          </Text>
-          <Text
-            style={{
-              color: "#334155",
-              fontWeight: 500,
-              lineHeight: 24,
-              fontFamily: "Avenir",
-              paddingTop: 8,
-            }}
-          >
-            Payment Terms - ABCD
+            {tnc}
           </Text>
         </View>
-      </View>
+      </ScrollView>
       <View
         style={{
           height: "100%",
@@ -223,12 +348,190 @@ const InquiryDetails = () => {
 };
 
 const Sample = () => {
-  return <View style={styles.tabContentContainer}>Sample</View>;
+  return (
+    <View style={styles.tabContentContainer}>
+      <ScrollView
+        style={{
+          height: "100%",
+          width: "75%",
+          padding: 20,
+          paddingBottom: 100,
+          backgroundColor: "#f9f9f9",
+        }}
+      >
+        {/* Customers Remarks */}
+      </ScrollView>
+      <View
+        style={{
+          height: "100%",
+          width: "25%",
+        }}
+      >
+        <DetailsTabs />
+      </View>
+    </View>
+  );
 };
 
-const Order = () => {
-  return <View style={styles.tabContentContainer}>Sample</View>;
+const NegotiationTable = ({
+  negotiationItems,
+  quoteItems,
+  handleQuoteItemUpdate,
+}: {
+  negotiationItems: QuoteItemMap;
+  quoteItems: QuoteItem[];
+  handleQuoteItemUpdate: (quoteItem: QuoteItem) => void;
+}) => {
+  return (
+    <Table style={styles.tableContainer}>
+      <TableHeading style={{ backgroundColor: "#F1F5F9" }}>
+        <TableData
+          style={{
+            fontSize: 14,
+            color: "#1E293B",
+            fontWeight: 500,
+            flex: 1,
+            borderRightWidth: 1,
+            borderColor: "#DCDFEA",
+          }}
+        >
+          Product Name
+        </TableData>
+        <TableData
+          style={{
+            fontSize: 14,
+            color: "#1E293B",
+            fontWeight: 500,
+            flex: 1,
+            borderRightWidth: 1,
+            borderColor: "#DCDFEA",
+          }}
+        >
+          Quantity
+        </TableData>
+        <TableData
+          style={{
+            fontSize: 14,
+            color: "#1E293B",
+            fontWeight: 500,
+            flex: 1,
+            borderRightWidth: 1,
+            borderColor: "#DCDFEA",
+          }}
+        >
+          Target Price
+        </TableData>
+        <TableData
+          style={{
+            fontSize: 14,
+            color: "#1E293B",
+            fontWeight: 500,
+            flex: 1,
+            borderRightWidth: 1,
+            borderColor: "#DCDFEA",
+          }}
+        >
+          Revised Price
+        </TableData>
+      </TableHeading>
+      {/* random data  */}
+
+      {quoteItems.map((quoteItem) => (
+        <ProductRow
+          key={quoteItem.productId}
+          quoteItem={quoteItem}
+          negotiatedItem={negotiationItems[quoteItem.productId]}
+          updateQuoteItem={handleQuoteItemUpdate}
+        />
+      ))}
+    </Table>
+  );
 };
+
+function ProductRow({
+  quoteItem,
+  negotiatedItem,
+  updateQuoteItem,
+}: {
+  quoteItem: QuoteItem;
+  negotiatedItem?: QuoteItem;
+  updateQuoteItem: (quoteItem: QuoteItem) => void;
+}) {
+  const { product } = useProductById(quoteItem.productId);
+  if (!product) {
+    return null;
+  }
+  return (
+    <TableRow style={styles.tableRow} id={"1"} key={quoteItem.productId}>
+      <TableData
+        style={{
+          fontSize: 14,
+          color: "#1E293B",
+          fontWeight: 400,
+          flex: 1,
+          borderRightWidth: 1,
+          borderColor: "#DCDFEA",
+        }}
+      >
+        {product.name}
+      </TableData>
+      <TableData
+        style={{
+          fontSize: 14,
+          color: "#1E293B",
+          fontWeight: 400,
+          flex: 1,
+          borderRightWidth: 1,
+          borderColor: "#DCDFEA",
+        }}
+      >
+        {quoteItem.quantity} {quoteItem.unit}
+      </TableData>
+      <TableData
+        style={{
+          fontSize: 14,
+          color: "#1E293B",
+          fontWeight: 400,
+          flex: 1,
+          borderRightWidth: 1,
+          borderColor: "#DCDFEA",
+        }}
+      >
+        Rs {quoteItem.price}
+      </TableData>
+      <TableData
+        style={{
+          fontSize: 14,
+          color: "#1E293B",
+          fontWeight: 400,
+          flex: 1,
+          borderRightWidth: 1,
+          borderColor: "#DCDFEA",
+        }}
+      >
+        <FormTextInput
+          placeholder="Price"
+          label=""
+          value={negotiatedItem?.price ? negotiatedItem.price.toString() : ""}
+          style={{
+            maxWidth: 100,
+          }}
+          onChangeText={(value) => {
+            const newPrice = parseFloat(value);
+            if (isNaN(newPrice)) {
+              return;
+            }
+            updateQuoteItem({
+              ...quoteItem,
+              ...negotiatedItem,
+              price: newPrice,
+            });
+          }}
+        />
+      </TableData>
+    </TableRow>
+  );
+}
 
 //styles
 const styles = StyleSheet.create({
@@ -267,5 +570,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 16,
     borderColor: "#DCDFEA",
+  },
+  tableContainer: {
+    borderRadius: 8,
+    backgroundColor: "white",
+  },
+  tableRow: {
+    flex: 1,
   },
 });

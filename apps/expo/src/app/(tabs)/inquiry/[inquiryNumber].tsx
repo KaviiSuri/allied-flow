@@ -11,14 +11,11 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import Icon from "react-native-vector-icons/AntDesign";
-import { Badge } from "~/components/core/badge";
 import { DetailsSectionMobile } from "~/components/inquiryDetails/mobile/Details";
-import {
-  orderStyles,
-  SampleSectionMobile,
-} from "~/components/inquiryDetails/mobile/Order";
+import { orderStyles } from "~/components/inquiryDetails/mobile/Order";
 import { BottomDrawer } from "~/components/layouts/BottomDrawerLayout";
 import { OrderPage } from "~/components/order/OrderPage";
+import { BadgeStatus } from "~/components/shared/badge";
 import { FormTextInput } from "~/components/shared/form";
 import { SearchBox } from "~/components/shared/searchComponent";
 import type { RouterOutputs } from "~/utils/api";
@@ -39,11 +36,10 @@ export default function InquiriesDetails() {
     {},
   );
   const isFinalized =
-    data &&
-    data.inquiry &&
+    data?.inquiry &&
     data.latestQuote &&
-    (["ACCEPTED", "REJECTED"].includes(data?.inquiry.status) ||
-      ["ACCEPTED", "REJECTED"].includes(data?.latestQuote?.status));
+    (["ACCEPTED", "REJECTED"].includes(data.inquiry.status) ||
+      ["ACCEPTED", "REJECTED"].includes(data.latestQuote.status));
 
   console.log("isFinalized", isFinalized);
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -52,6 +48,10 @@ export default function InquiriesDetails() {
   const [remark, setRemark] = useState<string>("");
 
   const [negoiatedItems, setNegotiatedItems] = useState<QuoteItemMap>({});
+
+  useEffect(() => {
+    setNegotiatedItems({});
+  }, [inquiryNumber]);
 
   const handleQuoteItemUpdate = (quoteItem: QuoteItem) => {
     console.log("quoteItem", quoteItem);
@@ -93,7 +93,7 @@ export default function InquiriesDetails() {
     setOpenCreateForm(false);
   };
 
-  const { mutateAsync: createOrderFromInquiry } =
+  const { mutate: createOrderFromInquiry } =
     api.orders.createFromInquiry.useMutation({
       onSuccess: () => {
         Toast.show({
@@ -108,7 +108,7 @@ export default function InquiriesDetails() {
     });
 
   const handleOrder = () => {
-    if (!data || !data.inquiry || !data.latestQuote || isFinalized) {
+    if (!data?.inquiry || !data.latestQuote || isFinalized) {
       return;
     }
     createOrderFromInquiry({
@@ -175,6 +175,7 @@ export default function InquiriesDetails() {
           <TouchableOpacity
             onPress={() => {
               router.back();
+              router.push("/inquiries");
             }}
           >
             <Icon name="arrowleft" size={24} color="black" />
@@ -188,12 +189,7 @@ export default function InquiriesDetails() {
             </Text>
           )}
           <View style={{ width: 118 }}>
-            <Badge
-              IconName="checkcircleo"
-              badgeText="QuoteReceived"
-              bg="#f0f9f6"
-              accentColor="#047857"
-            />
+            <BadgeStatus status="RECEIVED" />
           </View>
         </View>
         <View
@@ -341,14 +337,16 @@ export default function InquiriesDetails() {
         onPrimaryButtonPress={handleNegotiate}
         onSecondaryButtonPress={handleCancel}
       >
-        {data?.latestQuote?.quoteItems.map((quoteItem) => (
-          <ProductsCard
-            key={quoteItem.productId}
-            quoteItem={quoteItem}
-            updateQuoteItem={handleQuoteItemUpdate}
-            negotiatedItem={negoiatedItems[quoteItem.productId]}
-          />
-        ))}
+        <>
+          {data?.latestQuote?.quoteItems.map((quoteItem) => (
+            <ProductsCard
+              key={quoteItem.productId}
+              quoteItem={quoteItem}
+              updateQuoteItem={handleQuoteItemUpdate}
+              negotiatedItem={negoiatedItems[quoteItem.productId]}
+            />
+          ))}
+        </>
 
         <RemarksForm remark={remark} setRemark={setRemark} />
       </BottomDrawer>
@@ -356,7 +354,7 @@ export default function InquiriesDetails() {
   );
 }
 
-const RemarksForm = ({
+export const RemarksForm = ({
   remark,
   setRemark,
 }: {
@@ -386,7 +384,7 @@ const RemarksForm = ({
     </View>
   );
 };
-const ProductsCard = ({
+export const ProductsCard = ({
   quoteItem,
   updateQuoteItem,
   negotiatedItem,

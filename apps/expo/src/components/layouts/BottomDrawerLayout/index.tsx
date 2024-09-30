@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   View,
   TouchableWithoutFeedback,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Icon from "react-native-vector-icons/FontAwesome5";
@@ -41,7 +43,10 @@ export const BottomDrawer = ({
       </TouchableWithoutFeedback>
 
       {/* Modal content: white section */}
-      <View style={createStyles.modalContainer}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={createStyles.modalContainer}
+      >
         {/* Your modal content goes here */}
         <View style={createStyles.formHeader}>
           <Text style={createStyles.formHeaderText}>{header}</Text>
@@ -116,7 +121,7 @@ export const BottomDrawer = ({
             </TouchableOpacity>
           )}
         </GestureHandlerRootView>
-      </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 };
@@ -195,7 +200,6 @@ export const createStyles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     padding: 16,
-    paddingBottom: 46,
     backgroundColor: "white",
     flexDirection: "row",
     justifyContent: "space-between",

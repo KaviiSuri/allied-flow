@@ -17,6 +17,7 @@ function TableData(
     fontWeight: 500,
     flex: 1,
     flexDirection: "row",
+    minWidth: 100,
   };
 
   return (

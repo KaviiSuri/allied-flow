@@ -13,6 +13,9 @@ import { useMemo, useState } from "react";
 import type { RouterOutputs } from "@repo/api";
 import { api } from "~/utils/api";
 import { PrimaryButton } from "../core/button";
+import { LoadingState } from "../shared/displayStates/LoadingState";
+import { ErrorState } from "../shared/displayStates/ErrorState";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const windowHeight = Dimensions.get("window").height - 64;
 
@@ -39,10 +42,18 @@ export const OrderPage = () => {
   return (
     <>
       <HeaderComponent />
+      {isLoading ? (
+        <LoadingState stateContent={"Please wait... Loading orders"} />
+      ) : isError ? (
+        <ErrorState errorMessage={"Something went wrong, please try again."} />
+      ) : (
       <SampleTable orders={orders} />
+      )}
+      <GestureHandlerRootView>
       {hasNextPage && (
         <PrimaryButton onPress={() => fetchNextPage} text="Load more" />
       )}
+      </GestureHandlerRootView>
     </>
   );
 };

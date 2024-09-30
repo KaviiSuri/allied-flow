@@ -14,7 +14,7 @@ import {
   TableRow,
   TableData,
 } from "~/components/shared/table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { RouterInputs, RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
 import { PrimaryButton, SecondaryButton } from "~/components/core/button";
@@ -23,6 +23,8 @@ import { Can } from "~/providers/auth";
 import CloseIcon from "~/app/assets/images/close-icon.png";
 import EditIcon from "~/app/assets/images/edit-icon.svg";
 import TrashIcon from "~/app/assets/images/trash-icon.svg";
+import { LoadingState } from "~/components/shared/displayStates/LoadingState";
+import { ErrorState } from "~/components/shared/displayStates/ErrorState";
 const windowHeight = Dimensions.get("window").height - 64;
 
 type Team = RouterOutputs["teams"]["readTeams"][0];
@@ -249,7 +251,7 @@ function CreateTeamForm(props: { open: boolean; toggleOpen: () => void }) {
 }
 
 export default function Clients() {
-  const { data } = api.teams.readTeams.useQuery({
+  const { data, isLoading, isError } = api.teams.readTeams.useQuery({
     type: "CLIENT",
   });
   const [teamToUpdate, setTeamToUpdate] = useState<Team | null>(null);
@@ -265,6 +267,9 @@ export default function Clients() {
   const toggleDrawer = () => {
     setDrawerVisible(!drawerVisible);
   };
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
 
   return (
     <SafeAreaView
@@ -323,6 +328,11 @@ export default function Clients() {
           </Can>
         </View>
 
+      {isLoading ? (
+        <LoadingState stateContent={"Please wait... Loading clients"} />
+      ) : isError ? (
+        <ErrorState errorMessage={"Something went wrong, please try again."} />
+      ) : (
         <View style={{ padding: 16, height: windowHeight }}>
           <Table style={{ backgroundColor: "#fff" }}>
             <TableHeading>
@@ -346,8 +356,8 @@ export default function Clients() {
               <TableRow key={team.id}>
                 <TableData>{team.name}</TableData>
                 <TableData>{team.name}</TableData>
-                <TableData></TableData>
-                <TableData></TableData>
+                <TableData>-</TableData>
+                <TableData>-</TableData>
                 <View
                   style={{
                     paddingHorizontal: 16,
@@ -393,6 +403,7 @@ export default function Clients() {
             ))}
           </Table>
         </View>
+      )}
       </Can>
     </SafeAreaView>
   );

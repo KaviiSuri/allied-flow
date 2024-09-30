@@ -84,11 +84,12 @@ export const InquiryForm = ({
         </View>
       )}
       {productRequests.length > 0 &&
-        productRequests.map((product) => (
+        productRequests.map((product,index) => (
           <ProductForm
             onDelete={deleteProductRequest}
             onChange={updateProductRequest}
             product={product}
+            key={index}
           />
         ))}
       <GestureHandlerRootView>

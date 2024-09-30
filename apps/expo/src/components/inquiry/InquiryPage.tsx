@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   Modal,
   TouchableWithoutFeedback,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { SearchBox } from "../shared/searchComponent";
 import React, { useEffect, useMemo, useState } from "react";
@@ -22,6 +24,8 @@ import { useRouter } from "expo-router";
 import { createStyles } from "../layouts/BottomDrawerLayout";
 import { clientFilterList, sellerFilterList } from "~/constants/filterLists";
 import { ActionBadgeMobile } from "../core/actionBadge";
+import { LoadingState } from "../shared/displayStates/LoadingState";
+import { ErrorState } from "../shared/displayStates/ErrorState";
 
 export type ProductRequest =
   RouterInputs["inquiry"]["raise"]["productRequests"][0] & {
@@ -35,7 +39,7 @@ export const InquiryPage = () => {
   const { user } = useUser();
   const ability = useAbility();
   const utils = api.useUtils();
-  const { data } = api.inquiry.list.useInfiniteQuery(
+  const { data, isLoading, isError } = api.inquiry.list.useInfiniteQuery(
     {},
     {
       getNextPageParam: (lastPage) => {
@@ -56,6 +60,7 @@ export const InquiryPage = () => {
 
   useEffect(() => {
     setProductRequests([]);
+    console.log(isLoading, isError, "Loading and Error");
   }, []);
 
   const handleAddProductRequest = () => {
@@ -139,16 +144,23 @@ export const InquiryPage = () => {
       )}
 
       {/* Scrollable content below the fixed SearchBox */}
-      <ScrollView style={styles.orderBodyContainer}>
-        <InquiryList
-          filter={filter}
-          setFilter={setFilter}
-          inquiries={inquiries}
-          filterList={
-            user?.team.type === "CLIENT" ? clientFilterList : sellerFilterList
-          }
-        />
-      </ScrollView>
+
+      {isLoading ? (
+        <LoadingState stateContent={"Please wait... Loading inquiries"} />
+      ) : isError ? (
+        <ErrorState errorMessage={"Something went wrong, please try again."} />
+      ) : (
+        <ScrollView style={styles.orderBodyContainer}>
+          <InquiryList
+            filter={filter}
+            setFilter={setFilter}
+            inquiries={inquiries}
+            filterList={
+              user?.team.type === "CLIENT" ? clientFilterList : sellerFilterList
+            }
+          />
+        </ScrollView>
+      )}
 
       {/* create flow */}
       <View style={createStyles.createButtonContainer}>
@@ -176,7 +188,9 @@ export const InquiryPage = () => {
         </TouchableWithoutFeedback>
 
         {/* Modal content: white section */}
-        <View style={createStyles.modalContainer}>
+        <KeyboardAvoidingView 
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={createStyles.modalContainer}>
           {/* Your modal content goes here */}
           <View style={createStyles.formHeader}>
             <Text style={createStyles.formHeaderText}>Raise an inquiry</Text>
@@ -257,7 +271,7 @@ export const InquiryPage = () => {
               </Text>
             </TouchableOpacity>
           </GestureHandlerRootView>
-        </View>
+        </KeyboardAvoidingView>
       </Modal>
     </View>
   );
@@ -284,11 +298,12 @@ const InquiryList = ({
           contentContainerStyle={styles.filterTabsContainer}
         >
           <View style={styles.filterTabsContainer}>
-            {filterList.map((filterName: string) => (
+            {filterList.map((filterName: string, index: number) => (
               <MobileTab
                 activeFilter={filter === filterName ? true : false}
                 setFilter={setFilter}
                 currentFilter={filterName}
+                key={index}
               />
             ))}
           </View>

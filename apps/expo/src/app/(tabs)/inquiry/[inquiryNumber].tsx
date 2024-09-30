@@ -29,7 +29,7 @@ type QuoteItemMap = Record<string, QuoteItem>;
 
 export default function InquiriesDetails() {
   const { inquiryNumber } = useLocalSearchParams();
-  const { data, isLoading } = api.inquiry.getDetails.useQuery(
+  const { data, isLoading, isError } = api.inquiry.getDetails.useQuery(
     {
       inquiryId: inquiryNumber as string,
     },
@@ -362,7 +362,9 @@ export const RemarksForm = ({
   setRemark: React.Dispatch<React.SetStateAction<string>>;
 }) => {
   return (
-    <View>
+    <View style={{
+      marginBottom: 100,
+    }}>
       <View style={orderStyles.orderCardContainer}>
         <View style={orderStyles.orderCard}>
           <View style={orderStyles.innerSection}>

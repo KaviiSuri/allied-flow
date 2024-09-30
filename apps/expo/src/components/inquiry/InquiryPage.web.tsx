@@ -17,6 +17,8 @@ import { useAbility, useUser } from "~/providers/auth";
 import type { ProductRequest } from "./InquiryPage";
 import { SearchBox } from "../shared/searchComponent";
 import Toast from "react-native-toast-message";
+import { LoadingState } from "../shared/displayStates/LoadingState.web";
+import { ErrorState } from "../shared/displayStates/ErrorState";
 
 export const InquiryPage = () => {
   const [activeNestedTab, setActiveNestedTab] = useState<
@@ -28,7 +30,7 @@ export const InquiryPage = () => {
   const { user } = useUser();
   const ability = useAbility();
   const utils = api.useUtils();
-  const { data } = api.inquiry.list.useInfiniteQuery(
+  const { data, isError, isLoading } = api.inquiry.list.useInfiniteQuery(
     {},
     {
       getNextPageParam: (lastPage) => {
@@ -121,6 +123,9 @@ export const InquiryPage = () => {
     return <SentInquiries currentTab={activeNestedTab} inquiries={inquiries} />;
   };
 
+  useEffect(() => {
+    console.log(isLoading, isError, "Loading and Error");
+  }, [isError, isLoading]);
   return (
     <View>
       <ScrollView style={{ flex: 1, backgroundColor: "#f9f9f9" }}>
@@ -265,7 +270,15 @@ export const InquiryPage = () => {
             </View>
           </View>
         </View>
-        {renderNestedScreen()}
+        {isLoading ? (
+          <LoadingState stateContent={"Please wait... Loading inquiries"} />
+        ) : isError ? (
+          <ErrorState
+            errorMessage={"Something went wrong, please try again."}
+          />
+        ) : (
+          renderNestedScreen()
+        )}
       </ScrollView>
     </View>
   );

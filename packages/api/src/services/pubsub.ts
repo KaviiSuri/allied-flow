@@ -2,7 +2,7 @@ import { z } from "zod";
 import Redis from "ioredis";
 const redis = new Redis();
 import EventEmitter from "events";
-import type { TransactionType } from "@repo/db/client";
+import type { TransactionType, db } from "@repo/db/client";
 import { devices, notifications } from "@repo/db/schema";
 import { nanoid } from "nanoid";
 import { and, eq, inArray, lt } from "@repo/db";
@@ -89,7 +89,7 @@ export type Notification = z.infer<typeof notificationSchema>;
 
 // use ioredis to publish notifications to the chanel for a given userId
 export const createNotification = async (
-  tx: TransactionType,
+  tx: typeof db,
   notification: Notification,
 ) => {
   const n = await tx
@@ -107,7 +107,7 @@ export const createNotification = async (
 };
 
 export const sendNotifications = async (
-  tx: TransactionType,
+  tx: typeof db,
   notifications: Notification[],
 ) => {
   const pushTokensForUsers = await tx.query.devices.findMany({

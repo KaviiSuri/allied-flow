@@ -1,11 +1,62 @@
 import { TRPCError } from "@trpc/server";
 import type { TRPCRouterRecord } from "@trpc/server";
 import { protectedProcedure } from "../trpc.js";
+import type { Order } from "@repo/db/schema";
 import { inquiries, orderItems, orders } from "@repo/db/schema";
 import { nanoid } from "nanoid";
 import { and, eq, lt } from "@repo/db";
 import { z } from "zod";
+import type { Notification } from "../services/pubsub.js";
 import { createNotification, sendNotifications } from "../services/pubsub.js";
+import type { db } from "@repo/db/client";
+
+async function getOrderStakeHolders(tx: typeof db, order: Order) {
+  const buyerTeamUsers = await tx.query.users.findMany({
+    where: (users) => eq(users.teamId, order.buyerId),
+  });
+
+  return buyerTeamUsers;
+}
+
+async function createAndSendOrderNotification(tx: typeof db, order: Order) {
+  let type: Notification["type"] = "ORDER_PLACED";
+  switch (order.status) {
+    case "PLACED":
+      type = "ORDER_PLACED";
+      break;
+    case "DISPATCHED":
+      type = "ORDER_DISPATCHED";
+      break;
+    case "DELIVERED":
+      type = "ORDER_SHIPPED";
+      break;
+  }
+  const notificationPayload = {
+    userId: "",
+    id: "",
+    read: false,
+    type,
+    orderType: order.type,
+    orderId: order.id,
+    message: `Order ${order.id} has been ${type.toLowerCase().split("_")[1]}`,
+    createdAt: new Date().toISOString(),
+  } satisfies Notification;
+  const stakeholders = await getOrderStakeHolders(tx, order);
+  const notifications = stakeholders.map((stakeholder) => ({
+    ...notificationPayload,
+    userId: stakeholder.id,
+  }));
+  const persistedNotificaitons = await Promise.all(
+    notifications.map((notification) => createNotification(tx, notification)),
+  );
+
+  await Promise.allSettled(
+    persistedNotificaitons
+      .filter((n) => !!n)
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      .map((n) => sendNotifications(tx, [n!])),
+  );
+}
 
 export const ordersRouter = {
   createFromInquiry: protectedProcedure
@@ -83,22 +134,9 @@ export const ordersRouter = {
             status: "ACCEPTED",
           })
           .where(eq(inquiries.id, input.inquiryId));
-
-        const notification = await createNotification(trx, {
-          userId: ctx.user.id,
-          id: "",
-          read: false,
-          type: "ORDER_PLACED",
-          orderType: input.type,
-          orderId: order.id,
-          message: `Order ${order.id} has been placed`,
-          createdAt: new Date().toISOString(),
-        });
-        if (notification) {
-          await sendNotifications(trx, [notification]);
-        }
         return order;
       });
+      await createAndSendOrderNotification(ctx.db, order);
       return order;
     }),
 
@@ -204,6 +242,7 @@ export const ordersRouter = {
           message: "Failed to update order",
         });
       }
+      await createAndSendOrderNotification(ctx.db, updatedOrder[0]);
 
       return updatedOrder[0];
     }),

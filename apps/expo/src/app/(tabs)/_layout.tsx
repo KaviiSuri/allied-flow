@@ -43,19 +43,24 @@ export default function TabLayout() {
                     },
                     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                     tabBarItemStyle: {
-                      // @ts-expect-error types broken here
-                      ...(drawer.action &&
-                        drawer.subject &&
-                        !ability.can(drawer.action, drawer.subject) && {
-                          display: "none",
-                        }),
                       ...(!drawer.mobileView && {
                         display: "none",
                       }),
+                      // @ts-expect-error types broken here
+                      ...(drawer.action &&
+                        // @ts-expect-error types broken here
+                        drawer.subject &&
+                        // @ts-expect-error types broken here
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+                        !ability.can(drawer.action, drawer.subject) && {
+                          display: "none",
+                        }),
                     },
                     title: drawer.name,
                     tabBarIcon: ({ color }) => (
                       <Image
+                        // @ts-expect-error types broken here
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                         source={drawer.icon}
                         style={{
                           width: 20,

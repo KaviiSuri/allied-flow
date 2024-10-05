@@ -1,15 +1,14 @@
-
-import { StyleSheet, TextInput, View } from "react-native"
-import Icon from "react-native-vector-icons/AntDesign"
+import { StyleSheet, TextInput, View } from "react-native";
+import Icon from "react-native-vector-icons/AntDesign";
 
 export const SearchBox = ({
   placeholder,
   setValue,
   value,
 }: {
-  placeholder: string
-  setValue: React.Dispatch<React.SetStateAction<string>>
-  value: string
+  placeholder: string;
+  setValue: React.Dispatch<React.SetStateAction<string>>;
+  value: string;
 }) => {
   return (
     <View style={styles.searchBoxContainer}>
@@ -22,8 +21,8 @@ export const SearchBox = ({
         onChangeText={(e) => setValue(e)} // Update the value when text changes
       />
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   searchBoxContainer: {
@@ -41,4 +40,4 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     flex: 1, // Ensures the TextInput takes up the available space
   },
-})
+});

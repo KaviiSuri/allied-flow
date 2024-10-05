@@ -78,7 +78,7 @@ export const insertProductSchema = createInsertSchema(products);
 export const inquiries = sqliteTable("inquiries", {
   id: text("id").primaryKey().unique(),
   status: text("status", {
-    enum: ["NEGOTIATING", "ACCEPTED", "REJECTED"],
+    enum: ["RAISED", "NEGOTIATING", "ACCEPTED", "REJECTED"],
   }).notNull(),
   tnc: text("tnc").notNull(),
   remarks: text("remarks"),

@@ -8,7 +8,9 @@ import Icon from "react-native-vector-icons/FontAwesome5";
 import type { RouterInputs, RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
 import { PrimaryButton } from "../core/button";
-import { ViewProps } from "react-native-svg/lib/typescript/fabric/utils";
+import type { ViewProps } from "react-native-svg/lib/typescript/fabric/utils";
+import { LoadingState } from "../shared/displayStates/LoadingState";
+import { ErrorState } from "../shared/displayStates/ErrorState";
 
 export const OrderPage = ({
   type,
@@ -78,29 +80,38 @@ export const OrderPage = ({
       )}
 
       {/* Scrollable content below the fixed SearchBox */}
-      <ScrollView
-        style={[
-          styles.orderBodyContainer,
-          showHeader && { backgroundColor: "#f9f9f9" },
-        ]}
-      >
-        <OrderBody
-          style={[showHeader && { padding: 16 }]}
-          filter={filter}
-          setFilter={setFilter}
-          orders={orders}
-        />
 
-        {hasNextPage && (
-          <View style={{ alignItems: "center", marginVertical: 16 }}>
-            <PrimaryButton
-              style={{ maxWidth: 100 }}
-              onPress={() => fetchNextPage()}
-              text="Load more"
-            />
-          </View>
-        )}
-      </ScrollView>
+      {isLoading ? (
+        <LoadingState stateContent={"Please wait... Loading orders"} />
+      ) : isError ? (
+        <ErrorState errorMessage={"Something went wrong, please try again."} />
+      ) : (
+        <ScrollView
+          style={[
+            styles.orderBodyContainer,
+            showHeader && { backgroundColor: "#f9f9f9" },
+          ]}
+        >
+          <OrderBody
+            style={[showHeader && { padding: 16 }]}
+            filter={filter}
+            setFilter={setFilter}
+            orders={orders}
+          />
+
+          {hasNextPage && (
+            <GestureHandlerRootView
+              style={{ alignItems: "center", marginVertical: 16 }}
+            >
+              <PrimaryButton
+                style={{ maxWidth: 100 }}
+                onPress={() => fetchNextPage()}
+                text="Load more"
+              />
+            </GestureHandlerRootView>
+          )}
+        </ScrollView>
+      )}
     </View>
   );
 };
@@ -146,7 +157,7 @@ const OrderBody = ({
 
         {/* orders */}
 
-        {orders.map((order) => (
+        {orders.map((order,index) => (
           <OrderCard key={order.id} order={order} />
         ))}
       </GestureHandlerRootView>

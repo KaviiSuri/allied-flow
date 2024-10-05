@@ -4,7 +4,7 @@
   },
   "build": {
     "base": {
-      "node": "18.16.1",
+      "node": "21.6.2",
       "ios": {
         "resourceClass": "m-medium"
         "bundleIdentifier": "com.aacipl.spot",
@@ -21,21 +21,28 @@
           "sound": true
         }
       }
+      "channel": "base",
     },
     "development": {
       "extends": "base",
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://allied-flow.onrender.com"
+      },
+      "channel": "development"
     },
     "preview": {
       "extends": "base",
       "distribution": "internal",
-      "ios": {
-        "simulator": true
-      }
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://allied-flow.onrender.com"
+      },
+      "channel": "preview"
     },
     "production": {
-      "extends": "base"
+      "extends": "base",
+      "channel": "production"
     }
   },
   "submit": {

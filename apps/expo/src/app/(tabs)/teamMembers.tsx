@@ -18,7 +18,7 @@ import {
   TableData,
 } from "~/components/shared/table";
 import { useEffect, useRef, useState } from "react";
-import DocumentPicker from 'react-native-document-picker';
+import DocumentPicker from "react-native-document-picker";
 import type { RouterInputs, RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
 import { PrimaryButton, SecondaryButton } from "~/components/core/button";
@@ -33,6 +33,8 @@ import TrashIcon from "~/app/assets/images/trash-icon.svg";
 import UploadIcon from "~/app/assets/images/upload-icon.png";
 import ExcelIcon from "~/app/assets/images/excel-icon.png";
 import DownloadIcon from "~/app/assets/images/download-icon.png";
+import { LoadingState } from "~/components/shared/displayStates/LoadingState";
+import { ErrorState } from "~/components/shared/displayStates/ErrorState";
 const windowHeight = Dimensions.get("window").height - 64;
 
 type User = RouterOutputs["users"]["readUsers"][0];
@@ -62,14 +64,14 @@ function MemberForm(
     toggleOpen: () => void;
     isLoading?: boolean;
   } & (
-      | {
+    | {
         handleSave: (_user: CreateUser) => Promise<void>;
       }
-      | {
+    | {
         user: User;
         handleSave: (_user: UpdateUser) => Promise<void>;
       }
-    ),
+  ),
 ) {
   const [email, setEmail] = useState<string>(
     isUpdateUserProps(props) ? props.user.email : "",
@@ -156,10 +158,7 @@ function MemberForm(
             Add member
           </Text>
           <Pressable onPress={props.toggleOpen}>
-            <Image
-               
-              source={CloseIcon}
-            />
+            <Image source={CloseIcon} />
           </Pressable>
         </View>
         <View style={{ flex: 1, padding: 20 }}>
@@ -197,10 +196,9 @@ function MemberForm(
               label="Role"
               options={RoleOptions}
               value={role}
-              onValueChange={(e) => setRole(e)}
+              onValueChange={(e) => setRole(e as Role)}
               rightIcon={
                 <Image
-                   
                   source={DownArrowIcon}
                   style={{
                     width: 18,
@@ -265,8 +263,8 @@ function UpdateMemberForm(props: {
 }
 
 const handleFileDrop = () => {
-  console.log('Upload');
-}
+  console.log("Upload");
+};
 
 // const handleFileDrop = async () => {
 //   try {
@@ -292,7 +290,13 @@ const handleFileDrop = () => {
 //   }
 // };
 
-const DragAndDrop = ({ onDrop, children }) => {
+const DragAndDrop = ({
+  onDrop,
+  children,
+}: {
+  onDrop: () => void;
+  children: React.ReactNode;
+}) => {
   const panResponder = useRef(
     PanResponder.create({
       onMoveShouldSetPanResponder: () => true,
@@ -300,21 +304,23 @@ const DragAndDrop = ({ onDrop, children }) => {
         // Check if the drop location is valid and trigger the onDrop event
         onDrop();
       },
-    })
+    }),
   ).current;
 
   return (
-    <View {...panResponder.panHandlers} style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <View
+      {...panResponder.panHandlers}
+      style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+    >
       {children}
     </View>
   );
 };
 
 function UploadMemberPopup(props: { open: boolean; toggleOpen: () => void }) {
-
   const openFilePicker = () => {
     console.log("open");
-  }
+  };
 
   // const openFilePicker = async () => {
   //   try {
@@ -391,7 +397,6 @@ function UploadMemberPopup(props: { open: boolean; toggleOpen: () => void }) {
                 style={{
                   tintColor: "#64748B",
                 }}
-                 
                 source={CloseIcon}
               />
             </Pressable>
@@ -434,14 +439,12 @@ function UploadMemberPopup(props: { open: boolean; toggleOpen: () => void }) {
                     width: 20,
                     resizeMode: "contain",
                   }}
-                   
                   source={UploadIcon}
                 ></Image>
               </Pressable>
               <Text>Click to upload or drag and drop</Text>
             </View>
           </DragAndDrop>
-
 
           <Text
             style={{
@@ -476,7 +479,6 @@ function UploadMemberPopup(props: { open: boolean; toggleOpen: () => void }) {
                   width: 20,
                   resizeMode: "contain",
                 }}
-                 
                 source={ExcelIcon}
               ></Image>
               <Text
@@ -496,19 +498,21 @@ function UploadMemberPopup(props: { open: boolean; toggleOpen: () => void }) {
                   width: 14,
                   resizeMode: "contain",
                 }}
-                 
                 source={DownloadIcon}
               ></Image>
             </View>
-            <View style={{
-              borderTopWidth: 1,
-              flexDirection: "row",
-              justifyContent: "flex-end",
-              alignItems: "center",
-              marginTop: 16,
-              borderColor: "#E2E8F0"
-            }}>
-              <Pressable onPress={props.toggleOpen}
+            <View
+              style={{
+                borderTopWidth: 1,
+                flexDirection: "row",
+                justifyContent: "flex-end",
+                alignItems: "center",
+                marginTop: 16,
+                borderColor: "#E2E8F0",
+              }}
+            >
+              <Pressable
+                onPress={props.toggleOpen}
                 style={{
                   backgroundColor: "#FFF",
                   paddingHorizontal: 12,
@@ -518,7 +522,7 @@ function UploadMemberPopup(props: { open: boolean; toggleOpen: () => void }) {
                   justifyContent: "center",
                   margin: 16,
                   borderRadius: 8,
-                  borderColor: "#D0D5DD"
+                  borderColor: "#D0D5DD",
                 }}
               >
                 <Text
@@ -531,21 +535,22 @@ function UploadMemberPopup(props: { open: boolean; toggleOpen: () => void }) {
                 >
                   Cancel
                 </Text>
-
-
               </Pressable>
-              <Pressable onPress={props.toggleOpen} style={{
-                backgroundColor: "#2F80F5",
-                paddingHorizontal: 12,
-                paddingVertical: 8,
-                borderWidth: 1,
-                alignItems: "center",
-                justifyContent: "center",
-                marginVertical: 16,
-                marginRight: 16,
-                borderRadius: 8,
-                borderColor: "#2F80F5",
-              }}>
+              <Pressable
+                onPress={props.toggleOpen}
+                style={{
+                  backgroundColor: "#2F80F5",
+                  paddingHorizontal: 12,
+                  paddingVertical: 8,
+                  borderWidth: 1,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginVertical: 16,
+                  marginRight: 16,
+                  borderRadius: 8,
+                  borderColor: "#2F80F5",
+                }}
+              >
                 <Text
                   style={{
                     fontSize: 16,
@@ -591,7 +596,7 @@ function CreateMemberForm(props: { open: boolean; toggleOpen: () => void }) {
 
 export default function TeamMembers() {
   const ability = useAbility();
-  const { data } = api.users.readUsers.useQuery({
+  const { data, isLoading, isError } = api.users.readUsers.useQuery({
     scope: "TEAM",
   });
   const [userToUpdate, setUserToUpdate] = useState<User | null>(null);
@@ -689,82 +694,90 @@ export default function TeamMembers() {
           </Can>
         </View>
 
-        <View style={{ padding: 16, height: windowHeight }}>
-          <Table style={{ backgroundColor: "#fff" }}>
-            <TableHeading>
-              <TableData style={{ fontSize: 12, color: "#475467" }}>
-                Name
-              </TableData>
-              <TableData style={{ fontSize: 12, color: "#475467" }}>
-                Email
-              </TableData>
-              <TableData style={{ fontSize: 12, color: "#475467" }}>
-                Phone Number
-              </TableData>
-              <TableData style={{ fontSize: 12, color: "#475467" }}>
-                Role
-              </TableData>
-              <TableData style={{ fontSize: 12, color: "#475467" }}>
-                Clients
-              </TableData>
-              <TableData style={{ fontSize: 12, color: "#475467" }}>
-                Actions
-              </TableData>
-            </TableHeading>
-            {data?.map((user) => (
-              <TableRow id={user.id} key={user.id}>
-                <TableData>{user.name}</TableData>
-                <TableData>{user.email}</TableData>
-                <TableData>{user.phone}</TableData>
-                <TableData>{user.role}</TableData>
-                <TableData>John Doe</TableData>
-                <View
-                  style={{
-                    paddingHorizontal: 16,
-                    paddingVertical: 7,
-                    flexDirection: "row",
-                    gap: 16,
-                    flex: 1,
-                  }}
-                >
-                  <Can I="update" a="Team">
-                    <Pressable
-                      style={{
-                        borderColor: "#E2E8F0",
-                        borderWidth: 1,
-                        borderRadius: 8,
-                        padding: 8,
-                        shadowOffset: { height: 1, width: 0 },
-                        shadowOpacity: 0.05,
-                        shadowColor: "#101828",
-                        maxHeight: 35,
-                      }}
-                      onPress={() => setUserToUpdate(user)}
-                    >
-                      <EditIcon />
-                    </Pressable>
-                  </Can>
-                  {ability.can("delete", "User") && (
-                    <Pressable
-                      style={{
-                        borderColor: "#E2E8F0",
-                        borderWidth: 1,
-                        borderRadius: 8,
-                        padding: 8,
-                        shadowOffset: { height: 1, width: 0 },
-                        shadowOpacity: 0.05,
-                        shadowColor: "#101828",
-                        maxHeight: 35,
-                      }}
-                    >
-                      <TrashIcon />
-                    </Pressable>
-                  )}
-                </View>
-              </TableRow>
-            ))}
-          </Table>
-        </View>
+        {isLoading ? (
+          <LoadingState stateContent={"Please wait... Loading team members"} />
+        ) : isError ? (
+          <ErrorState
+            errorMessage={"Something went wrong, please try again."}
+          />
+        ) : (
+          <View style={{ padding: 16, height: windowHeight }}>
+            <Table style={{ backgroundColor: "#fff" }}>
+              <TableHeading>
+                <TableData style={{ fontSize: 12, color: "#475467" }}>
+                  Name
+                </TableData>
+                <TableData style={{ fontSize: 12, color: "#475467" }}>
+                  Email
+                </TableData>
+                <TableData style={{ fontSize: 12, color: "#475467" }}>
+                  Phone Number
+                </TableData>
+                <TableData style={{ fontSize: 12, color: "#475467" }}>
+                  Role
+                </TableData>
+                <TableData style={{ fontSize: 12, color: "#475467" }}>
+                  Clients
+                </TableData>
+                <TableData style={{ fontSize: 12, color: "#475467" }}>
+                  Actions
+                </TableData>
+              </TableHeading>
+              {data?.map((user) => (
+                <TableRow id={user.id} key={user.id}>
+                  <TableData>{user.name}</TableData>
+                  <TableData>{user.email}</TableData>
+                  <TableData>{user.phone}</TableData>
+                  <TableData>{user.role}</TableData>
+                  <TableData>John Doe</TableData>
+                  <View
+                    style={{
+                      paddingHorizontal: 16,
+                      paddingVertical: 7,
+                      flexDirection: "row",
+                      gap: 16,
+                      flex: 1,
+                    }}
+                  >
+                    <Can I="update" a="Team">
+                      <Pressable
+                        style={{
+                          borderColor: "#E2E8F0",
+                          borderWidth: 1,
+                          borderRadius: 8,
+                          padding: 8,
+                          shadowOffset: { height: 1, width: 0 },
+                          shadowOpacity: 0.05,
+                          shadowColor: "#101828",
+                          maxHeight: 35,
+                        }}
+                        onPress={() => setUserToUpdate(user)}
+                      >
+                        <EditIcon />
+                      </Pressable>
+                    </Can>
+                    {ability.can("delete", "User") && (
+                      <Pressable
+                        style={{
+                          borderColor: "#E2E8F0",
+                          borderWidth: 1,
+                          borderRadius: 8,
+                          padding: 8,
+                          shadowOffset: { height: 1, width: 0 },
+                          shadowOpacity: 0.05,
+                          shadowColor: "#101828",
+                          maxHeight: 35,
+                        }}
+                      >
+                        <TrashIcon />
+                      </Pressable>
+                    )}
+                  </View>
+                </TableRow>
+              ))}
+            </Table>
+          </View>
+        )}
       </SafeAreaView>
     </Can>
   );

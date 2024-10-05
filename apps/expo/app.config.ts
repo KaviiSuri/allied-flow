@@ -24,11 +24,11 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   assetBundlePatterns: ["**/*"],
   ios: {
-    bundleIdentifier: "your.bundle.identifier",
+    bundleIdentifier: "com.aacipl.alliedflow",
     supportsTablet: true,
   },
   android: {
-    package: "your.bundle.identifier",
+    package: "com.aacipl.alliedflow",
     adaptiveIcon: {
       foregroundImage: "./assets/icon.png",
       backgroundColor: "#1F104A",

@@ -7,10 +7,12 @@ function SecondaryButton(props: {
   onPress?: TouchableOpacityProps["onPress"];
   text: string;
   isLoading?: boolean;
+  style?: TouchableOpacityProps["style"];
+  disabled?: boolean;
 }) {
   return (
     <TouchableOpacity
-      style={{
+      style={[{
         paddingHorizontal: 12,
         paddingVertical: 8,
         backgroundColor: props.isLoading ? "#D0D5DD" : "#FFFFFF",
@@ -20,9 +22,12 @@ function SecondaryButton(props: {
         shadowOffset: { height: 1, width: 0 },
         shadowOpacity: 0.05,
         shadowColor: "#101828",
-      }}
-      disabled={props.isLoading}
+        alignItems: "center",
+        justifyContent: "center",
+        cursor: "pointer",
+      }]}
       onPress={props.onPress}
+      disabled={props.disabled ?? props.isLoading}
     >
       <Text
         style={{

@@ -1,15 +1,49 @@
-import React, { useState } from "react";
+import React from "react";
 import type { PropsWithChildren } from "react";
-import { SafeAreaView } from "react-native";
+import { Animated, Dimensions, Pressable, View } from "react-native";
 import type { ViewStyle } from "react-native";
 
-function RightDrawerLayout(props: PropsWithChildren<{ style?: ViewStyle }>) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [drawerVisible, setDrawerVisible] = useState(false);
+const windowHeight = Dimensions.get("window").height;
+function RightDrawerLayout(
+  props: PropsWithChildren<{
+    style?: ViewStyle;
+    visible: boolean;
+    toggleVisible: () => void;
+  }>,
+) {
   return (
-    <SafeAreaView style={{ backgroundColor: "#F9F9F9", position: "relative" }}>
-      {props.children}
-    </SafeAreaView>
+    <Animated.View
+      style={{
+        zIndex: 1,
+        position: "absolute",
+        right: props.visible ? 0 : "-100%",
+        width: "100%",
+        height: windowHeight,
+        flexDirection: "row",
+      }}
+    >
+      <View style={{ flex: 1 }}>
+        <Pressable
+          style={{
+            width: "100%",
+            height: "100%",
+            backgroundColor: "#000",
+            opacity: 0.1,
+          }}
+          onPress={props.toggleVisible}
+        ></Pressable>
+      </View>
+      <View
+        style={{
+          flex: 1,
+          height: "100%",
+          flexDirection: "column",
+          backgroundColor: "#F9F9F9",
+        }}
+      >
+        {props.children}
+      </View>
+    </Animated.View>
   );
 }
 

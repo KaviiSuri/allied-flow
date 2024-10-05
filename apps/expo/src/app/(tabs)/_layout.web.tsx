@@ -63,11 +63,6 @@ export default function WebLayout() {
   const { isAuthenticated } = useLogto();
   const ability = useAbility();
 
-  useEffect(() => {
-    console.log("======", ability.can("read", "User"));
-    console.log(DrawerItem);
-  }, [ability, DrawerItem]);
-
   if (!isAuthenticated) {
     return <Redirect href={"/login"} />;
   }
@@ -117,7 +112,10 @@ export default function WebLayout() {
                       drawerItemStyle: {
                         // @ts-expect-error types broken here
                         ...(drawer.action &&
+                          // @ts-expect-error types broken here
                           drawer.subject &&
+                          // @ts-expect-error types broken here
+                          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                           !ability.can(drawer.action, drawer.subject) && {
                             display: "none",
                           }),
@@ -140,6 +138,8 @@ export default function WebLayout() {
                       ),
                       drawerIcon: ({ focused }) => (
                         <Image
+                          // @ts-expect-error types broken here
+                          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                           source={drawer.icon}
                           style={{
                             width: 20,

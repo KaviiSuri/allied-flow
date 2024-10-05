@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native"
+import { StyleSheet, Text, View } from "react-native";
 
 export const CommentsSection = () => {
   return (
@@ -9,9 +9,10 @@ export const CommentsSection = () => {
             <Text style={styles.sectionHeader}>Henry</Text>
             <Text style={styles.time}>2 mins ago</Text>
           </View>
-          <Text style={styles.sectionContent}>What price should we quote this time? @johndoe</Text>
+          <Text style={styles.sectionContent}>
+            What price should we quote this time? @johndoe
+          </Text>
         </View>
-
 
         <View style={styles.section}>
           <View style={styles.headerContainer}>
@@ -22,12 +23,11 @@ export const CommentsSection = () => {
         </View>
       </View>
     </>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-  },
+  sectionContainer: {},
   section: {
     marginBottom: 12,
     borderBottomColor: "#E2E8F0",
@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center"
+    alignItems: "center",
   },
   time: {
     fontWeight: 500,
@@ -57,7 +57,6 @@ const styles = StyleSheet.create({
     fontWeight: 500,
     lineHeight: 20,
     fontFamily: "Avenir",
-    color: "#1E293B"
-  }
-
-})
+    color: "#1E293B",
+  },
+});

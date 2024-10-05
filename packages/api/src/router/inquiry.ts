@@ -2,10 +2,117 @@ import type { TRPCRouterRecord } from "@trpc/server";
 import { TRPCError } from "@trpc/server";
 import { protectedProcedure } from "../trpc.js";
 import { z } from "zod";
+import type { Inquiry, Quote } from "@repo/db/schema";
 import { inquiries } from "@repo/db/schema";
 import { nanoid } from "nanoid";
 import { productRequestSchema, quotesService } from "../services/quote.js";
-import { and, eq, or, lte, lt } from "@repo/db";
+import { and, eq, or, lt, inArray, notInArray } from "@repo/db";
+import { db } from "@repo/db/client";
+import type { Notification } from "../services/pubsub.js";
+import { createNotification, sendNotifications } from "../services/pubsub.js";
+
+const getStakeholdersForRaiseInquiry = async (
+  trx: typeof db,
+  inquiry: Inquiry,
+) => {
+  const users = await trx.query.users.findMany({
+    where: (users) =>
+      and(
+        eq(users.teamId, inquiry.sellerId),
+        inArray(users.role, ["SALES", "MANAGEMENT"]),
+      ),
+  });
+  return users;
+};
+
+const sendInquiryRaisedNotifications = async (
+  trx: typeof db,
+  inquiry: Inquiry,
+) => {
+  const stakeholders = await getStakeholdersForRaiseInquiry(trx, inquiry);
+  const notifications = stakeholders.map(
+    (stakeholder) =>
+      ({
+        id: "",
+        userId: stakeholder.id,
+        message: `Inquiry ${inquiry.id} has been raised`,
+        type: "INQUIRY_RECEIVED",
+        inquiryId: inquiry.id,
+        createdAt: new Date().toISOString(),
+        read: false,
+      }) satisfies Notification,
+  );
+
+  const persistedNotifications = await Promise.all(
+    notifications.map((n) => createNotification(trx, n)),
+  );
+
+  await sendNotifications(
+    trx,
+    persistedNotifications.filter((n) => !!n) as Notification[],
+  );
+};
+
+const stakehodlersForInquiryNegotation = async (
+  trx: typeof db,
+  inquiry: Inquiry,
+) => {
+  const users = await trx.query.users.findMany({
+    where: (users) =>
+      or(
+        and(
+          eq(users.teamId, inquiry.sellerId),
+          notInArray(users.role, ["LOGISTICS"]),
+        ),
+        eq(users.teamId, inquiry.buyerId),
+      ),
+  });
+  return users;
+};
+
+const sendInquiryNegotiationNotifications = async (
+  trx: typeof db,
+  inquiry: Inquiry,
+  quoteId: string,
+  type: "NEW_QUOTE_RECEIVED" | "QUOTE_ACCEPTED" | "QUOTE_REJECTED",
+) => {
+  const stakeholders = await stakehodlersForInquiryNegotation(trx, inquiry);
+  let message = `New quote received for inquiry ${inquiry.id}`;
+  switch (type) {
+    case "NEW_QUOTE_RECEIVED":
+      message = `New quote received for inquiry ${inquiry.id}`;
+      break;
+
+    case "QUOTE_ACCEPTED":
+      message = `Quote ${quoteId} has been accepted for inquiry ${inquiry.id}`;
+      break;
+    case "QUOTE_REJECTED":
+      message = `Quote ${quoteId} has been rejected for inquiry ${inquiry.id}`;
+      break;
+  }
+  const notifications = stakeholders.map(
+    (stakeholder) =>
+      ({
+        id: "",
+        userId: stakeholder.id,
+        message,
+        type,
+        inquiryId: inquiry.id,
+        quoteId,
+        createdAt: new Date().toISOString(),
+        read: false,
+      }) satisfies Notification,
+  );
+
+  const persistedNotifications = await Promise.all(
+    notifications.map((n) => createNotification(trx, n)),
+  );
+
+  await sendNotifications(
+    trx,
+    persistedNotifications.filter((n) => !!n) as Notification[],
+  );
+};
 
 // Define the schema for raising an inquiry
 const raiseInquiryInput = z.object({
@@ -60,6 +167,7 @@ export const inquiryRouter = {
         return inquiry;
       });
 
+      sendInquiryRaisedNotifications(ctx.db, inquiry).catch(console.error);
       return {
         id: inquiry.id,
       };
@@ -77,7 +185,7 @@ export const inquiryRouter = {
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const quote = await ctx.db.transaction(async (trx) => {
+      const { quote, inquiry } = await ctx.db.transaction(async (trx) => {
         const inquiry = await trx.query.inquiries.findFirst({
           where: (inquiries) => eq(inquiries.id, input.inquiryId),
         });
@@ -115,8 +223,18 @@ export const inquiryRouter = {
             status: "NEGOTIATING",
           })
           .where(eq(inquiries.id, input.inquiryId));
-        return quote;
+        return {
+          inquiry,
+          quote,
+        };
       });
+
+      sendInquiryNegotiationNotifications(
+        ctx.db,
+        inquiry,
+        quote.id,
+        "NEW_QUOTE_RECEIVED",
+      ).catch(console.error);
 
       return quote;
     }),
@@ -150,6 +268,12 @@ export const inquiryRouter = {
           .where(eq(inquiries.id, input.inquiryId));
 
         await quotesService.accept(trx, input.quoteId);
+        sendInquiryNegotiationNotifications(
+          ctx.db,
+          inquiry,
+          input.quoteId,
+          "QUOTE_ACCEPTED",
+        ).catch(console.error);
       });
     }),
   reject: protectedProcedure
@@ -182,6 +306,12 @@ export const inquiryRouter = {
           .where(eq(inquiries.id, input.inquiryId));
 
         await quotesService.reject(trx, input.quoteId);
+        sendInquiryNegotiationNotifications(
+          ctx.db,
+          inquiry,
+          input.quoteId,
+          "QUOTE_REJECTED",
+        ).catch(console.error);
       });
     }),
   getDetails: protectedProcedure

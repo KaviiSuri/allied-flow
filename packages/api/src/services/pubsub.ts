@@ -79,6 +79,7 @@ const getNotificationTitle = (n: Notification) => {
   if (n.type === "QUOTE_ACCEPTED") {
     return "Quote Accepted";
   }
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (n.type === "QUOTE_REJECTED") {
     return "Quote Rejected";
   }

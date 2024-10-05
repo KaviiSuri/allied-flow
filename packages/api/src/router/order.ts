@@ -50,11 +50,9 @@ async function createAndSendOrderNotification(tx: typeof db, order: Order) {
     notifications.map((notification) => createNotification(tx, notification)),
   );
 
-  await Promise.allSettled(
-    persistedNotificaitons
-      .filter((n) => !!n)
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      .map((n) => sendNotifications(tx, [n!])),
+  await sendNotifications(
+    tx,
+    persistedNotificaitons.filter((n) => !!n) as Notification[],
   );
 }
 
@@ -136,7 +134,7 @@ export const ordersRouter = {
           .where(eq(inquiries.id, input.inquiryId));
         return order;
       });
-      await createAndSendOrderNotification(ctx.db, order);
+      createAndSendOrderNotification(ctx.db, order).catch(console.error);
       return order;
     }),
 
@@ -242,7 +240,9 @@ export const ordersRouter = {
           message: "Failed to update order",
         });
       }
-      await createAndSendOrderNotification(ctx.db, updatedOrder[0]);
+      createAndSendOrderNotification(ctx.db, updatedOrder[0]).catch(
+        console.error,
+      );
 
       return updatedOrder[0];
     }),

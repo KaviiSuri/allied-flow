@@ -373,6 +373,25 @@ export type Notification = InferSelectModel<typeof notifications>;
 
 export const insertNotificationSchema = createInsertSchema(notifications);
 
+export const notificationsRelations = relations(notifications, ({ one }) => ({
+  user: one(users, {
+    fields: [notifications.userId],
+    references: [users.id],
+  }),
+  order: one(orders, {
+    fields: [notifications.orderId],
+    references: [orders.id],
+  }),
+  inquiry: one(inquiries, {
+    fields: [notifications.inquiryId],
+    references: [inquiries.id],
+  }),
+  quote: one(quotes, {
+    fields: [notifications.quoteId],
+    references: [quotes.id],
+  }),
+}));
+
 export const devices = sqliteTable("devices", {
   userId: text("user_id")
     .notNull()

@@ -10,7 +10,7 @@ function NotificationList() {
   return (
     <>
       {currentNotification.map((element) => (
-        <Notification notification={element} />
+        <Notification key={element.id} notification={element} />
       ))}
     </>
   );

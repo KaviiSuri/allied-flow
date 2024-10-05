@@ -1,5 +1,5 @@
 import { Expo } from "expo-server-sdk";
-import { ExpoPushTicket } from "expo-server-sdk";
+import type { ExpoPushTicket } from "expo-server-sdk";
 import { env } from "@repo/server-config";
 
 const expo = new Expo({
@@ -9,7 +9,7 @@ const expo = new Expo({
 export async function sendPushNotifications(
   pushTokens: string[],
   title: string,
-  body: string,
+  body?: string,
 ) {
   const messages = pushTokens.map((pushToken) => ({
     to: pushToken,
@@ -19,7 +19,7 @@ export async function sendPushNotifications(
   }));
 
   const chunks = expo.chunkPushNotifications(messages);
-  const tickets: Array<ExpoPushTicket & { pushToken: string }> = [];
+  const tickets: (ExpoPushTicket & { pushToken: string })[] = [];
 
   for (const chunk of chunks) {
     try {
@@ -27,6 +27,7 @@ export async function sendPushNotifications(
       tickets.push(
         ...ticketChunk.map((ticket, index) => ({
           ...ticket,
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           pushToken: chunk[index]!.to as string,
         })),
       );

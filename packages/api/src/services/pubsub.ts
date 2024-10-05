@@ -3,9 +3,10 @@ import Redis from "ioredis";
 const redis = new Redis();
 import EventEmitter from "events";
 import type { TransactionType } from "@repo/db/client";
-import { notifications } from "@repo/db/schema";
+import { devices, notifications } from "@repo/db/schema";
 import { nanoid } from "nanoid";
-import { and, eq, lt } from "@repo/db";
+import { and, eq, inArray, lt } from "@repo/db";
+import { sendPushNotifications } from "./expo";
 
 export const getNotificationChanelForUser = (userId: string) => {
   return `notification:user:${userId}`;
@@ -56,18 +57,41 @@ export const notificationSchema = z.discriminatedUnion("type", [
   }),
 ]);
 
+const getNotificationTitle = (n: Notification) => {
+  if (n.type === "ORDER_PLACED") {
+    const prefix = n.orderType === "REGULAR" ? "Order" : "Sample";
+    return `${prefix} placed`;
+  }
+  if (n.type === "ORDER_DISPATCHED") {
+    const prefix = n.orderType === "REGULAR" ? "Order" : "Sample";
+    return `${prefix} dispatched`;
+  }
+  if (n.type === "ORDER_SHIPPED") {
+    const prefix = n.orderType === "REGULAR" ? "Order" : "Sample";
+    return `${prefix} shipped`;
+  }
+  if (n.type === "INQUIRY_RECEIVED") {
+    return "Inquiry Received";
+  }
+  if (n.type === "NEW_QUOTE_RECEIVED") {
+    return "New Quote Received";
+  }
+  if (n.type === "QUOTE_ACCEPTED") {
+    return "Quote Accepted";
+  }
+  if (n.type === "QUOTE_REJECTED") {
+    return "Quote Rejected";
+  }
+  return "New Notification From Spot!";
+};
+
 export type Notification = z.infer<typeof notificationSchema>;
 
 // use ioredis to publish notifications to the chanel for a given userId
-export const sendNotification = async (
+export const createNotification = async (
   tx: TransactionType,
   notification: Notification,
 ) => {
-  console.log("Sending notification", {
-    ...notification,
-    id: nanoid(),
-    read: false,
-  });
   const n = await tx
     .insert(notifications)
     .values({
@@ -79,9 +103,68 @@ export const sendNotification = async (
   if (n.length === 0) {
     return;
   }
+  return n[0] as Notification;
+};
+
+export const sendNotifications = async (
+  tx: TransactionType,
+  notifications: Notification[],
+) => {
+  const pushTokensForUsers = await tx.query.devices.findMany({
+    where: (devices) =>
+      inArray(devices.userId, [...new Set(notifications.map((n) => n.userId))]),
+  });
+
+  const pushTokensByUserId = pushTokensForUsers.reduce(
+    (acc, device) => {
+      if (!acc[device.userId]) {
+        acc[device.userId] = [];
+      }
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      acc[device.userId]!.push(device.expoPushToken);
+      return acc;
+    },
+    {} as Record<string, string[]>,
+  );
+
+  const tokensToCleanup: string[][] = [];
+
+  const inAppPromises = notifications
+    .map((notification) => {
+      const notificationPromises: Promise<void>[] = [
+        sendInAppNotification(notification),
+      ];
+
+      // push notifications
+      const pushTokens = pushTokensByUserId[notification.userId];
+      if (pushTokens) {
+        notificationPromises.push(
+          (async () => {
+            const failedTokens = await sendPushNotifications(
+              pushTokens,
+              getNotificationTitle(notification),
+              notification.message,
+            );
+            tokensToCleanup.push(failedTokens);
+          })(),
+        );
+      }
+
+      return notificationPromises;
+    })
+    .flat();
+
+  await Promise.all(inAppPromises);
+  await tx
+    .delete(devices)
+    .where(inArray(devices.expoPushToken, tokensToCleanup.flat()))
+    .execute();
+};
+
+const sendInAppNotification = async (notification: Notification) => {
   await redis.publish(
     getNotificationChanelForUser(notification.userId),
-    JSON.stringify(n[0]),
+    JSON.stringify(notification),
   );
 };
 

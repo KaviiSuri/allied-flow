@@ -9,7 +9,8 @@
     "tsBuildInfoFile": "node_modules/.cache/tsbuildinfo.json",
     "types": [],
     "checkJs": false,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "noErrorTruncation": true,
   },
   "include": ["src", "*.ts", "*.js", ".expo/types/**/*.ts", "expo-env.d.ts"],
   "exclude": ["node_modules", "dist"]

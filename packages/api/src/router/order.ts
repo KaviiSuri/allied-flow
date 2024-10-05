@@ -5,7 +5,7 @@ import { inquiries, orderItems, orders } from "@repo/db/schema";
 import { nanoid } from "nanoid";
 import { and, eq, lt } from "@repo/db";
 import { z } from "zod";
-import { sendNotification } from "../services/pubsub.js";
+import { createNotification, sendNotifications } from "../services/pubsub.js";
 
 export const ordersRouter = {
   createFromInquiry: protectedProcedure
@@ -84,7 +84,7 @@ export const ordersRouter = {
           })
           .where(eq(inquiries.id, input.inquiryId));
 
-        await sendNotification(trx, {
+        const notification = await createNotification(trx, {
           userId: ctx.user.id,
           id: "",
           read: false,
@@ -94,6 +94,9 @@ export const ordersRouter = {
           message: `Order ${order.id} has been placed`,
           createdAt: new Date().toISOString(),
         });
+        if (notification) {
+          await sendNotifications(trx, [notification]);
+        }
         return order;
       });
       return order;

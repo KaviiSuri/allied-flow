@@ -54,6 +54,9 @@ export const NotificationProvider = ({
     },
   );
 
+  const { mutate: registerDevice } =
+    api.notifications.registerDevice.useMutation();
+
   useEffect(() => {
     if (data) {
       setNotifications(data.pages.flat());
@@ -63,7 +66,12 @@ export const NotificationProvider = ({
   useEffect(() => {
     registerForPushNotificationsAsync()
       .then((token) => {
-        console.log(token);
+        if (!token) {
+          throw new Error("No token");
+        }
+        registerDevice({
+          expoPushToken: token,
+        });
       })
       .then(() => {
         Notifications.setNotificationHandler({
@@ -76,14 +84,10 @@ export const NotificationProvider = ({
         });
       })
       .catch(console.error);
-  }, [user]);
+  }, [user, registerDevice]);
 
   api.notifications.onNotificationSent.useSubscription(undefined, {
     onData: (notification) => {
-      if (!notification) {
-        return;
-      }
-
       if (!notifications.find((n) => n.id === notification.id)) {
         setNotifications((prev) => [notification, ...prev]);
         Toast.show({
@@ -115,32 +119,6 @@ export const NotificationProvider = ({
   );
 };
 
-// async function registerForPushNotificationsAsync() {
-//   if (Platform.OS === "android") {
-//     await Notifications.setNotificationChannelAsync("default", {
-//       name: "default",
-//       importance: Notifications.AndroidImportance.MAX,
-//     });
-//   }
-//
-//   const { status: existingStatus } = await Notifications.getPermissionsAsync();
-//   let finalStatus = existingStatus;
-//
-//   // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
-//   if (existingStatus !== "granted") {
-//     const { status } = await Notifications.requestPermissionsAsync();
-//     finalStatus = status;
-//   }
-//
-//   // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
-//   if (finalStatus !== "granted") {
-//     Alert.alert("Failed to get push token for push notification!");
-//     return;
-//   }
-//
-//   const token = (await Notifications.getExpoPushTokenAsync()).data;
-//   return token;
-// }
 async function registerForPushNotificationsAsync() {
   if (Platform.OS === "android") {
     Notifications.setNotificationChannelAsync("default", {

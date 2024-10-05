@@ -58,6 +58,7 @@ export const notificationsRouter = {
           userId: ctx.user.id,
           expoPushToken: input.expoPushToken,
         })
+        .onConflictDoNothing()
         .execute();
     }),
 } satisfies TRPCRouterRecord;

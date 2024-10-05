@@ -1,12 +1,14 @@
 import { z } from "zod";
 import Redis from "ioredis";
-const redis = new Redis();
 import EventEmitter from "events";
 import type { TransactionType, db } from "@repo/db/client";
 import { devices, notifications } from "@repo/db/schema";
 import { nanoid } from "nanoid";
 import { and, eq, inArray, lt } from "@repo/db";
 import { sendPushNotifications } from "./expo";
+import { env } from "@repo/server-config";
+
+const redis = new Redis(env.REDIS_URL);
 
 export const getNotificationChanelForUser = (userId: string) => {
   return `notification:user:${userId}`;

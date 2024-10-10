@@ -23,12 +23,16 @@ export const usersRouter = {
       subject: "User",
     })
     .input(
-      insertUserSchema.omit({
-        id: true,
-        createdAt: true,
-        updatedAt: true,
-        teamId: true,
-      }),
+      insertUserSchema
+        .omit({
+          id: true,
+          createdAt: true,
+          updatedAt: true,
+          teamId: true,
+        })
+        .extend({
+          teamId: z.string().optional(),
+        }),
     )
     .mutation(async ({ ctx, input }) => {
       const user = await usersApi.createUser({
@@ -43,13 +47,14 @@ export const usersRouter = {
           code: "INTERNAL_SERVER_ERROR",
         });
       }
+      console.log("user", user.data);
 
       const insertedUserId = await ctx.db
         .insert(users)
         .values({
           ...input,
           id: user.data.id,
-          teamId: ctx.user.teamId,
+          teamId: input.teamId ?? ctx.user.teamId,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         })

@@ -60,6 +60,19 @@ function TeamForm(props: TeamProps) {
     isUpdateTeamProps(props) ? props.team.gstNo : "",
   );
 
+  const [poc, setPoc] = useState(
+    isUpdateTeamProps(props) ? props.team.name : "",
+  );
+  const [phone, setPhone] = useState(
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    isUpdateTeamProps(props) ? props.team.adminUser?.phone : "",
+  );
+
+  const [email, setEmail] = useState(
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    isUpdateTeamProps(props) ? props.team.adminUser?.email : "",
+  );
+
   async function handleSave() {
     if (isUpdateTeamProps(props)) {
       await props.handleSave({
@@ -67,6 +80,11 @@ function TeamForm(props: TeamProps) {
         name,
         address,
         gstNo: gstNumber,
+        adminUser: {
+          phone,
+          email,
+          name: poc,
+        },
       });
     } else {
       await props.handleSave({
@@ -74,6 +92,11 @@ function TeamForm(props: TeamProps) {
         gstNo: gstNumber,
         address,
         type: "CLIENT",
+        adminUser: {
+          phone,
+          email,
+          name: poc,
+        },
       });
     }
     props.toggleOpen();
@@ -143,35 +166,41 @@ function TeamForm(props: TeamProps) {
               label="Company Name"
               placeholder="Type company name"
               onChangeText={setName}
+              value={name}
             />
             <FormTextInput
               label="Company Address"
               placeholder="Type company address"
               onChangeText={setAddress}
+              value={address}
             />
             <View style={{ flexDirection: "row", gap: 16 }}>
               <FormTextInput
                 label="POC"
                 placeholder="Type POC"
                 style={{ flex: 1 }}
-                editable={false}
+                onChangeText={setPoc}
+                value={poc}
               />
               <FormTextInput
                 label="GST Number"
                 placeholder="Type GST Number"
                 style={{ flex: 1 }}
                 onChangeText={setGstNumber}
+                value={gstNumber ?? undefined}
               />
             </View>
             <FormTextInput
               label="Phone Number"
               placeholder="Type phone number"
-              editable={false}
+              onChangeText={setPhone}
+              value={phone}
             />
             <FormTextInput
               label="Email"
               placeholder="Type email"
-              editable={false}
+              onChangeText={setEmail}
+              value={email}
             />
           </View>
         </View>
@@ -271,6 +300,10 @@ export default function Clients() {
     console.log(data);
   }, [data]);
 
+  useEffect(() => {
+    console.log(teamToUpdate);
+  }, [teamToUpdate]);
+
   return (
     <SafeAreaView
       style={{
@@ -328,82 +361,84 @@ export default function Clients() {
           </Can>
         </View>
 
-      {isLoading ? (
-        <LoadingState stateContent={"Please wait... Loading clients"} />
-      ) : isError ? (
-        <ErrorState errorMessage={"Something went wrong, please try again."} />
-      ) : (
-        <View style={{ padding: 16, height: windowHeight }}>
-          <Table style={{ backgroundColor: "#fff" }}>
-            <TableHeading>
-              <TableData style={{ fontSize: 12, color: "#475467" }}>
-                Company Name
-              </TableData>
-              <TableData style={{ fontSize: 12, color: "#475467" }}>
-                POC Name
-              </TableData>
-              <TableData style={{ fontSize: 12, color: "#475467" }}>
-                Phone Number
-              </TableData>
-              <TableData style={{ fontSize: 12, color: "#475467" }}>
-                Email
-              </TableData>
-              <TableData style={{ fontSize: 12, color: "#475467" }}>
-                Actions
-              </TableData>
-            </TableHeading>
-            {data?.map((team) => (
-              <TableRow key={team.id}>
-                <TableData>{team.name}</TableData>
-                <TableData>{team.name}</TableData>
-                <TableData>-</TableData>
-                <TableData>-</TableData>
-                <View
-                  style={{
-                    paddingHorizontal: 16,
-                    paddingVertical: 7,
-                    flexDirection: "row",
-                    gap: 16,
-                    flex: 1,
-                  }}
-                >
-                  <Can I="update" a="Team">
-                    <Pressable
-                      style={{
-                        borderColor: "#E2E8F0",
-                        borderWidth: 1,
-                        borderRadius: 8,
-                        padding: 8,
-                        shadowOffset: { height: 1, width: 0 },
-                        shadowOpacity: 0.05,
-                        shadowColor: "#101828",
-                      }}
-                      onPress={() => setTeamToUpdate(team)}
-                    >
-                      <EditIcon />
-                    </Pressable>
-                  </Can>
-                  <Can I="delete" a="Team">
-                    <Pressable
-                      style={{
-                        borderColor: "#E2E8F0",
-                        borderWidth: 1,
-                        borderRadius: 8,
-                        padding: 8,
-                        shadowOffset: { height: 1, width: 0 },
-                        shadowOpacity: 0.05,
-                        shadowColor: "#101828",
-                      }}
-                    >
-                      <TrashIcon />
-                    </Pressable>
-                  </Can>
-                </View>
-              </TableRow>
-            ))}
-          </Table>
-        </View>
-      )}
+        {isLoading ? (
+          <LoadingState stateContent={"Please wait... Loading clients"} />
+        ) : isError ? (
+          <ErrorState
+            errorMessage={"Something went wrong, please try again."}
+          />
+        ) : (
+          <View style={{ padding: 16, height: windowHeight }}>
+            <Table style={{ backgroundColor: "#fff" }}>
+              <TableHeading>
+                <TableData style={{ fontSize: 12, color: "#475467" }}>
+                  Company Name
+                </TableData>
+                <TableData style={{ fontSize: 12, color: "#475467" }}>
+                  POC Name
+                </TableData>
+                <TableData style={{ fontSize: 12, color: "#475467" }}>
+                  Phone Number
+                </TableData>
+                <TableData style={{ fontSize: 12, color: "#475467" }}>
+                  Email
+                </TableData>
+                <TableData style={{ fontSize: 12, color: "#475467" }}>
+                  Actions
+                </TableData>
+              </TableHeading>
+              {data?.map((team) => (
+                <TableRow key={team.id}>
+                  <TableData>{team.name}</TableData>
+                  <TableData>{team.adminUser?.name}</TableData>
+                  <TableData>{team.adminUser?.phone}</TableData>
+                  <TableData>{team.adminUser?.email}</TableData>
+                  <View
+                    style={{
+                      paddingHorizontal: 16,
+                      paddingVertical: 7,
+                      flexDirection: "row",
+                      gap: 16,
+                      flex: 1,
+                    }}
+                  >
+                    <Can I="update" a="Team">
+                      <Pressable
+                        style={{
+                          borderColor: "#E2E8F0",
+                          borderWidth: 1,
+                          borderRadius: 8,
+                          padding: 8,
+                          shadowOffset: { height: 1, width: 0 },
+                          shadowOpacity: 0.05,
+                          shadowColor: "#101828",
+                        }}
+                        onPress={() => setTeamToUpdate(team)}
+                      >
+                        <EditIcon />
+                      </Pressable>
+                    </Can>
+                    <Can I="delete" a="Team">
+                      <Pressable
+                        style={{
+                          borderColor: "#E2E8F0",
+                          borderWidth: 1,
+                          borderRadius: 8,
+                          padding: 8,
+                          shadowOffset: { height: 1, width: 0 },
+                          shadowOpacity: 0.05,
+                          shadowColor: "#101828",
+                        }}
+                      >
+                        <TrashIcon />
+                      </Pressable>
+                    </Can>
+                  </View>
+                </TableRow>
+              ))}
+            </Table>
+          </View>
+        )}
       </Can>
     </SafeAreaView>
   );

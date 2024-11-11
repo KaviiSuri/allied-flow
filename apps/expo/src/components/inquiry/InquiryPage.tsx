@@ -130,13 +130,16 @@ export const InquiryPage = () => {
     });
   }
 
+  useEffect(() => {
+    console.log(user?.team.type,"user");
+  }, [user?.team.type]);
   return (
     <View style={[styles.container, { backgroundColor: "white" }]}>
       {/* Fixed SearchBox at the top */}
       {user?.team.type === "CLIENT" && (
         <View style={styles.searchBoxContainer}>
           <SearchBox
-            placeholder="Search inquiry external"
+            placeholder={"Search inquiry "}
             setValue={setSearchResult}
             value={searchResult}
           />
@@ -188,9 +191,10 @@ export const InquiryPage = () => {
         </TouchableWithoutFeedback>
 
         {/* Modal content: white section */}
-        <KeyboardAvoidingView 
+        <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={createStyles.modalContainer}>
+          style={createStyles.modalContainer}
+        >
           {/* Your modal content goes here */}
           <View style={createStyles.formHeader}>
             <Text style={createStyles.formHeaderText}>Raise an inquiry</Text>

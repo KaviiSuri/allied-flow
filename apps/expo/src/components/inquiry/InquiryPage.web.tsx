@@ -26,7 +26,6 @@ export const InquiryPage = () => {
   >("All");
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [searchResult, setSearchResult] = useState<string>("");
-  // const [filter, setFilter] = useState<string>("All");
   const { user } = useUser();
   const ability = useAbility();
   const utils = api.useUtils();
@@ -44,6 +43,8 @@ export const InquiryPage = () => {
     () => data?.pages.flatMap((page) => page.items) ?? [],
     [data],
   );
+
+  console.log(inquiries, "Inquiries");
 
   const [remarks, setRemarks] = useState<string>("");
 
@@ -262,7 +263,7 @@ export const InquiryPage = () => {
               }}
             >
               <SearchBox
-                placeholder="Search inquiry external"
+                placeholder="Search by products"
                 setValue={setSearchResult}
                 value={searchResult}
               />

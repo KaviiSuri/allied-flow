@@ -20,6 +20,8 @@ import type { RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
 import { useUser } from "~/providers/auth";
 import { useProductList } from "~/hooks/useProductById";
+import { SearchBox } from "../shared/searchComponent";
+import { SearchClientBox } from "../shared/searchComponent/searchClients";
 
 export const InquiryForm = ({
   productRequests,
@@ -49,6 +51,7 @@ export const InquiryForm = ({
       enabled: user?.team.type === "SELLER",
     },
   );
+
   const clientNameOptions = useMemo(() => {
     return (
       clientList?.map((client) => ({
@@ -63,10 +66,14 @@ export const InquiryForm = ({
     if (user.team.type === "CLIENT") setClientId(user.teamId);
   }, [user]);
 
+  const [selectedClient, setSelectedClient] = useState<string>("");
+
+
   return (
     <View
       style={{
         paddingBottom: 150,
+        position: "relative",
       }}
     >
       {user?.team.type === "SELLER" && (
@@ -172,6 +179,8 @@ const ProductForm = ({
     { label: "Millilitre", value: "ml" },
     { label: "Piece", value: "piece" },
   ];
+
+  const [productName, setProductName] = useState<string>("");
   return (
     <Animated.View
       key={product.productId}
@@ -207,14 +216,12 @@ const ProductForm = ({
               </Text>
             </TouchableOpacity>
           </View>
-          <FormDropDown
-            paddingBottom={false}
-            onValueChange={handleProductChange}
-            value={product.productName}
-            options={productNameOptions}
-            rightIcon={<Icon name="down" />}
-          />
-
+          <SearchClientBox
+            placeholder="Search product"
+            value={productName}
+            setValue={setProductName}
+            list={productList?.map((product) => product.name)}
+           />
           <FormTextInput
             label="Description"
             placeholder="This is description of the product"

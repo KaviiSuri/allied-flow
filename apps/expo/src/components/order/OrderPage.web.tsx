@@ -1,4 +1,12 @@
-import { StyleSheet, View, Image, Dimensions, Text } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Image,
+  Dimensions,
+  Text,
+  Pressable,
+  ScrollView,
+} from "react-native";
 import {
   SingleSelect,
   SingleSelectDropdown,
@@ -16,6 +24,9 @@ import { PrimaryButton } from "../core/button";
 import { LoadingState } from "../shared/displayStates/LoadingState";
 import { ErrorState } from "../shared/displayStates/ErrorState";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import EditIcon from "~/app/assets/images/edit-icon.svg";
+import TrashIcon from "~/app/assets/images/trash-icon.svg";
+import { Can } from "~/providers/auth";
 
 const windowHeight = Dimensions.get("window").height - 64;
 
@@ -42,18 +53,22 @@ export const OrderPage = () => {
   return (
     <>
       <HeaderComponent />
-      {isLoading ? (
-        <LoadingState stateContent={"Please wait... Loading orders"} />
-      ) : isError ? (
-        <ErrorState errorMessage={"Something went wrong, please try again."} />
-      ) : (
-      <SampleTable orders={orders} />
-      )}
-      <GestureHandlerRootView>
-      {hasNextPage && (
-        <PrimaryButton onPress={() => fetchNextPage} text="Load more" />
-      )}
-      </GestureHandlerRootView>
+      <ScrollView>
+        {isLoading ? (
+          <LoadingState stateContent={"Please wait... Loading orders"} />
+        ) : isError ? (
+          <ErrorState
+            errorMessage={"Something went wrong, please try again."}
+          />
+        ) : (
+          <SampleTable orders={orders} />
+        )}
+        <GestureHandlerRootView>
+          {hasNextPage && (
+            <PrimaryButton onPress={() => fetchNextPage} text="Load more" />
+          )}
+        </GestureHandlerRootView>
+      </ScrollView>
     </>
   );
 };
@@ -170,16 +185,18 @@ const SampleTable = ({
           >
             Inquiry Number
           </TableData>
-          <TableData
-            style={{
-              fontSize: 14,
-              color: "#1E293B",
-              fontWeight: 500,
-              flex: 1 / 3,
-            }}
-          >
-            Actions
-          </TableData>
+          <Can I="delete" a="Order">
+            <TableData
+              style={{
+                fontSize: 14,
+                color: "#1E293B",
+                fontWeight: 500,
+                flex: 1 / 3,
+              }}
+            >
+              Actions
+            </TableData>
+          </Can>
         </TableHeading>
         {/* random data  */}
         {orders.map((order) => (
@@ -263,7 +280,44 @@ function OrderItem({ order }: { order: RouterOutputs["orders"]["list"][0] }) {
           fontWeight: 500,
           flex: 1 / 3,
         }}
-      ></TableData>
+      >
+        <View
+          style={{
+            flexDirection: "row",
+            gap: 8,
+            flex: 1,
+          }}
+        >
+          <Pressable
+            style={{
+              borderColor: "#E2E8F0",
+              borderWidth: 1,
+              borderRadius: 8,
+              maxHeight: 32,
+              padding: 8,
+              shadowOffset: { height: 1, width: 0 },
+              shadowOpacity: 0.05,
+              shadowColor: "#101828",
+            }}
+          >
+            <EditIcon />
+          </Pressable>
+          <Pressable
+            style={{
+              borderColor: "#E2E8F0",
+              borderWidth: 1,
+              borderRadius: 8,
+              padding: 8,
+              maxHeight: 32,
+              shadowOffset: { height: 1, width: 0 },
+              shadowOpacity: 0.05,
+              shadowColor: "#101828",
+            }}
+          >
+            <TrashIcon />
+          </Pressable>
+        </View>
+      </TableData>
     </TableRow>
   );
 }

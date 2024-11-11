@@ -1,8 +1,18 @@
-import { StyleSheet, TextInput, View, FlatList, Text, TouchableOpacity } from "react-native";
+
+
+
+import {
+  StyleSheet,
+  TextInput,
+  View,
+  FlatList,
+  Text,
+  Pressable,
+} from "react-native";
 import Icon from "react-native-vector-icons/AntDesign";
 import { useState } from "react";
 
-export const SearchBox = ({
+export const SearchClientBox = ({
   placeholder,
   setValue,
   value,
@@ -19,7 +29,7 @@ export const SearchBox = ({
     setValue(text);
     if (text && list.length > 0) {
       // Filter list only if it has items
-      const matches = list.filter(item =>
+      const matches = list.filter((item) =>
         item.toLowerCase().includes(text.toLowerCase())
       );
       setFilteredItems(matches);
@@ -31,7 +41,7 @@ export const SearchBox = ({
   return (
     <View style={styles.container}>
       <View style={styles.searchBoxContainer}>
-        <Icon name="search1" />
+        <Icon name="search1" size={20} color="#94a3b8" />
         <TextInput
           placeholder={placeholder}
           placeholderTextColor="#94a3b8"
@@ -41,14 +51,13 @@ export const SearchBox = ({
         />
       </View>
 
-      {/* Autocomplete dropdown (only shown if list is provided and filteredItems has matches) */}
       {list.length > 0 && filteredItems.length > 0 && (
         <View style={styles.suggestionsContainer}>
           <FlatList
             data={filteredItems}
             keyExtractor={(item) => item}
             renderItem={({ item }) => (
-              <TouchableOpacity
+              <Pressable
                 style={styles.suggestionItem}
                 onPress={() => {
                   setValue(item);
@@ -56,7 +65,7 @@ export const SearchBox = ({
                 }}
               >
                 <Text style={styles.suggestionText}>{item}</Text>
-              </TouchableOpacity>
+              </Pressable>
             )}
           />
         </View>
@@ -70,37 +79,48 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   searchBoxContainer: {
-    paddingVertical: 10,
+    paddingVertical: 12,
     paddingHorizontal: 14,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: "#E2E8F0",
     flexDirection: "row",
     alignItems: "center",
-    columnGap: 4,
+    gap: 8,
+    backgroundColor: "#ffffff",
   },
   placeholder: {
     color: "#1E293B",
-    borderWidth: 0,
-    outlineStyle: "none",
     flex: 1,
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+    fontSize: 16,
   },
   suggestionsContainer: {
     position: "absolute",
-    top: 50,
+    top: 60,
     left: 0,
     right: 0,
-    zIndex: 1,
+    zIndex: 999,
+    elevation: 5, // for Android
     maxHeight: 150,
     borderWidth: 1,
     borderColor: "#E2E8F0",
     borderRadius: 8,
-    backgroundColor: "#FFF",
+    backgroundColor: "#ffffff", // Background color for suggestions
+    shadowColor: "#000", // Shadow for iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
   suggestionItem: {
-    padding: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E2E8F0",
   },
   suggestionText: {
     color: "#1E293B",
+    fontSize: 16,
   },
 });

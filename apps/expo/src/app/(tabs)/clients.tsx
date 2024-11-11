@@ -25,6 +25,7 @@ import EditIcon from "~/app/assets/images/edit-icon.svg";
 import TrashIcon from "~/app/assets/images/trash-icon.svg";
 import { LoadingState } from "~/components/shared/displayStates/LoadingState";
 import { ErrorState } from "~/components/shared/displayStates/ErrorState";
+import { SearchBox } from "~/components/shared/searchComponent";
 const windowHeight = Dimensions.get("window").height - 64;
 
 type Team = RouterOutputs["teams"]["readTeams"][0];
@@ -284,15 +285,8 @@ export default function Clients() {
     type: "CLIENT",
   });
   const [teamToUpdate, setTeamToUpdate] = useState<Team | null>(null);
-  // const slideAnim = useRef(new Animated.Value(-100)).current;
-  // useEffect(() => {
-  //   Animated.timing(slideAnim, {
-  //     toValue: 0,
-  //     duration: 10000,
-  //     useNativeDriver: true,
-  //   }).start();
-  // }, [slideAnim]);
   const [drawerVisible, setDrawerVisible] = useState(false);
+  const [searchProducts, setSearchProducts] = useState("");
   const toggleDrawer = () => {
     setDrawerVisible(!drawerVisible);
   };
@@ -331,27 +325,11 @@ export default function Clients() {
           }}
         >
           <View>
-            <TextInput
-              placeholder="Search by client name"
-              style={{
-                width: 320,
-                paddingHorizontal: 14,
-                paddingVertical: 10,
-                borderWidth: 1,
-                borderRadius: 8,
-                borderColor: "#E2E8F0",
-                fontFamily: "Avenir",
-                fontWeight: 400,
-                fontSize: 16,
-                shadowOffset: { height: 1, width: 0 },
-                shadowOpacity: 0.05,
-                shadowColor: "#101828",
-              }}
-              placeholderTextColor="#94A3B8"
-              // You can adjust the number of lines
-              // onChangeText={(text) => setText(text)}
-              // value={text}
-            />
+            <SearchBox
+             placeholder="Search clients"
+             value={searchProducts}
+             setValue={setSearchProducts}
+             />
           </View>
           <Can I="create" a="Team">
             <View style={{ flexDirection: "row", gap: 16 }}>
@@ -390,9 +368,9 @@ export default function Clients() {
               {data?.map((team) => (
                 <TableRow key={team.id}>
                   <TableData>{team.name}</TableData>
-                  <TableData>{team.adminUser?.name}</TableData>
-                  <TableData>{team.adminUser?.phone}</TableData>
-                  <TableData>{team.adminUser?.email}</TableData>
+                  <TableData>{team.adminUser?.name ? team.adminUser?.name : "-"}</TableData>
+                  <TableData>{team.adminUser?.phone ? team.adminUser?.phone:"-"}</TableData>
+                  <TableData>{team.adminUser?.email ? team.adminUser?.email : "-"}</TableData>
                   <View
                     style={{
                       paddingHorizontal: 16,

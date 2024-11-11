@@ -19,12 +19,15 @@ export const clientPermissions: Record<Role, DefinePermissions> = {
     can("update", "Team", ({ teamId }) => teamId === user.teamId);
     can("create", "Team", ({ teamId }) => teamId === user.teamId);
     can("delete", "Team", ({ teamId }) => teamId === user.teamId);
+    can("read", "Product");
     can("list", "Inquiry");
     can("raise", "Inquiry");
     can("negotiate", "Inquiry");
     can("accept", "Inquiry");
     can("reject", "Inquiry");
     can("getDetails", "Inquiry");
+    can("read", "Order");
+    can("list", "Order");
   },
 
   MANAGEMENT: (user, { can }) => {

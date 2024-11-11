@@ -137,10 +137,46 @@ export const usersRouter = {
     })
     .input(z.string())
     .mutation(async ({ ctx, input }) => {
-      const deletedUser = await ctx.db
-        .delete(users)
-        .where(eq(users.id, input))
-        .returning();
-      return deletedUser;
+      try {
+        const logtoResponse = await usersApi.deleteUser(input);
+
+        if (logtoResponse.status !== 200) {
+          console.error("Failed to delete user from Logto:", logtoResponse);
+          throw new TRPCError({
+            message: "Failed to delete user from Logto",
+            code: "INTERNAL_SERVER_ERROR",
+          });
+        }
+
+        console.log(
+          "User successfully deleted from Logto:",
+          logtoResponse.data,
+        );
+
+        const deletedUser = await ctx.db
+          .delete(users)
+          .where(eq(users.id, input))
+          .returning();
+
+        if (!deletedUser[0]) {
+          throw new TRPCError({
+            message: "Failed to delete user from the database",
+            code: "INTERNAL_SERVER_ERROR",
+          });
+        }
+
+        console.log(
+          "User successfully deleted from the database:",
+          deletedUser[0],
+        );
+
+        return deletedUser[0];
+      } catch (error) {
+        console.error("Error during user deletion process:", error);
+        throw new TRPCError({
+          message: "Failed to delete user",
+          code: "INTERNAL_SERVER_ERROR",
+        });
+      }
     }),
 } satisfies TRPCRouterRecord;

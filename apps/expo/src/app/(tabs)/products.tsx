@@ -26,6 +26,7 @@ import TrashIcon from "~/app/assets/images/trash-icon.svg";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { LoadingState } from "~/components/shared/displayStates/LoadingState";
 import { ErrorState } from "~/components/shared/displayStates/ErrorState";
+import { SearchBox } from "~/components/shared/searchComponent";
 const windowHeight = Dimensions.get("window").height - 64;
 
 type Product = RouterOutputs["products"]["read"][0];
@@ -227,20 +228,13 @@ function CreateProductForm(props: { open: boolean; toggleOpen: () => void }) {
 }
 
 export default function Products() {
-  const { data, isLoading,isError } = api.products.read.useQuery();
-  // const slideAnim = useRef(new Animated.Value(-100)).current;
-  // useEffect(() => {
-  //   Animated.timing(slideAnim, {
-  //     toValue: 0,
-  //     duration: 10000,
-  //     useNativeDriver: true,
-  //   }).start();
-  // }, [slideAnim]);
+  const { data, isLoading, isError } = api.products.read.useQuery();
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [productToUpdate, setProductToUpdate] = useState<Product | null>(null);
   const toggleDrawer = () => {
     setDrawerVisible(!drawerVisible);
   };
+  const [products, setProducts] = useState<string>("");
 
   return (
     <GestureHandlerRootView>
@@ -269,29 +263,12 @@ export default function Products() {
               justifyContent: "space-between",
             }}
           >
-            <View>
-              <TextInput
-                placeholder="Search products"
-                style={{
-                  width: 320,
-                  paddingHorizontal: 14,
-                  paddingVertical: 10,
-                  borderWidth: 1,
-                  borderRadius: 8,
-                  borderColor: "#E2E8F0",
-                  fontFamily: "Avenir",
-                  fontWeight: 400,
-                  fontSize: 16,
-                  shadowOffset: { height: 1, width: 0 },
-                  shadowOpacity: 0.05,
-                  shadowColor: "#101828",
-                }}
-                placeholderTextColor="#94A3B8"
-                // You can adjust the number of lines
-                // onChangeText={(text) => setText(text)}
-                // value={text}
-              />
-            </View>
+            <SearchBox
+              placeholder="Search by products"
+              setValue={setProducts}
+              value={products}
+            />
+
             <Can I="create" a="Product">
               <View style={{ flexDirection: "row", gap: 16 }}>
                 <SecondaryButton text="Upload Products" />
@@ -300,85 +277,105 @@ export default function Products() {
             </Can>
           </View>
 
-      {isLoading ? (
-        <LoadingState stateContent={"Please wait... Loading products"} />
-      ) : isError ? (
-        <ErrorState errorMessage={"Something went wrong, please try again."} />
-      ) : (
-          <View style={{ padding: 16, height: windowHeight }}>
-            <Table style={{ backgroundColor: "#fff" }}>
-              <TableHeading>
-                <TableData style={{ fontSize: 12, color: "#475467", flex: 1 }}>
-                  Product ID
-                </TableData>
-                <TableData style={{ fontSize: 12, color: "#475467", flex: 1 }}>
-                  Product Name
-                </TableData>
-                <TableData style={{ fontSize: 12, color: "#475467", flex: 1 }}>
-                  Make
-                </TableData>
-                <TableData style={{ fontSize: 12, color: "#475467", flex: 1 }}>
-                  CAS
-                </TableData>
-                <TableData style={{ fontSize: 12, color: "#475467", flex: 1 }}>
-                  Description
-                </TableData>
-                <TableData style={{ fontSize: 12, color: "#475467", flex: 1 }}>
-                  Actions
-                </TableData>
-              </TableHeading>
-              {data?.map((product) => (
-                <TableRow id={product.id} key={product.id}>
-                  <TableData style={{ flex: 1 }}>{product.id}</TableData>
-                  <TableData style={{ flex: 1 }}>{product.name}</TableData>
-                  <TableData style={{ flex: 1 }}>{product.make}</TableData>
-                  <TableData style={{ flex: 1 }}>{product.cas}</TableData>
-                  <TableData style={{ flex: 1 }}>{product.desc}</TableData>
-                  <View
-                    style={{
-                      paddingHorizontal: 16,
-                      paddingVertical: 7,
-                      flexDirection: "row",
-                      gap: 16,
-                      flex: 1,
-                    }}
+          {isLoading ? (
+            <LoadingState stateContent={"Please wait... Loading products"} />
+          ) : isError ? (
+            <ErrorState
+              errorMessage={"Something went wrong, please try again."}
+            />
+          ) : (
+            <View style={{ padding: 16, height: windowHeight }}>
+              <Table style={{ backgroundColor: "#fff" }}>
+                <TableHeading>
+                  <TableData
+                    style={{ fontSize: 12, color: "#475467", flex: 1 }}
                   >
-                    <Can I="update" a="Product">
-                      <Pressable
-                        style={{
-                          borderColor: "#E2E8F0",
-                          borderWidth: 1,
-                          borderRadius: 8,
-                          padding: 8,
-                          shadowOffset: { height: 1, width: 0 },
-                          shadowOpacity: 0.05,
-                          shadowColor: "#101828",
-                        }}
-                      >
-                        <EditIcon />
-                      </Pressable>
-                    </Can>
+                    Product ID
+                  </TableData>
+                  <TableData
+                    style={{ fontSize: 12, color: "#475467", flex: 1 }}
+                  >
+                    Product Name
+                  </TableData>
+                  <TableData
+                    style={{ fontSize: 12, color: "#475467", flex: 1 }}
+                  >
+                    Make
+                  </TableData>
+                  <TableData
+                    style={{ fontSize: 12, color: "#475467", flex: 1 }}
+                  >
+                    CAS
+                  </TableData>
+                  <TableData
+                    style={{ fontSize: 12, color: "#475467", flex: 1 }}
+                  >
+                    Description
+                  </TableData>
+                  <Can I="delete" a="Product">
+                    <TableData
+                      style={{ fontSize: 12, color: "#475467", flex: 1 }}
+                    >
+                      Actions
+                    </TableData>
+                  </Can>
+                </TableHeading>
+                {data?.map((product) => (
+                  <TableRow id={product.id} key={product.id}>
+                    <TableData style={{ flex: 1 }}>{product.id}</TableData>
+                    <TableData style={{ flex: 1 }}>{product.name}</TableData>
+                    <TableData style={{ flex: 1 }}>{product.make}</TableData>
+                    <TableData style={{ flex: 1 }}>{product.cas}</TableData>
+                    <TableData style={{ flex: 1 }}>{product.desc}</TableData>
                     <Can I="delete" a="Product">
-                      <Pressable
+                      <View
                         style={{
-                          borderColor: "#E2E8F0",
-                          borderWidth: 1,
-                          borderRadius: 8,
-                          padding: 8,
-                          shadowOffset: { height: 1, width: 0 },
-                          shadowOpacity: 0.05,
-                          shadowColor: "#101828",
+                          paddingHorizontal: 16,
+                          paddingVertical: 7,
+                          flexDirection: "row",
+                          gap: 16,
+                          flex: 1,
                         }}
                       >
-                        <TrashIcon />
-                      </Pressable>
+                        <Can I="update" a="Product">
+                          <Pressable
+                            style={{
+                              borderColor: "#E2E8F0",
+                              borderWidth: 1,
+                              borderRadius: 8,
+                              padding: 8,
+                              maxHeight: 32,
+                              shadowOffset: { height: 1, width: 0 },
+                              shadowOpacity: 0.05,
+                              shadowColor: "#101828",
+                            }}
+                          >
+                            <EditIcon />
+                          </Pressable>
+                        </Can>
+                        <Can I="delete" a="Product">
+                          <Pressable
+                            style={{
+                              borderColor: "#E2E8F0",
+                              borderWidth: 1,
+                              borderRadius: 8,
+                              maxHeight: 32,
+                              padding: 8,
+                              shadowOffset: { height: 1, width: 0 },
+                              shadowOpacity: 0.05,
+                              shadowColor: "#101828",
+                            }}
+                          >
+                            <TrashIcon />
+                          </Pressable>
+                        </Can>
+                      </View>
                     </Can>
-                  </View>
-                </TableRow>
-              ))}
-            </Table>
-          </View>
-                  )}
+                  </TableRow>
+                ))}
+              </Table>
+            </View>
+          )}
         </Can>
       </SafeAreaView>
     </GestureHandlerRootView>

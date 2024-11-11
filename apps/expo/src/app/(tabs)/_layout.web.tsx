@@ -13,7 +13,11 @@ import { useLogto } from "@logto/rn";
 import { Redirect } from "expo-router";
 import { Logout } from "~/components/Logout";
 import { logtoService } from "~/config/logto";
-import AuthProvider, { AuthConsumer, useAbility } from "~/providers/auth";
+import AuthProvider, {
+  AuthConsumer,
+  useAbility,
+  useUser,
+} from "~/providers/auth";
 import DashboardIcon from "~/app/assets/images/dashboard-icon.png";
 import NotificationButton from "~/components/utils/notifications/NotificationButton";
 import { dummyNotificationData } from "./notifications";
@@ -62,7 +66,6 @@ function CustomDrawerContent(props: any) {
 export default function WebLayout() {
   const { isAuthenticated } = useLogto();
   const ability = useAbility();
-
   if (!isAuthenticated) {
     return <Redirect href={"/login"} />;
   }

@@ -35,6 +35,7 @@ import ExcelIcon from "~/app/assets/images/excel-icon.png";
 import DownloadIcon from "~/app/assets/images/download-icon.png";
 import { LoadingState } from "~/components/shared/displayStates/LoadingState";
 import { ErrorState } from "~/components/shared/displayStates/ErrorState";
+import { SearchBox } from "~/components/shared/searchComponent";
 const windowHeight = Dimensions.get("window").height - 64;
 
 type User = RouterOutputs["users"]["readUsers"][0];
@@ -600,14 +601,22 @@ export default function TeamMembers() {
     scope: "TEAM",
   });
   const [userToUpdate, setUserToUpdate] = useState<User | null>(null);
-  // const slideAnim = useRef(new Animated.Value(-100)).current;
-  // useEffect(() => {
-  //   Animated.timing(slideAnim, {
-  //     toValue: 0,
-  //     duration: 10000,
-  //     useNativeDriver: true,
-  //   }).start();
-  // }, [slideAnim]);
+  const [userToDelete, setUserToDelete] = useState<User | null>(null);
+  const utils = api.useUtils();
+  const { mutateAsync: deleteUser, isPending } =
+    api.users.deleteUser.useMutation({
+      onSuccess: () => {
+        utils.users.readUsers.refetch().catch(console.error);
+      },
+    });
+
+  const handleUserDelete = (user: User) => async () => {
+    setUserToDelete(user);
+    await deleteUser(user.id);
+    setUserToDelete(null);
+    console.log("User deleted", user);
+  };
+  const [searchMembers, setSearchMembers] = useState("");
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [uploadPopupVisible, setUploadPopupVisible] = useState(false);
   const toggleDrawer = () => {
@@ -659,26 +668,10 @@ export default function TeamMembers() {
           }}
         >
           <View>
-            <TextInput
-              placeholder="Search by member name"
-              style={{
-                width: 320,
-                paddingHorizontal: 14,
-                paddingVertical: 10,
-                borderWidth: 1,
-                borderRadius: 8,
-                borderColor: "#E2E8F0",
-                fontFamily: "Avenir",
-                fontWeight: 400,
-                fontSize: 16,
-                shadowOffset: { height: 1, width: 0 },
-                shadowOpacity: 0.05,
-                shadowColor: "#101828",
-              }}
-              placeholderTextColor="#94A3B8"
-              // You can adjust the number of lines
-              // onChangeText={(text) => setText(text)}
-              // value={text}
+            <SearchBox
+              placeholder="Search clients"
+              value={searchMembers}
+              setValue={setSearchMembers}
             />
           </View>
           <Can I="create" a="User">
@@ -768,6 +761,7 @@ export default function TeamMembers() {
                           shadowColor: "#101828",
                           maxHeight: 35,
                         }}
+                        onPress={handleUserDelete(user)}
                       >
                         <TrashIcon />
                       </Pressable>

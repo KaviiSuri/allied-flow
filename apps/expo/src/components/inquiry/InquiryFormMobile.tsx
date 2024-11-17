@@ -180,6 +180,13 @@ const ProductForm = ({
   ];
 
   const [productName, setProductName] = useState<string>("");
+  useEffect(() => {
+    if (!productName) return;
+    const selectedProduct = productList?.find(
+      (p) => p.name === productName,
+    );
+    setSelectedProduct(selectedProduct ?? null);
+  },[productName]);
   return (
     <Animated.View
       key={product.productId}

@@ -105,6 +105,7 @@ const QuoteTableList = ({
           placeholder="Enter quote here"
           style={styles.inputForm}
           value={negotiationItem?.price ? negotiationItem.price.toString() : ""}
+          keyboardType="numeric" 
           onChangeText={(value) => {
             const newPrice = parseFloat(value);
             console.log("newPrice", newPrice);

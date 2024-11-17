@@ -1,6 +1,3 @@
-
-
-
 import {
   StyleSheet,
   TextInput,
@@ -10,7 +7,7 @@ import {
   Pressable,
 } from "react-native";
 import Icon from "react-native-vector-icons/AntDesign";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 export const SearchClientBox = ({
   placeholder,
@@ -24,20 +21,34 @@ export const SearchClientBox = ({
   list?: string[]; // Optional list of items to match for autocomplete
 }) => {
   const [filteredItems, setFilteredItems] = useState<string[]>([]);
-
+  const blurTimeout = useRef<NodeJS.Timeout | null>(null);
   const handleSearch = (text: string) => {
     setValue(text);
     if (text && list.length > 0) {
-      // Filter list only if it has items
       const matches = list.filter((item) =>
         item.toLowerCase().includes(text.toLowerCase())
       );
       setFilteredItems(matches);
     } else {
-      setFilteredItems([]); // Clear suggestions if no input or list is empty
+      setFilteredItems([]);
     }
   };
 
+  const handleSuggestionPress = (item: string) => {
+    console.log("LOGS: PRESS:", item);
+    if (blurTimeout.current) {
+      clearTimeout(blurTimeout.current);
+    }
+    setValue(item);
+    setFilteredItems([]);
+  };
+
+
+  const handleBlur = () => {
+    blurTimeout.current = setTimeout(() => {
+      setFilteredItems([]);
+    }, 100);
+  };
   return (
     <View style={styles.container}>
       <View style={styles.searchBoxContainer}>
@@ -48,6 +59,10 @@ export const SearchClientBox = ({
           style={styles.placeholder}
           value={value}
           onChangeText={handleSearch}
+          onBlur={() => {
+            handleBlur();
+          }}
+          onFocus={() => {handleSearch(value);}}
         />
       </View>
 
@@ -59,10 +74,7 @@ export const SearchClientBox = ({
             renderItem={({ item }) => (
               <Pressable
                 style={styles.suggestionItem}
-                onPress={() => {
-                  setValue(item);
-                  setFilteredItems([]); // Hide suggestions after selection
-                }}
+                onPressIn={() => handleSuggestionPress(item)}
               >
                 <Text style={styles.suggestionText}>{item}</Text>
               </Pressable>
@@ -92,8 +104,7 @@ const styles = StyleSheet.create({
   placeholder: {
     color: "#1E293B",
     flex: 1,
-    paddingVertical: 6,
-    paddingHorizontal: 8,
+    outlineWidth: 0, // Remove default outline on focus
     fontSize: 16,
   },
   suggestionsContainer: {

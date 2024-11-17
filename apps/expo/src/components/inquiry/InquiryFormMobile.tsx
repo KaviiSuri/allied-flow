@@ -73,7 +73,6 @@ export const InquiryForm = ({
     <View
       style={{
         paddingBottom: 150,
-        position: "relative",
       }}
     >
       {user?.team.type === "SELLER" && (
@@ -216,12 +215,17 @@ const ProductForm = ({
               </Text>
             </TouchableOpacity>
           </View>
-          <SearchClientBox
-            placeholder="Search product"
-            value={productName}
-            setValue={setProductName}
-            list={productList?.map((product) => product.name)}
-           />
+          <View style={{
+            position: "relative",
+            zIndex: 1,
+          }}>
+            <SearchClientBox
+              placeholder="Search product"
+              value={productName}
+              setValue={setProductName}
+              list={productList?.map((product) => product.name)}
+            />
+          </View>
           <FormTextInput
             label="Description"
             placeholder="This is description of the product"

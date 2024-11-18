@@ -120,7 +120,7 @@ export const InquiryPage = () => {
     if (!seller) {
       return;
     }
-    const sellerId = user.team.id;
+    const sellerId = seller.id;
     await raiseInquiry({
       tnc: "",
       remarks,
@@ -130,9 +130,6 @@ export const InquiryPage = () => {
     });
   }
 
-  useEffect(() => {
-    console.log(user?.team.type,"user");
-  }, [user?.team.type]);
   return (
     <View style={[styles.container, { backgroundColor: "white" }]}>
       {/* Fixed SearchBox at the top */}

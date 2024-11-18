@@ -204,15 +204,6 @@ export default function SentInquiries({
                         }
                       />
                     )}
-                    {/*currentTab === "Negotiation" && (
-                      <ActionBadge
-                        iconName="alarm-light-outline"
-                        actionText="Follow Up"
-                        handleAction={() =>
-                          router.navigate(`inquiry/${inquiry.id}`)
-                        }
-                      />
-                    )*/}
                     <TableData>
                       <BadgeStatus status={inquiry.status} />
                     </TableData>

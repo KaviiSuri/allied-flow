@@ -21,9 +21,7 @@ import { LoadingState } from "../shared/displayStates/LoadingState.web";
 import { ErrorState } from "../shared/displayStates/ErrorState";
 
 export const InquiryPage = () => {
-  const [activeNestedTab, setActiveNestedTab] = useState<
-"NEGOTIATING" | "ACCEPTED" | "REJECTED" | undefined
-  >(undefined);
+  const [activeNestedTab, setActiveNestedTab] = useState<"NEGOTIATING" | "ACCEPTED" | "REJECTED" | undefined>(undefined);
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [currentStatus, setCurrentStatus] = useState<"NEGOTIATING" | "ACCEPTED" | "REJECTED" | undefined>(undefined);
   const [searchResult, setSearchResult] = useState<string>("");

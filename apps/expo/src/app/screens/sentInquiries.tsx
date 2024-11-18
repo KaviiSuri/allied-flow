@@ -39,7 +39,7 @@ export default function SentInquiries({
   currentTab,
 }: {
   inquiries: RouterOutputs["inquiry"]["list"]["items"][0][];
-  currentTab: "All" | "New" | "Sent" | "Negotiation";
+  currentTab: "NEGOTIATING" | "ACCEPTED" | "REJECTED" | undefined;
 }) {
   // const ability = useAbility();
   const [quoteVisible, setQuoteVisible] = useState(false);

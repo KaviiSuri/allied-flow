@@ -1,7 +1,8 @@
 export const clientFilterList = [
-  "All",
-  "Quotes received",
-  "Pending",
+  "All Inquiries",
+  "Quotes Received",
+  "Negotiation",
+  "Order Placed",
   "Quote expired",
 ];
-export const sellerFilterList = ["All", "New", "Sent", "Negotiation"];
+export const sellerFilterList = ["All", "New", "Negotiation", "Accepted", "Rejected"];

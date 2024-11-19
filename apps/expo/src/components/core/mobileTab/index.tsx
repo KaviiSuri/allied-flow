@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Pressable, StyleSheet, Text } from "react-native";
 
 interface MobileTabProps {
@@ -12,6 +12,7 @@ export const MobileTab: React.FC<MobileTabProps> = ({
   activeFilter,
   setFilter,
 }) => {
+
   return (
     <Pressable
       onPress={() => setFilter(currentFilter)}

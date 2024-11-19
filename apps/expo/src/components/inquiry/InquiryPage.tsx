@@ -13,7 +13,6 @@ import { SearchBox } from "../shared/searchComponent";
 import React, { useEffect, useMemo, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { MobileTab } from "../core/mobileTab";
-import { Badge } from "../core/badge";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { InquiryForm } from "./InquiryFormMobile";
 import type { RouterInputs, RouterOutputs } from "~/utils/api";
@@ -26,6 +25,7 @@ import { clientFilterList, sellerFilterList } from "~/constants/filterLists";
 import { ActionBadgeMobile } from "../core/actionBadge";
 import { LoadingState } from "../shared/displayStates/LoadingState";
 import { ErrorState } from "../shared/displayStates/ErrorState";
+import { BadgeStatus } from "../shared/badge";
 
 export type ProductRequest =
   RouterInputs["inquiry"]["raise"]["productRequests"][0] & {
@@ -36,13 +36,14 @@ export const InquiryPage = () => {
   const [searchResult, setSearchResult] = useState<string>("");
   const [filter, setFilter] = useState<string>("All");
   const [openCreateForm, setOpenCreateForm] = useState<boolean>(false);
-  const [activeNestedTab, setActiveNestedTab] = useState<"NEGOTIATING" | "ACCEPTED" | "REJECTED" | undefined>(undefined);
+  const [activeNestedTab, setActiveNestedTab] = useState<"NEGOTIATING" | "RAISED" | "ACCEPTED" | "REJECTED" | undefined>(undefined);
   const { user } = useUser();
   const ability = useAbility();
   const utils = api.useUtils();
   const { data, isLoading, isError } = api.inquiry.list.useInfiniteQuery(
     {
       search: searchResult,
+      status: activeNestedTab,
     },
     {
       getNextPageParam: (lastPage) => {
@@ -63,8 +64,21 @@ export const InquiryPage = () => {
 
   useEffect(() => {
     setProductRequests([]);
-    console.log(isLoading, isError, "Loading and Error");
   }, []);
+
+  useEffect(() => {
+    if (filter === "All" || filter === "All Inquiries") {
+      setActiveNestedTab(undefined);
+    } else if (filter === "Negotiation") {
+      setActiveNestedTab("NEGOTIATING");
+    } else if (filter === "Quotes Received" || filter === "New") {
+      setActiveNestedTab("RAISED");
+    } else if (filter === "Accepted" || filter === "Order Placed") {
+      setActiveNestedTab("ACCEPTED");
+    } else if (filter === "Rejected" || filter === "Quote expired") {
+      setActiveNestedTab("REJECTED");
+    }
+  }, [filter]);
 
   const handleAddProductRequest = () => {
     setProductRequests([
@@ -91,9 +105,9 @@ export const InquiryPage = () => {
       productRequests.map((product) =>
         product.id === productRequest.id
           ? {
-              ...product,
-              ...productRequest,
-            }
+            ...product,
+            ...productRequest,
+          }
           : product,
       ),
     );
@@ -157,7 +171,6 @@ export const InquiryPage = () => {
           <InquiryList
             filter={filter}
             setFilter={setFilter}
-            setActiveNestedTab={setActiveNestedTab}
             inquiries={inquiries}
             filterList={
               user?.team.type === "CLIENT" ? clientFilterList : sellerFilterList
@@ -285,14 +298,12 @@ export const InquiryPage = () => {
 const InquiryList = ({
   filter,
   setFilter,
-  setActiveNestedTab,
   inquiries,
   filterList,
 }: {
   inquiries: RouterOutputs["inquiry"]["list"]["items"];
   filter: string;
   setFilter: React.Dispatch<React.SetStateAction<string>>;
-  setActiveNestedTab: React.Dispatch<React.SetStateAction<"NEGOTIATING" | "ACCEPTED" | "REJECTED" | undefined>>;
   filterList: string[];
 }) => {
   return (
@@ -338,11 +349,8 @@ const InquiryCard = ({
       <View style={orderStyles.orderCardContainer}>
         <View style={orderStyles.orderCard}>
           <View style={orderStyles.innerSection}>
-            <Badge
-              IconName="checkcircleo"
-              badgeText="Quote Received"
-              bg="#f0f9f6"
-              accentColor="#047857"
+            <BadgeStatus
+              status={inquiry.status}
             />
             <Icon name="ellipsis-v"></Icon>
           </View>
@@ -377,7 +385,7 @@ const InquiryCard = ({
             <ActionBadgeMobile
               iconName="open-in-new"
               actionText="View Quote"
-              handleAction={() => router.navigate(`inquiry/${inquiry.id}`)}
+              handleAction={() => router.push(`../../app/(tabs)/inquiry/${inquiry.id}`)}
             />
           )}
           {inquiry.status === "RAISED" && (
@@ -385,7 +393,7 @@ const InquiryCard = ({
               iconName="open-in-new"
               actionText="Send Quote"
               handleAction={() =>
-                router.navigate(`inquiry/sendQuote/${inquiry.id}`)
+                router.push(`../../app/(tabs)/inquiry/sendQuote/${inquiry.id}`)
               }
             />
           )}
@@ -394,7 +402,7 @@ const InquiryCard = ({
             <ActionBadgeMobile
               iconName="open-in-new"
               actionText="View Quote"
-              handleAction={() => router.navigate(`inquiry/${inquiry.id}`)}
+              handleAction={() => router.push(`../../app/(tabs)/inquiry/${inquiry.id}`)}
             />
           )}
           {/* (filter === "Negotiation" && (

@@ -178,7 +178,7 @@ export const InquiryPage = () => {
                   marginHorizontal: 6,
                 }}
               >
-                All
+                All {user?.team?.type === "CLIENT" ? "Inquiries" : ""}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -203,7 +203,7 @@ export const InquiryPage = () => {
                   marginHorizontal: 6,
                 }}
               >
-                New
+                {user?.team?.type === "CLIENT" ? "Inquiry Raised" : "New"}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -254,7 +254,7 @@ export const InquiryPage = () => {
                   marginHorizontal: 6,
                 }}
               >
-                Accepted
+                {user?.team?.type === "CLIENT" ? "Order Placed" : "Accepted"}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -279,7 +279,7 @@ export const InquiryPage = () => {
                   marginHorizontal: 6,
                 }}
               >
-                Rejected
+                {user?.team?.type === "CLIENT" ? "Inquiry Rejected" : "Rejected"}
               </Text>
             </TouchableOpacity>
           </View>

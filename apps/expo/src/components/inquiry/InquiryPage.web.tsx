@@ -22,11 +22,11 @@ import { ErrorState } from "../shared/displayStates/ErrorState";
 
 export const InquiryPage = () => {
   const [activeNestedTab, setActiveNestedTab] = useState<
-    "NEGOTIATING" | "ACCEPTED" | "REJECTED" | undefined
+    "NEGOTIATING" | "RAISED" | "ACCEPTED" | "REJECTED" | undefined
   >(undefined);
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [currentStatus, setCurrentStatus] = useState<
-    "NEGOTIATING" | "ACCEPTED" | "REJECTED" | undefined
+    "NEGOTIATING" | "RAISED" | "ACCEPTED" | "REJECTED" | undefined
   >(undefined);
   const [searchResult, setSearchResult] = useState<string>("");
   const { user } = useUser();
@@ -124,7 +124,7 @@ export const InquiryPage = () => {
   };
 
   const renderNestedScreen = () => {
-    return <SentInquiries currentTab={activeNestedTab} inquiries={inquiries} />;
+    return <SentInquiries inquiries={inquiries} />;
   };
 
   useEffect(() => {
@@ -179,6 +179,31 @@ export const InquiryPage = () => {
                 }}
               >
                 All
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                {
+                  paddingVertical: 12,
+                  paddingHorizontal: 4,
+                },
+                activeNestedTab === "RAISED" && {
+                  borderBottomWidth: 2,
+                  borderColor: "#2F80F5",
+                },
+              ]}
+              onPress={() => setActiveNestedTab("RAISED")}
+            >
+              <Text
+                style={{
+                  fontFamily: "Avenir",
+                  color: activeNestedTab === "RAISED" ? "#475569" : "#64748B",
+                  fontSize: 16,
+                  fontWeight: 400,
+                  marginHorizontal: 6,
+                }}
+              >
+                New
               </Text>
             </TouchableOpacity>
             <TouchableOpacity

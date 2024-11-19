@@ -241,7 +241,7 @@ export const inquiryRouter = {
       z.object({
         limit: z.number().min(1).max(100).default(10),
         cursor: z.string().optional(),
-        status: z.enum(["NEGOTIATING", "ACCEPTED", "REJECTED"]).optional(),
+        status: z.enum(["NEGOTIATING", "ACCEPTED", "REJECTED", "RAISED"]).optional(),
         search: z.string().optional(),
       }),
     )
@@ -258,10 +258,10 @@ export const inquiryRouter = {
             cursor ? lt(inquiries.createdAt, cursor) : undefined,
             status ? eq(inquiries.status, status) : undefined,
             input.search ? like(
-                inquiries.searchQuery,
-                `%${input.search.toLowerCase().trim()}%`,
-              )
-            : undefined,
+              inquiries.searchQuery,
+              `%${input.search.toLowerCase().trim()}%`,
+            )
+              : undefined,
           ),
         orderBy: (inquiries, { desc }) => desc(inquiries.createdAt),
         limit: limit + 1,

@@ -35,10 +35,8 @@ interface IClient {
 
 export default function SentInquiries({
   inquiries,
-  currentTab,
 }: {
   inquiries: RouterOutputs["inquiry"]["list"]["items"][0][];
-  currentTab: "NEGOTIATING" | "ACCEPTED" | "REJECTED" | undefined;
 }) {
   const [quoteVisible, setQuoteVisible] = useState(false);
   const toggleQuoteVisible = () => {
@@ -203,7 +201,7 @@ export default function SentInquiries({
                         />
                       )}
                     <TableData>
-                      <BadgeStatus currentTab={currentTab} status={inquiry.status} />
+                      <BadgeStatus status={inquiry.status} />
                     </TableData>
                   </TableRow>
                 );

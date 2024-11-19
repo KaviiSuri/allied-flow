@@ -3,7 +3,7 @@ import { Badge } from "~/components/core/badge";
 
 type StatusType = "EXPIRED" | "RAISED" | "REJECTED" | "RECEIVED" | "ACCEPTED" | "PLACED" | "NEGOTIATING";
 
-export const BadgeStatus = ({ currentTab, status }: { currentTab: undefined | string, status: string }) => {
+export const BadgeStatus = ({ status }: { status: string }) => {
   const defaultConfig = {
     iconName: "checkcircleo",
     badgeText: "Quote Received",

@@ -33,7 +33,7 @@ export const InquiryPage = () => {
   const ability = useAbility();
   const utils = api.useUtils();
   const { data, isError, isLoading } = api.inquiry.list.useInfiniteQuery(
-    { status: currentStatus, searchResult },
+    { status: currentStatus, search: searchResult },
     {
       getNextPageParam: (lastPage) => {
         if (lastPage.items.length === 0) return null;
@@ -76,9 +76,9 @@ export const InquiryPage = () => {
       productRequests.map((product) =>
         product.id === productRequest.id
           ? {
-              ...product,
-              ...productRequest,
-            }
+            ...product,
+            ...productRequest,
+          }
           : product,
       ),
     );
@@ -130,6 +130,7 @@ export const InquiryPage = () => {
   useEffect(() => {
     setCurrentStatus(activeNestedTab);
   }, [activeNestedTab]);
+
   return (
     <View>
       <ScrollView style={{ flex: 1, backgroundColor: "#f9f9f9" }}>
@@ -357,7 +358,7 @@ function CreateInquiryForm(props: {
           <PrimaryButton
             text="Raise Inquiry"
             onPress={props.handleSave}
-            // isLoading={props.isLoading}
+          // isLoading={props.isLoading}
           />
         </View>
       </View>

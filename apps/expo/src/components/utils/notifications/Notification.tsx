@@ -8,17 +8,17 @@ export interface NotificationProps {
   id: string;
   timePlaced: Date;
   notificationType:
-    | "ORDER_PLACED"
-    | "NEW_QUOTE_RECIEVED"
-    | "QUOTE_ACCEPTED"
-    | "QUOTE_EXPIRED"
-    | "ORDER_ACCEPTED"
-    | "ORDER_DISPATCHED"
-    | "ORDER_SHIPPED"
-    | "SAMPLE_DISPATCHED"
-    | "SAMPLE_SHIPPED"
-    | "SAMPLE_ORDER_PLACED"
-    | "INQUIRY_RAISED";
+  | "ORDER_PLACED"
+  | "NEW_QUOTE_RECIEVED"
+  | "QUOTE_ACCEPTED"
+  | "QUOTE_EXPIRED"
+  | "ORDER_ACCEPTED"
+  | "ORDER_DISPATCHED"
+  | "ORDER_SHIPPED"
+  | "SAMPLE_DISPATCHED"
+  | "SAMPLE_SHIPPED"
+  | "SAMPLE_ORDER_PLACED"
+  | "INQUIRY_RAISED";
 }
 
 const notificationIcons: {
@@ -94,7 +94,7 @@ function NotificationContent(props: NotificationProps) {
             ? props.productNames[0] + ` & 1 other`
             : props.productNames.length > 2
               ? props.productNames[0] +
-                ` & ${props.productNames.length - 1} others`
+              ` & ${props.productNames.length - 1} others`
               : props.productNames[0]}
         </Text>{" "}
         with order id <Text style={{ fontWeight: 700 }}>#{props.id}</Text> has
@@ -138,7 +138,7 @@ function NotificationContent(props: NotificationProps) {
             ? props.productNames[0] + ` & 1 other`
             : props.productNames.length > 2
               ? props.productNames[0] +
-                ` & ${props.productNames.length - 1} others`
+              ` & ${props.productNames.length - 1} others`
               : props.productNames[0]}
         </Text>{" "}
         with order id <Text style={{ fontWeight: 700 }}>#{props.id}</Text> has
@@ -154,7 +154,7 @@ function NotificationContent(props: NotificationProps) {
             ? props.productNames[0] + ` & 1 other`
             : props.productNames.length > 2
               ? props.productNames[0] +
-                ` & ${props.productNames.length - 1} others`
+              ` & ${props.productNames.length - 1} others`
               : props.productNames[0]}
         </Text>{" "}
         with order id <Text style={{ fontWeight: 700 }}>#{props.id}</Text> has
@@ -170,7 +170,7 @@ function NotificationContent(props: NotificationProps) {
             ? props.productNames[0] + ` & 1 other`
             : props.productNames.length > 2
               ? props.productNames[0] +
-                ` & ${props.productNames.length - 1} others`
+              ` & ${props.productNames.length - 1} others`
               : props.productNames[0]}
         </Text>{" "}
         with order id <Text style={{ fontWeight: 700 }}>#{props.id}</Text> has
@@ -186,7 +186,7 @@ function NotificationContent(props: NotificationProps) {
             ? props.productNames[0] + ` & 1 other`
             : props.productNames.length > 2
               ? props.productNames[0] +
-                ` & ${props.productNames.length - 1} others`
+              ` & ${props.productNames.length - 1} others`
               : props.productNames[0]}
         </Text>{" "}
         with order id <Text style={{ fontWeight: 700 }}>#{props.id}</Text> has
@@ -202,7 +202,7 @@ function NotificationContent(props: NotificationProps) {
             ? props.productNames[0] + ` & 1 other`
             : props.productNames.length > 2
               ? props.productNames[0] +
-                ` & ${props.productNames.length - 1} others`
+              ` & ${props.productNames.length - 1} others`
               : props.productNames[0]}
         </Text>{" "}
         with inquiry number <Text style={{ fontWeight: 700 }}>#{props.id}</Text>{" "}
@@ -219,7 +219,7 @@ function NotificationContent(props: NotificationProps) {
             ? props.productNames[0] + ` & 1 other`
             : props.productNames.length > 2
               ? props.productNames[0] +
-                ` & ${props.productNames.length - 1} others`
+              ` & ${props.productNames.length - 1} others`
               : props.productNames[0]}
         </Text>{" "}
         with order id <Text style={{ fontWeight: 700 }}>#{props.id}</Text> has
@@ -232,6 +232,7 @@ function NotificationContent(props: NotificationProps) {
 function Notification(props: NotificationProps) {
   return (
     <View
+      key={props.id}
       style={{
         flexDirection: "row",
         paddingHorizontal: 16,

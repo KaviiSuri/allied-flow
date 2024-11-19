@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Badge } from "~/components/core/badge";
 
-type StatusType = "EXPIRED"| "RAISED" | "REJECTED" | "RECEIVED" | "ACCEPTED" | "PLACED" | "NEGOTIATING";
+type StatusType = "EXPIRED" | "RAISED" | "REJECTED" | "RECEIVED" | "ACCEPTED" | "PLACED" | "NEGOTIATING";
 
-export const BadgeStatus = ({ status }: { status: string }) => {
+export const BadgeStatus = ({ currentTab, status }: { currentTab: undefined | string, status: string }) => {
   const defaultConfig = {
     iconName: "checkcircleo",
     badgeText: "Quote Received",
@@ -45,13 +45,13 @@ export const BadgeStatus = ({ status }: { status: string }) => {
         bg: "#f1f5f9",
         accentColor: "#334155",
       },
-      NEGOTIATING : {
+      NEGOTIATING: {
         iconName: "checkcircleo",
         badgeText: "Negotiation",
         bg: "#efebfe",
         accentColor: "#21134e",
       },
-      RAISED:{
+      RAISED: {
         iconName: "checkcircleo",
         badgeText: "Raised",
         bg: "#f0f9f6",
@@ -59,24 +59,20 @@ export const BadgeStatus = ({ status }: { status: string }) => {
       }
     };
 
-    // Debugging: Log the received status and check if it matches the expected keys
-    console.log("Received status prop:", status, typeof status);
     const newConfig = statusSettings[status as StatusType] || defaultConfig;
-
-    // Check if the newConfig was found in statusSettings or fell back to defaultConfig
     setStatusConfig(newConfig);
-  }, []);
+  }, [status]);
 
   return (
-          <>
-              {statusConfig.badgeText && 
-                  <Badge
-                    IconName={statusConfig.iconName}
-                    badgeText={statusConfig.badgeText}
-                    bg={statusConfig.bg}
-                    accentColor={statusConfig.accentColor}
-                  />
-              }
-          </>
+    <>
+      {statusConfig.badgeText &&
+        <Badge
+          IconName={statusConfig.iconName}
+          badgeText={statusConfig.badgeText}
+          bg={statusConfig.bg}
+          accentColor={statusConfig.accentColor}
+        />
+      }
+    </>
   );
 };

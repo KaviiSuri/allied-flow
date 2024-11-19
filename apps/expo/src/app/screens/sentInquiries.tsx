@@ -9,7 +9,6 @@ import {
   View,
 } from "react-native";
 import type { RouterOutputs } from "~/utils/api";
-import { useAbility } from "~/providers/auth";
 import {
   Table,
   TableHeading,
@@ -41,7 +40,6 @@ export default function SentInquiries({
   inquiries: RouterOutputs["inquiry"]["list"]["items"][0][];
   currentTab: "NEGOTIATING" | "ACCEPTED" | "REJECTED" | undefined;
 }) {
-  // const ability = useAbility();
   const [quoteVisible, setQuoteVisible] = useState(false);
   const toggleQuoteVisible = () => {
     setQuoteVisible(!quoteVisible);
@@ -181,7 +179,7 @@ export default function SentInquiries({
                         iconName="open-in-new"
                         actionText="View Quote"
                         handleAction={() =>
-                          router.navigate(`inquiry/${inquiry.id}`)
+                          router.push(`../(tabs)/inquiry/${inquiry.id}`)
                         }
                       />
                     )}
@@ -190,22 +188,22 @@ export default function SentInquiries({
                         iconName="open-in-new"
                         actionText="Send Quote"
                         handleAction={() =>
-                          router.navigate(`inquiry/sendQuote/${inquiry.id}`)
+                          router.push(`../(tabs)/inquiry/sendQuote/${inquiry.id}`)
                         }
                       />
                     )}
                     {(inquiry.status === "ACCEPTED" ||
                       inquiry.status === "REJECTED") && (
-                      <ActionBadge
-                        iconName="open-in-new"
-                        actionText="View Quote"
-                        handleAction={() =>
-                          router.navigate(`inquiry/${inquiry.id}`)
-                        }
-                      />
-                    )}
+                        <ActionBadge
+                          iconName="open-in-new"
+                          actionText="View Quote"
+                          handleAction={() =>
+                            router.push(`../(tabs)/inquiry/${inquiry.id}`)
+                          }
+                        />
+                      )}
                     <TableData>
-                      <BadgeStatus status={inquiry.status} />
+                      <BadgeStatus currentTab={currentTab} status={inquiry.status} />
                     </TableData>
                   </TableRow>
                 );

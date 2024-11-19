@@ -36,11 +36,12 @@ export const InquiryPage = () => {
   const [searchResult, setSearchResult] = useState<string>("");
   const [filter, setFilter] = useState<string>("All");
   const [openCreateForm, setOpenCreateForm] = useState<boolean>(false);
+  const [activeNestedTab, setActiveNestedTab] = useState<"NEGOTIATING" | "ACCEPTED" | "REJECTED" | undefined>(undefined);
   const { user } = useUser();
   const ability = useAbility();
   const utils = api.useUtils();
   const { data, isLoading, isError } = api.inquiry.list.useInfiniteQuery(
-    {},
+ { status: activeNestedTab }, 
     {
       getNextPageParam: (lastPage) => {
         if (lastPage.items.length === 0) return null;
@@ -154,6 +155,7 @@ export const InquiryPage = () => {
           <InquiryList
             filter={filter}
             setFilter={setFilter}
+            setActiveNestedTab={setActiveNestedTab}
             inquiries={inquiries}
             filterList={
               user?.team.type === "CLIENT" ? clientFilterList : sellerFilterList
@@ -281,12 +283,14 @@ export const InquiryPage = () => {
 const InquiryList = ({
   filter,
   setFilter,
+  setActiveNestedTab,
   inquiries,
   filterList,
 }: {
   inquiries: RouterOutputs["inquiry"]["list"]["items"];
   filter: string;
   setFilter: React.Dispatch<React.SetStateAction<string>>;
+  setActiveNestedTab: React.Dispatch<React.SetStateAction<"NEGOTIATING" | "ACCEPTED" | "REJECTED" | undefined>>;
   filterList: string[];
 }) => {
   return (

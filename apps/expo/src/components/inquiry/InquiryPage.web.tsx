@@ -21,15 +21,19 @@ import { LoadingState } from "../shared/displayStates/LoadingState.web";
 import { ErrorState } from "../shared/displayStates/ErrorState";
 
 export const InquiryPage = () => {
-  const [activeNestedTab, setActiveNestedTab] = useState<"NEGOTIATING" | "ACCEPTED" | "REJECTED" | undefined>(undefined);
+  const [activeNestedTab, setActiveNestedTab] = useState<
+    "NEGOTIATING" | "ACCEPTED" | "REJECTED" | undefined
+  >(undefined);
   const [drawerVisible, setDrawerVisible] = useState(false);
-  const [currentStatus, setCurrentStatus] = useState<"NEGOTIATING" | "ACCEPTED" | "REJECTED" | undefined>(undefined);
+  const [currentStatus, setCurrentStatus] = useState<
+    "NEGOTIATING" | "ACCEPTED" | "REJECTED" | undefined
+  >(undefined);
   const [searchResult, setSearchResult] = useState<string>("");
   const { user } = useUser();
   const ability = useAbility();
   const utils = api.useUtils();
   const { data, isError, isLoading } = api.inquiry.list.useInfiniteQuery(
-    {status: currentStatus},
+    { status: currentStatus, searchResult },
     {
       getNextPageParam: (lastPage) => {
         if (lastPage.items.length === 0) return null;
@@ -42,7 +46,6 @@ export const InquiryPage = () => {
     () => data?.pages.flatMap((page) => page.items) ?? [],
     [data],
   );
-
 
   const [remarks, setRemarks] = useState<string>("");
 
@@ -124,7 +127,9 @@ export const InquiryPage = () => {
     return <SentInquiries currentTab={activeNestedTab} inquiries={inquiries} />;
   };
 
-  useEffect(() => {setCurrentStatus(activeNestedTab)},[activeNestedTab]);
+  useEffect(() => {
+    setCurrentStatus(activeNestedTab);
+  }, [activeNestedTab]);
   return (
     <View>
       <ScrollView style={{ flex: 1, backgroundColor: "#f9f9f9" }}>
@@ -191,13 +196,14 @@ export const InquiryPage = () => {
               <Text
                 style={{
                   fontFamily: "Avenir",
-                  color: activeNestedTab == "NEGOTIATING" ? "#475569" : "#64748B",
+                  color:
+                    activeNestedTab == "NEGOTIATING" ? "#475569" : "#64748B",
                   fontSize: 16,
                   fontWeight: 400,
                   marginHorizontal: 6,
                 }}
               >
-              Negotiation
+                Negotiation
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -241,14 +247,13 @@ export const InquiryPage = () => {
               <Text
                 style={{
                   fontFamily: "Avenir",
-                  color:
-                    activeNestedTab == "REJECTED" ? "#475569" : "#64748B",
+                  color: activeNestedTab == "REJECTED" ? "#475569" : "#64748B",
                   fontSize: 16,
                   fontWeight: 400,
                   marginHorizontal: 6,
                 }}
               >
-              Rejected
+                Rejected
               </Text>
             </TouchableOpacity>
           </View>

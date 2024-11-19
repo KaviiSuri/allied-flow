@@ -7,7 +7,6 @@ import {
   primaryKey,
   real,
 } from "drizzle-orm/sqlite-core";
-import type { AnySQLiteColumn } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
 
 export const users = sqliteTable("users", {
@@ -94,6 +93,7 @@ export const inquiries = sqliteTable("inquiries", {
     .$defaultFn(() => new Date().toISOString())
     .notNull(),
   productNames: text("product_names").notNull(),
+  searchQuery: text("search_query").notNull().default(""),
 });
 
 export type Inquiry = InferSelectModel<typeof inquiries>;

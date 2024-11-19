@@ -40,7 +40,9 @@ export const InquiryPage = () => {
   const ability = useAbility();
   const utils = api.useUtils();
   const { data, isLoading, isError } = api.inquiry.list.useInfiniteQuery(
-    {},
+    {
+      search: searchResult,
+    },
     {
       getNextPageParam: (lastPage) => {
         if (lastPage.items.length === 0) return null;

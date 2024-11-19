@@ -5,7 +5,7 @@ import { z } from "zod";
 import { inquiries } from "@repo/db/schema";
 import { nanoid } from "nanoid";
 import { productRequestSchema, quotesService } from "../services/quote.js";
-import { and, eq, or, lte, lt } from "@repo/db";
+import { and, eq, or, lt, like } from "@repo/db";
 
 // Define the schema for raising an inquiry
 const raiseInquiryInput = z.object({
@@ -38,6 +38,9 @@ export const inquiryRouter = {
             productNames: input.productRequests
               .map((productRequest) => productRequest.productName)
               .join(", "),
+            searchQuery: input.productRequests
+              .map((productRequest) => productRequest.productName.toLowerCase().trim())
+              .join(" "),
           })
           .returning();
         const inquiry = createdInquiries[0];
@@ -239,6 +242,7 @@ export const inquiryRouter = {
         limit: z.number().min(1).max(100).default(10),
         cursor: z.string().optional(),
         status: z.enum(["NEGOTIATING", "ACCEPTED", "REJECTED"]).optional(),
+        search: z.string().optional(),
       }),
     )
     .query(async ({ ctx, input }) => {
@@ -253,6 +257,11 @@ export const inquiryRouter = {
             ),
             cursor ? lt(inquiries.createdAt, cursor) : undefined,
             status ? eq(inquiries.status, status) : undefined,
+            input.search ? like(
+                inquiries.searchQuery,
+                `%${input.search.toLowerCase().trim()}%`,
+              )
+            : undefined,
           ),
         orderBy: (inquiries, { desc }) => desc(inquiries.createdAt),
         limit: limit + 1,

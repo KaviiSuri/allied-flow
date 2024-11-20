@@ -17,7 +17,7 @@ import { MenuItem } from "../shared/dropdown/multiSelect";
 import { SearchBox } from "../shared/searchComponent";
 import { Table, TableData, TableHeading, TableRow } from "../shared/table";
 import { Badge } from "../core/badge";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { RouterOutputs } from "@repo/api";
 import { api } from "~/utils/api";
 import { PrimaryButton } from "../core/button";
@@ -50,10 +50,35 @@ export const OrderPage = () => {
   const orders = useMemo(() => {
     return data?.pages.flatMap((page) => page) ?? [];
   }, [data]);
+
+
+
+  useEffect(() => {
+    if (data?.pages && data.pages?.length < 2) {
+      if (hasNextPage) {
+        fetchNextPage();
+      }
+    }
+  }, [data])
+
+
+  const scrollViewRef = useRef(null);
+
+  const handleScroll = (event: any) => {
+    const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+    const isScrolledToBottom = layoutMeasurement.height + contentOffset.y >= contentSize.height - 20;
+    if (isScrolledToBottom && hasNextPage) {
+      fetchNextPage();
+    }
+  };
   return (
     <>
       <HeaderComponent />
-      <ScrollView>
+      <ScrollView
+        ref={scrollViewRef}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+      >
         {isLoading ? (
           <LoadingState stateContent={"Please wait... Loading orders"} />
         ) : isError ? (
@@ -63,11 +88,6 @@ export const OrderPage = () => {
         ) : (
           <SampleTable orders={orders} />
         )}
-        <GestureHandlerRootView>
-          {hasNextPage && (
-            <PrimaryButton onPress={() => fetchNextPage} text="Load more" />
-          )}
-        </GestureHandlerRootView>
       </ScrollView>
     </>
   );

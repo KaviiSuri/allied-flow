@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -32,15 +32,14 @@ export const InquiryPage = () => {
   const { user } = useUser();
   const ability = useAbility();
   const utils = api.useUtils();
-  const { data, isError, isLoading } = api.inquiry.list.useInfiniteQuery(
-    { status: currentStatus, search: searchResult },
-    {
-      getNextPageParam: (lastPage) => {
-        if (lastPage.items.length === 0) return null;
-        return lastPage.nextCursor;
-      },
-      enabled: ability.can("list", "Inquiry"),
+  const { data, isError, isLoading, hasNextPage, fetchNextPage } = api.inquiry.list.useInfiniteQuery(
+    { status: currentStatus, search: searchResult }, {
+    getNextPageParam: (lastPage) => {
+      if (lastPage.items.length === 0) return null;
+      return lastPage.nextCursor;
     },
+    enabled: ability.can("list", "Inquiry"),
+  },
   );
   const inquiries = useMemo(
     () => data?.pages.flatMap((page) => page.items) ?? [],
@@ -124,16 +123,40 @@ export const InquiryPage = () => {
   };
 
   const renderNestedScreen = () => {
-    return <SentInquiries inquiries={inquiries} />;
+    return <SentInquiries inquiries={inquiries} />
   };
 
   useEffect(() => {
     setCurrentStatus(activeNestedTab);
   }, [activeNestedTab]);
 
+  useEffect(() => {
+    if (data?.pages && data.pages?.length < 2) {
+      if (hasNextPage) {
+        fetchNextPage();
+      }
+    }
+  }, [data])
+
+
+  const scrollViewRef = useRef(null);
+
+  const handleScroll = (event: any) => {
+    const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+    const isScrolledToBottom = layoutMeasurement.height + contentOffset.y >= contentSize.height - 20;
+    if (isScrolledToBottom && hasNextPage) {
+      fetchNextPage();
+    }
+  };
+
   return (
     <View>
-      <ScrollView style={{ flex: 1, backgroundColor: "#f9f9f9" }}>
+      <ScrollView
+        style={{ flex: 1, backgroundColor: "#f9f9f9" }}
+        ref={scrollViewRef}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+      >
         <CreateInquiryForm
           open={drawerVisible}
           toggleOpen={toggleDrawer}
@@ -310,7 +333,7 @@ export const InquiryPage = () => {
           renderNestedScreen()
         )}
       </ScrollView>
-    </View>
+    </View >
   );
 };
 

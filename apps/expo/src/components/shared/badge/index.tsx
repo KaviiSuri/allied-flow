@@ -53,9 +53,9 @@ export const BadgeStatus = ({ status }: { status: string }) => {
       },
       RAISED: {
         iconName: "checkcircleo",
-        badgeText: "Raised",
-        bg: "#f0f9f6",
-        accentColor: "#047857",
+        badgeText: "Inquiry Raised",
+        bg: "#fceefb",
+        accentColor: "#5e0b5a",
       }
     };
 

@@ -41,7 +41,6 @@ export default function InquiriesDetails() {
     (["ACCEPTED", "REJECTED"].includes(data.inquiry.status) ||
       ["ACCEPTED", "REJECTED"].includes(data.latestQuote.status));
 
-  console.log("isFinalized", isFinalized);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [activeNestedTab, setActiveNestedTab] = useState("Details");
   const [openCreateForm, setOpenCreateForm] = useState(false);
@@ -54,7 +53,6 @@ export default function InquiriesDetails() {
   }, [inquiryNumber]);
 
   const handleQuoteItemUpdate = (quoteItem: QuoteItem) => {
-    console.log("quoteItem", quoteItem);
     setNegotiatedItems((prev) => ({
       ...prev,
       [quoteItem.productId]: quoteItem,
@@ -160,9 +158,6 @@ export default function InquiriesDetails() {
     }
   };
 
-  console.log("data", data?.inquiry.status, data?.latestQuote?.status);
-  console.log("bool");
-
   const windowHeight = Dimensions.get("window").height - 185;
 
   return (
@@ -189,7 +184,7 @@ export default function InquiriesDetails() {
             </Text>
           )}
           <View style={{ width: 118 }}>
-            <BadgeStatus status="RECEIVED" />
+            <BadgeStatus status={data?.inquiry.status ? data.inquiry.status : "RAISED"} />
           </View>
         </View>
         <View

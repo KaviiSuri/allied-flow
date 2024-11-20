@@ -1,4 +1,4 @@
-import { Dimensions, Text, TouchableOpacity, View} from "react-native";
+import { Dimensions, Text, TouchableOpacity, View } from "react-native";
 import SkeletonLoader from "../skelton";
 import { router } from "expo-router";
 

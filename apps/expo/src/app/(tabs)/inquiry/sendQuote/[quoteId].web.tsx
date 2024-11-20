@@ -1,12 +1,13 @@
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import { Dimensions, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Toast from "react-native-toast-message";
-import { PrimaryButton } from "~/components/core/button";
+import { PrimaryButton, SecondaryButton } from "~/components/core/button";
 import { HistoryPanelTable } from "~/components/historyPanel";
 import { QuotePanel } from "~/components/historyPanel/quotePanel";
 import type { RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 type QuoteItem = NonNullable<
   RouterOutputs["inquiry"]["getDetails"]["latestQuote"]
@@ -24,6 +25,7 @@ export default () => {
   );
   const [terms, setTerms] = useState("");
   const [negoiatedItems, setNegotiatedItems] = useState<QuoteItemMap>({});
+  const [showHistory, setShowHistory] = useState(false);
 
   useEffect(() => {
     if (!data?.latestQuote) {
@@ -56,7 +58,7 @@ export default () => {
               type: "success",
               text1: "Negotiation successful",
             });
-            router.navigate(`/inquiry/${data?.inquiry.id}`);
+            router.push(`../../inquiry/${data?.inquiry.id}`);
           })
           .catch();
       },
@@ -90,10 +92,11 @@ export default () => {
           terms={terms}
           setTerms={setTerms}
           handleSave={handleSave}
+          handleOrdrHistory={() => { setShowHistory(true) }}
         />
       )}
       {/* order history */}
-      <OrderHistory />
+      {showHistory && <OrderHistory handleOrdrHistory={() => { setShowHistory(false) }} />}
     </View>
   );
 };
@@ -106,6 +109,7 @@ const QuoteDetails = ({
   terms,
   setTerms,
   handleSave,
+  handleOrdrHistory,
 }: {
   latestQuote: RouterOutputs["inquiry"]["getDetails"]["latestQuote"];
   inquiryDetails: RouterOutputs["inquiry"]["getDetails"]["inquiry"];
@@ -114,6 +118,7 @@ const QuoteDetails = ({
   terms: string;
   setTerms: (terms: string) => void;
   handleSave: () => void;
+  handleOrdrHistory: () => void;
 }) => {
   useEffect(() => {
     console.log(latestQuote, inquiryDetails);
@@ -135,8 +140,20 @@ const QuoteDetails = ({
   return (
     <View style={styles.container}>
       <View style={[styles.headerContainer, styles.leftHeader]}>
-        <Text style={styles.header}>{clientName}</Text>
-        <PrimaryButton text="Send Quote" onPress={handleSave} />
+        <View style={{ flexDirection: "row" }}>
+          <MaterialCommunityIcons name="office-building" size={24} />
+          <Text style={styles.header}>{clientName}</Text>
+          <Text style={{
+            fontFamily: "Avenir",
+            fontSize: 16,
+            marginLeft: 8,
+            color: "#94a3b8",
+          }}>#{inquiryDetails.buyerId}</Text>
+        </View>
+        <View style={{ flexDirection: "row", gap: 8 }}>
+          <SecondaryButton text="Order History" onPress={handleOrdrHistory} />
+          <PrimaryButton text="Send Quote" onPress={handleSave} />
+        </View>
       </View>
       <ScrollView style={styles.quotePanel}>
         <QuotePanel
@@ -151,12 +168,18 @@ const QuoteDetails = ({
   );
 };
 
-const OrderHistory = () => {
+const OrderHistory = ({ handleOrdrHistory }:
+  {
+    handleOrdrHistory: () => void;
+  }
+) => {
   return (
     <View style={styles.container}>
       <View style={[styles.headerContainer, styles.rightHeader]}>
         <Text style={styles.header}>OrderHistory</Text>
-        <Text>{">>"}</Text>
+        <TouchableOpacity onPress={handleOrdrHistory}>
+          <MaterialCommunityIcons name="close" size={24} />
+        </TouchableOpacity>
       </View>
       <View style={styles.historyPanel}>
         <View></View>
@@ -187,6 +210,7 @@ const styles = StyleSheet.create({
   },
   header: {
     fontFamily: "Avenir",
+    fontSize: 16,
   },
   leftHeader: {
     borderColor: "#E2E8F0",

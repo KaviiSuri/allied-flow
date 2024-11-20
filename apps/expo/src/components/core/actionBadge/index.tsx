@@ -1,15 +1,18 @@
 import { Pressable, Text } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import MaterialIcon from "react-native-vector-icons/MaterialIcons";
 import { ActionBadgeMobile } from "./actionBadge";
 
 export const ActionBadge = ({
   actionText,
   iconName,
   handleAction,
+  materialIcon = false,
 }: {
   actionText: string;
   iconName: string;
   handleAction: () => void;
+  materialIcon?: boolean;
 }) => {
   return (
     <Pressable
@@ -35,7 +38,12 @@ export const ActionBadge = ({
       >
         {actionText}
       </Text>
-      <Icon style={{ paddingTop: 4, color: "#2f80f5" }} name={iconName} />
+      {materialIcon ? (
+        <MaterialIcon style={{ paddingTop: 4, color: "#2f80f5" }} name={iconName} />
+      ) : (
+        <Icon style={{ paddingTop: 4, color: "#2f80f5" }} name={iconName} />
+      )
+      }
     </Pressable>
   );
 };

@@ -71,7 +71,7 @@ export default function SendQuote() {
               type: "success",
               text1: "Negotiation successful",
             });
-            router.navigate(`/inquiry/${data?.inquiry.id}`);
+            router.push(`/inquiry/${data?.inquiry.id}`);
           })
           .catch();
       },

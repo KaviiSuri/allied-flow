@@ -329,7 +329,7 @@ const InquiryList = ({
 
         {/* orders */}
         {inquiries.map((inquiry) => (
-          <InquiryCard inquiry={inquiry} key={inquiry.id} filter={filter} />
+          <InquiryCard inquiry={inquiry} key={inquiry.id} />
         ))}
       </GestureHandlerRootView>
     </View>
@@ -338,12 +338,25 @@ const InquiryList = ({
 
 const InquiryCard = ({
   inquiry,
-  filter,
 }: {
   inquiry: RouterOutputs["inquiry"]["list"]["items"][0];
-  filter: string;
 }) => {
   const router = useRouter();
+  const { user } = useUser();
+
+  const formatProducts = (input: string): string => {
+    // Split the input string into an array
+    const entities = input.split(",").map((entity) => entity.trim());
+
+    // Check the number of entities
+    if (entities.length <= 2) {
+      return input; // Return original string if 2 or fewer entities
+    } else {
+      // Return the first two entities and append "& others"
+      return `${entities[0]}, ${entities[1]} & ${entities.length - 2}others`;
+    }
+  };
+
   return (
     <View>
       <View style={orderStyles.orderCardContainer}>
@@ -363,8 +376,10 @@ const InquiryCard = ({
               <Text style={orderStyles.orderMainText}>{inquiry.id}</Text>
             </View>
             <View style={{ flex: 1, gap: 4 }}>
-              <Text style={orderStyles.orderHeader}>Quantity</Text>
-              <Text style={orderStyles.orderMainText}>-</Text>
+              <Text style={orderStyles.orderHeader}>Products</Text>
+              <Text style={orderStyles.orderMainText}>
+                {formatProducts(inquiry.productNames)}
+              </Text>
             </View>
           </View>
           <View style={orderStyles.innerSectionFlexStart}>
@@ -374,10 +389,16 @@ const InquiryCard = ({
                 {new Date(inquiry.createdAt).toLocaleDateString()}
               </Text>
             </View>
-            <View style={{ flex: 1, gap: 4 }}>
-              <Text style={orderStyles.orderHeader}>Make</Text>
-              <Text style={orderStyles.orderMainText}>-</Text>
-            </View>
+            {
+              user?.team.type !== "CLIENT" && (
+                <View style={{ flex: 1, gap: 4 }}>
+                  <Text style={orderStyles.orderHeader}>Client</Text>
+                  <Text style={orderStyles.orderMainText}>
+                    {inquiry.buyer.name}
+                  </Text>
+                </View>
+              )
+            }
           </View>
         </View>
         <View style={orderStyles.actionContainer}>
@@ -385,7 +406,7 @@ const InquiryCard = ({
             <ActionBadgeMobile
               iconName="open-in-new"
               actionText="View Quote"
-              handleAction={() => router.push(`../../app/(tabs)/inquiry/${inquiry.id}`)}
+              handleAction={() => router.push(`/inquiry/${inquiry.id}`)}
             />
           )}
           {inquiry.status === "RAISED" && (
@@ -393,7 +414,7 @@ const InquiryCard = ({
               iconName="open-in-new"
               actionText="Send Quote"
               handleAction={() =>
-                router.push(`../../app/(tabs)/inquiry/sendQuote/${inquiry.id}`)
+                router.push(`/inquiry/sendQuote/${inquiry.id}`)
               }
             />
           )}

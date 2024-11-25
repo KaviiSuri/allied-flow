@@ -24,6 +24,8 @@ const create = async (
   productRequests: ProductRequest[],
   userId: string,
   teamId: string,
+  buyerId: string,
+  sellerId: string,
 ) => {
   const createdQuotes = await tx
     .insert(quotes)
@@ -63,39 +65,43 @@ const create = async (
     )
     .returning();
 
-  const createdSamples = await tx
-    .insert(orders)
-    .values({
-      id: nanoid(),
-      inquiryId,
-      quoteId: quote.id,
-      type: "SAMPLE",
-      buyerId: userId,
-      sellerId: teamId,
-      status: "PLACED",
-    })
-    .returning();
+  if (
+    productRequests.some((productRequest) => productRequest.sampleRequested)
+  ) {
+    const createdSamples = await tx
+      .insert(orders)
+      .values({
+        id: nanoid(),
+        inquiryId,
+        quoteId: quote.id,
+        type: "SAMPLE",
+        buyerId,
+        sellerId,
+        status: "PLACED",
+      })
+      .returning();
 
-  const sampleOrder = createdSamples[0];
+    const sampleOrder = createdSamples[0];
 
-  if (!sampleOrder) {
-    throw new TRPCError({
-      message: "Failed to create sample order",
-      code: "INTERNAL_SERVER_ERROR",
-    });
+    if (!sampleOrder) {
+      throw new TRPCError({
+        message: "Failed to create sample order",
+        code: "INTERNAL_SERVER_ERROR",
+      });
+    }
+
+    const _sampleOrderItems = await tx.insert(orderItems).values(
+      createdQuoteItems.map((quoteItem) => ({
+        orderId: sampleOrder.id,
+        productId: quoteItem.productId,
+        price: quoteItem.price,
+        quantity: quoteItem.quantity,
+        unit: quoteItem.unit,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      })),
+    );
   }
-
-  const _sampleOrderItems = await tx.insert(orderItems).values(
-    createdQuoteItems.map((quoteItem) => ({
-      orderId: sampleOrder.id,
-      productId: quoteItem.productId,
-      price: quoteItem.price,
-      quantity: quoteItem.quantity,
-      unit: quoteItem.unit,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    })),
-  );
 
   return {
     ...quote,

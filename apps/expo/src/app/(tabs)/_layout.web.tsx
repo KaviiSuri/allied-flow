@@ -10,7 +10,7 @@ import {
   DrawerItemList,
 } from "@react-navigation/drawer";
 import { useLogto } from "@logto/rn";
-import { Redirect } from "expo-router";
+import { Redirect, useRouter } from "expo-router";
 import { Logout } from "~/components/Logout";
 import { logtoService } from "~/config/logto";
 import AuthProvider, { AuthConsumer, useAbility } from "~/providers/auth";
@@ -43,7 +43,7 @@ function CustomDrawerContent(props: any) {
       <DrawerItem
         label="Logout"
         onPress={() => signOut(logtoService.redirectUri)}
-        icon={({ focused }) => (
+        icon={({ focused }: { focused: boolean }) => (
           <Image
             source={DashboardIcon}
             style={{
@@ -61,8 +61,8 @@ function CustomDrawerContent(props: any) {
 
 export default function WebLayout() {
   const { isAuthenticated } = useLogto();
+  const router = useRouter();
   const ability = useAbility();
-
   if (!isAuthenticated) {
     return <Redirect href={"/login"} />;
   }
@@ -84,7 +84,14 @@ export default function WebLayout() {
                   fontWeight: 800,
                   fontSize: 18,
                 },
-                headerLeft: () => null,
+                headerLeft: (el: any) => {
+                  console.log(el, ability, router, "EL");
+                  return (
+                    <>
+                      <View style={{ marginLeft: 24 }}></View>
+                    </>
+                  );
+                },
                 headerRight: () => {
                   return (
                     <View style={{ gap: 16, marginRight: 24 }}>
@@ -122,7 +129,7 @@ export default function WebLayout() {
                         display: "none",
                       }),
                     },
-                    drawerLabel: ({ focused }) => (
+                    drawerLabel: ({ focused }: { focused: boolean }) => (
                       <Text
                         style={{
                           fontFamily: "Avenir",
@@ -135,7 +142,7 @@ export default function WebLayout() {
                         {drawer.name}
                       </Text>
                     ),
-                    drawerIcon: ({ focused }) => (
+                    drawerIcon: ({ focused }: { focused: boolean }) => (
                       <Image
                         // @ts-expect-error types broken here
                         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment

@@ -13,7 +13,6 @@ import { SearchBox } from "../shared/searchComponent";
 import React, { useEffect, useMemo, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { MobileTab } from "../core/mobileTab";
-import { Badge } from "../core/badge";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { InquiryForm } from "./InquiryFormMobile";
 import type { RouterInputs, RouterOutputs } from "~/utils/api";
@@ -26,6 +25,7 @@ import { clientFilterList, sellerFilterList } from "~/constants/filterLists";
 import { ActionBadgeMobile } from "../core/actionBadge";
 import { LoadingState } from "../shared/displayStates/LoadingState";
 import { ErrorState } from "../shared/displayStates/ErrorState";
+import { BadgeStatus } from "../shared/badge";
 
 export type ProductRequest =
   RouterInputs["inquiry"]["raise"]["productRequests"][0] & {
@@ -36,11 +36,17 @@ export const InquiryPage = () => {
   const [searchResult, setSearchResult] = useState<string>("");
   const [filter, setFilter] = useState<string>("All");
   const [openCreateForm, setOpenCreateForm] = useState<boolean>(false);
+  const [activeNestedTab, setActiveNestedTab] = useState<
+    "NEGOTIATING" | "RAISED" | "ACCEPTED" | "REJECTED" | undefined
+  >(undefined);
   const { user } = useUser();
   const ability = useAbility();
   const utils = api.useUtils();
   const { data, isLoading, isError } = api.inquiry.list.useInfiniteQuery(
-    {},
+    {
+      search: searchResult,
+      status: activeNestedTab,
+    },
     {
       getNextPageParam: (lastPage) => {
         if (lastPage.items.length === 0) return null;
@@ -60,8 +66,21 @@ export const InquiryPage = () => {
 
   useEffect(() => {
     setProductRequests([]);
-    console.log(isLoading, isError, "Loading and Error");
   }, []);
+
+  useEffect(() => {
+    if (filter === "All" || filter === "All Inquiries") {
+      setActiveNestedTab(undefined);
+    } else if (filter === "Negotiation") {
+      setActiveNestedTab("NEGOTIATING");
+    } else if (filter === "Quotes Received" || filter === "New") {
+      setActiveNestedTab("RAISED");
+    } else if (filter === "Accepted" || filter === "Order Placed") {
+      setActiveNestedTab("ACCEPTED");
+    } else if (filter === "Rejected" || filter === "Quote expired") {
+      setActiveNestedTab("REJECTED");
+    }
+  }, [filter]);
 
   const handleAddProductRequest = () => {
     setProductRequests([
@@ -120,7 +139,7 @@ export const InquiryPage = () => {
     if (!seller) {
       return;
     }
-    const sellerId = user.team.id;
+    const sellerId = seller.id;
     await raiseInquiry({
       tnc: "",
       remarks,
@@ -136,7 +155,7 @@ export const InquiryPage = () => {
       {user?.team.type === "CLIENT" && (
         <View style={styles.searchBoxContainer}>
           <SearchBox
-            placeholder="Search inquiry external"
+            placeholder={"Search inquiry "}
             setValue={setSearchResult}
             value={searchResult}
           />
@@ -188,9 +207,10 @@ export const InquiryPage = () => {
         </TouchableWithoutFeedback>
 
         {/* Modal content: white section */}
-        <KeyboardAvoidingView 
+        <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={createStyles.modalContainer}>
+          style={createStyles.modalContainer}
+        >
           {/* Your modal content goes here */}
           <View style={createStyles.formHeader}>
             <Text style={createStyles.formHeaderText}>Raise an inquiry</Text>
@@ -311,7 +331,7 @@ const InquiryList = ({
 
         {/* orders */}
         {inquiries.map((inquiry) => (
-          <InquiryCard inquiry={inquiry} key={inquiry.id} filter={filter} />
+          <InquiryCard inquiry={inquiry} key={inquiry.id} />
         ))}
       </GestureHandlerRootView>
     </View>
@@ -320,23 +340,31 @@ const InquiryList = ({
 
 const InquiryCard = ({
   inquiry,
-  filter,
 }: {
   inquiry: RouterOutputs["inquiry"]["list"]["items"][0];
-  filter: string;
 }) => {
   const router = useRouter();
+  const { user } = useUser();
+
+  const formatProducts = (input: string): string => {
+    // Split the input string into an array
+    const entities = input.split(",").map((entity) => entity.trim());
+
+    // Check the number of entities
+    if (entities.length <= 2) {
+      return input; // Return original string if 2 or fewer entities
+    } else {
+      // Return the first two entities and append "& others"
+      return `${entities[0]}, ${entities[1]} & ${entities.length - 2}others`;
+    }
+  };
+
   return (
     <View>
       <View style={orderStyles.orderCardContainer}>
         <View style={orderStyles.orderCard}>
           <View style={orderStyles.innerSection}>
-            <Badge
-              IconName="checkcircleo"
-              badgeText="Quote Received"
-              bg="#f0f9f6"
-              accentColor="#047857"
-            />
+            <BadgeStatus status={inquiry.status} />
             <Icon name="ellipsis-v"></Icon>
           </View>
           <View style={orderStyles.innerSection}>
@@ -348,8 +376,10 @@ const InquiryCard = ({
               <Text style={orderStyles.orderMainText}>{inquiry.id}</Text>
             </View>
             <View style={{ flex: 1, gap: 4 }}>
-              <Text style={orderStyles.orderHeader}>Quantity</Text>
-              <Text style={orderStyles.orderMainText}>-</Text>
+              <Text style={orderStyles.orderHeader}>Products</Text>
+              <Text style={orderStyles.orderMainText}>
+                {formatProducts(inquiry.productNames)}
+              </Text>
             </View>
           </View>
           <View style={orderStyles.innerSectionFlexStart}>
@@ -359,10 +389,14 @@ const InquiryCard = ({
                 {new Date(inquiry.createdAt).toLocaleDateString()}
               </Text>
             </View>
-            <View style={{ flex: 1, gap: 4 }}>
-              <Text style={orderStyles.orderHeader}>Make</Text>
-              <Text style={orderStyles.orderMainText}>-</Text>
-            </View>
+            {user?.team.type !== "CLIENT" && (
+              <View style={{ flex: 1, gap: 4 }}>
+                <Text style={orderStyles.orderHeader}>Client</Text>
+                <Text style={orderStyles.orderMainText}>
+                  {inquiry.buyer.name}
+                </Text>
+              </View>
+            )}
           </View>
         </View>
         <View style={orderStyles.actionContainer}>
@@ -370,7 +404,7 @@ const InquiryCard = ({
             <ActionBadgeMobile
               iconName="open-in-new"
               actionText="View Quote"
-              handleAction={() => router.navigate(`inquiry/${inquiry.id}`)}
+              handleAction={() => router.push(`/inquiry/${inquiry.id}`)}
             />
           )}
           {inquiry.status === "RAISED" && (
@@ -378,7 +412,7 @@ const InquiryCard = ({
               iconName="open-in-new"
               actionText="Send Quote"
               handleAction={() =>
-                router.navigate(`inquiry/sendQuote/${inquiry.id}`)
+                router.push(`/inquiry/sendQuote/${inquiry.id}`)
               }
             />
           )}
@@ -387,7 +421,9 @@ const InquiryCard = ({
             <ActionBadgeMobile
               iconName="open-in-new"
               actionText="View Quote"
-              handleAction={() => router.navigate(`inquiry/${inquiry.id}`)}
+              handleAction={() =>
+                router.push(`../../app/(tabs)/inquiry/${inquiry.id}`)
+              }
             />
           )}
           {/* (filter === "Negotiation" && (

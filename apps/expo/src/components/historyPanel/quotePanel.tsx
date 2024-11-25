@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
 import { Badge } from "../core/badge";
 import type { RouterOutputs } from "@repo/api";
@@ -22,7 +22,13 @@ export const QuotePanel = ({
   setTerms: (terms: string) => void;
 }) => {
   return (
-    <>
+    <View
+      style={{
+        width: "100%",
+        maxWidth: 600,
+        alignSelf: "center",
+      }}
+    >
       {/* map this */}
       {latestQuote?.quoteItems.map((quoteItem) => (
         <QuoteTableList
@@ -44,7 +50,7 @@ export const QuotePanel = ({
           placeholder="Enter remark here..."
         />
       </View>
-    </>
+    </View>
   );
 };
 
@@ -68,6 +74,7 @@ const QuoteTableList = ({
   if (!product) {
     return null;
   }
+
   return (
     <View
       key={quoteItem.productId}
@@ -75,12 +82,14 @@ const QuoteTableList = ({
     >
       <View style={styles.quoteCardHeader}>
         <Text style={styles.quoteCardHeaderText}>{product.name}</Text>
-        <Badge
-          IconName={"checkcircleo"}
-          bg={"#FDF3EA"}
-          accentColor={"#6B4323"}
-          badgeText="Sample requested"
-        />
+        {quoteItem.sampleRequested && (
+          <Badge
+            IconName={"checkcircleo"}
+            bg={"#FDF3EA"}
+            accentColor={"#6B4323"}
+            badgeText="Sample requested"
+          />
+        )}
       </View>
 
       <View style={styles.quoteCardInfo}>
@@ -105,6 +114,7 @@ const QuoteTableList = ({
           placeholder="Enter quote here"
           style={styles.inputForm}
           value={negotiationItem?.price ? negotiationItem.price.toString() : ""}
+          keyboardType="numeric"
           onChangeText={(value) => {
             const newPrice = parseFloat(value);
             console.log("newPrice", newPrice);

@@ -19,7 +19,7 @@ export const InquiryDetailsPage = ({
 
   return (
     <>
-      <Table style={styles.tableContainer}>
+      <Table key={quote?.createdAt} style={styles.tableContainer}>
         <TableHeading style={{ backgroundColor: "#F1F5F9" }}>
           <TableData
             style={{
@@ -124,7 +124,7 @@ const QuoteTableData = ({ quoteItem }: { quoteItem: QuoteItem }) => {
     return null;
   }
   return (
-    <TableRow style={styles.tableRow} id={"1"} key={1}>
+    <TableRow style={styles.tableRow} id={"1"} key={quoteItem.quoteId}>
       <TableData
         style={{
           fontSize: 14,

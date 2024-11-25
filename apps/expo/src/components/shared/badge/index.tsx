@@ -1,57 +1,85 @@
 import { useEffect, useState } from "react";
 import { Badge } from "~/components/core/badge";
 
+type StatusType =
+  | "EXPIRED"
+  | "RAISED"
+  | "REJECTED"
+  | "RECEIVED"
+  | "ACCEPTED"
+  | "PLACED"
+  | "NEGOTIATING";
+
 export const BadgeStatus = ({ status }: { status: string }) => {
-  const [iconName, setIconName] = useState<string>("checkcircleo");
-  const [badgeText, setBadgeText] = useState<string>("Quote Received");
-  const [bg, setBg] = useState<string>("#f0f9f6");
-  const [accentColor, setAccentColor] = useState<string>("#047857");
+  const defaultConfig = {
+    iconName: "checkcircleo",
+    badgeText: "Quote Received",
+    bg: "#f0f9f6",
+    accentColor: "#047857",
+  };
+
+  const [statusConfig, setStatusConfig] = useState(defaultConfig);
+
   useEffect(() => {
-    switch (status) {
-      case "EXPIRED": {
-        setIconName("closecircleo");
-        setBadgeText("Quote expired");
-        setBg("#faf1f2");
-        setAccentColor("#b91c1c");
-        break;
-      }
-      case "RECEIVED": {
-        setIconName("checkcircleo");
-        setBadgeText("Quote received");
-        setBg("#f0f9f6");
-        setAccentColor("#047857");
-        break;
-      }
-      case "PLACED": {
-        setIconName("checkcircleo");
-        setBadgeText("Order placed");
-        setBg("#f1f5f9");
-        setAccentColor("#334155");
-        break;
-      }
-      case "NEGOTIATION": {
-        setIconName("checkcircleo");
-        setBadgeText("Negotiation");
-        setBg("#efebfe");
-        setAccentColor("#21134e");
-        break;
-      }
-      default: {
-        setIconName("checkcircleo");
-        setBadgeText("Quote Received");
-        setBg("#f0f9f6");
-        setAccentColor("#047857");
-        break;
-      }
-    }
+    const statusSettings: Record<StatusType, typeof defaultConfig> = {
+      EXPIRED: {
+        iconName: "closecircleo",
+        badgeText: "Quote expired",
+        bg: "#faf1f2",
+        accentColor: "#b91c1c",
+      },
+      REJECTED: {
+        iconName: "closecircleo",
+        badgeText: "Quote rejected",
+        bg: "#faf1f2",
+        accentColor: "#b91c1c",
+      },
+      RECEIVED: {
+        iconName: "checkcircleo",
+        badgeText: "Quote received",
+        bg: "#f0f9f6",
+        accentColor: "#047857",
+      },
+      ACCEPTED: {
+        iconName: "checkcircleo",
+        badgeText: "Quote accepted",
+        bg: "#f0f9f6",
+        accentColor: "#047857",
+      },
+      PLACED: {
+        iconName: "checkcircleo",
+        badgeText: "Order placed",
+        bg: "#f1f5f9",
+        accentColor: "#334155",
+      },
+      NEGOTIATING: {
+        iconName: "checkcircleo",
+        badgeText: "Negotiation",
+        bg: "#efebfe",
+        accentColor: "#21134e",
+      },
+      RAISED: {
+        iconName: "checkcircleo",
+        badgeText: "Inquiry Raised",
+        bg: "#fceefb",
+        accentColor: "#5e0b5a",
+      },
+    };
+
+    const newConfig = statusSettings[status as StatusType] || defaultConfig;
+    setStatusConfig(newConfig);
   }, [status]);
 
   return (
-    <Badge
-      IconName={iconName}
-      badgeText={badgeText}
-      bg={bg}
-      accentColor={accentColor}
-    />
+    <>
+      {statusConfig.badgeText && (
+        <Badge
+          IconName={statusConfig.iconName}
+          badgeText={statusConfig.badgeText}
+          bg={statusConfig.bg}
+          accentColor={statusConfig.accentColor}
+        />
+      )}
+    </>
   );
 };

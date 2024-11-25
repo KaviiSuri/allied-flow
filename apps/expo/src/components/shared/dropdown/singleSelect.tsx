@@ -34,6 +34,7 @@ interface SingleSelectProps {
   changeLabel?: boolean;
   rightIcon?: ReactNode;
   leftIcon?: ReactNode;
+  typeable?: boolean;
 }
 
 interface MenuItemProps {
@@ -297,5 +298,15 @@ const styles = StyleSheet.create({
     width: 16,
     height: 16,
     marginRight: 10,
+  },
+  searchInput: {
+    padding: 10,
+    borderColor: "#E2E8F0",
+    borderBottomWidth: 1,
+  },
+  noResultsText: {
+    padding: 10,
+    color: "#999",
+    textAlign: "center",
   },
 });

@@ -1,7 +1,7 @@
 import type { TransactionType } from "@repo/db/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { quoteItems, quotes } from "@repo/db/schema";
+import { orderItems, orders, quoteItems, quotes } from "@repo/db/schema";
 import { nanoid } from "nanoid";
 import { eq } from "@repo/db";
 
@@ -62,6 +62,40 @@ const create = async (
       })),
     )
     .returning();
+
+  const createdSamples = await tx
+    .insert(orders)
+    .values({
+      id: nanoid(),
+      inquiryId,
+      quoteId: quote.id,
+      type: "SAMPLE",
+      buyerId: userId,
+      sellerId: teamId,
+      status: "PLACED",
+    })
+    .returning();
+
+  const sampleOrder = createdSamples[0];
+
+  if (!sampleOrder) {
+    throw new TRPCError({
+      message: "Failed to create sample order",
+      code: "INTERNAL_SERVER_ERROR",
+    });
+  }
+
+  const _sampleOrderItems = await tx.insert(orderItems).values(
+    createdQuoteItems.map((quoteItem) => ({
+      orderId: sampleOrder.id,
+      productId: quoteItem.productId,
+      price: quoteItem.price,
+      quantity: quoteItem.quantity,
+      unit: quoteItem.unit,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    })),
+  );
 
   return {
     ...quote,

@@ -20,6 +20,8 @@ import type { RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
 import { useUser } from "~/providers/auth";
 import { useProductList } from "~/hooks/useProductById";
+import { SearchBox } from "../shared/searchComponent";
+import { SearchClientBox } from "../shared/searchComponent/searchClients";
 
 export const InquiryForm = ({
   productRequests,
@@ -49,6 +51,7 @@ export const InquiryForm = ({
       enabled: user?.team.type === "SELLER",
     },
   );
+
   const clientNameOptions = useMemo(() => {
     return (
       clientList?.map((client) => ({
@@ -62,6 +65,8 @@ export const InquiryForm = ({
     if (!user) return;
     if (user.team.type === "CLIENT") setClientId(user.teamId);
   }, [user]);
+
+  const [selectedClient, setSelectedClient] = useState<string>("");
 
   return (
     <View
@@ -84,7 +89,7 @@ export const InquiryForm = ({
         </View>
       )}
       {productRequests.length > 0 &&
-        productRequests.map((product,index) => (
+        productRequests.map((product, index) => (
           <ProductForm
             onDelete={deleteProductRequest}
             onChange={updateProductRequest}
@@ -172,6 +177,13 @@ const ProductForm = ({
     { label: "Millilitre", value: "ml" },
     { label: "Piece", value: "piece" },
   ];
+
+  const [productName, setProductName] = useState<string>("");
+  useEffect(() => {
+    if (!productName) return;
+    const selectedProduct = productList?.find((p) => p.name === productName);
+    setSelectedProduct(selectedProduct ?? null);
+  }, [productName]);
   return (
     <Animated.View
       key={product.productId}
@@ -207,14 +219,19 @@ const ProductForm = ({
               </Text>
             </TouchableOpacity>
           </View>
-          <FormDropDown
-            paddingBottom={false}
-            onValueChange={handleProductChange}
-            value={product.productName}
-            options={productNameOptions}
-            rightIcon={<Icon name="down" />}
-          />
-
+          <View
+            style={{
+              position: "relative",
+              zIndex: 1,
+            }}
+          >
+            <SearchClientBox
+              placeholder="Search product"
+              value={productName}
+              setValue={setProductName}
+              list={productList?.map((product) => product.name)}
+            />
+          </View>
           <FormTextInput
             label="Description"
             placeholder="This is description of the product"
@@ -257,7 +274,7 @@ const ProductForm = ({
                 isNaN(product.quantity)
                   ? "0"
                   : // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-                    product.quantity.toString() ?? "0"
+                    (product.quantity.toString() ?? "0")
               }
               onChangeText={(t) => {
                 const quantity = parseFloat(t);

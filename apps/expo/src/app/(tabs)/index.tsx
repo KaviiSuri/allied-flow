@@ -1,5 +1,5 @@
-import { SafeAreaView, Text } from "react-native";
-import SkeletonLoader from "~/components/shared/skelton";
+import { SafeAreaView } from "react-native";
+import { DashboardPage } from "~/components/dashboard/DashboardPage.web";
 
 export default function Dashboard() {
   return (
@@ -12,7 +12,7 @@ export default function Dashboard() {
         height: "100%",
       }}
     >
-      <Text>Dashboard</Text>
+      <DashboardPage />
       {/* <SkeletonLoader rows={1} columns={1} itemHeight={700} itemWidth={700} /> */}
     </SafeAreaView>
   );

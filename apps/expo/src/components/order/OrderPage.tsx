@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, ScrollView, Pressable } from "react-native";
 import { SearchBox } from "../shared/searchComponent";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { MobileTab } from "../core/mobileTab";
 import { Badge } from "../core/badge";
@@ -66,6 +66,24 @@ export const OrderPage = ({
 
   const [searchResult, setSearchResult] = useState<string>("");
 
+  useEffect(() => {
+    if (data?.pages && data.pages?.length < 2) {
+      if (hasNextPage) {
+        fetchNextPage();
+      }
+    }
+  }, [data]);
+
+  const scrollViewRef = useRef(null);
+
+  const handleScroll = (event: any) => {
+    const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+    const isScrolledToBottom =
+      layoutMeasurement.height + contentOffset.y >= contentSize.height - 20;
+    if (isScrolledToBottom && hasNextPage) {
+      fetchNextPage();
+    }
+  };
   return (
     <View style={styles.container}>
       {/* Fixed SearchBox at the top */}
@@ -91,6 +109,9 @@ export const OrderPage = ({
             styles.orderBodyContainer,
             showHeader && { backgroundColor: "#f9f9f9" },
           ]}
+          ref={scrollViewRef}
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
         >
           <OrderBody
             style={[showHeader && { padding: 16 }]}
@@ -157,7 +178,7 @@ const OrderBody = ({
 
         {/* orders */}
 
-        {orders.map((order,index) => (
+        {orders.map((order, index) => (
           <OrderCard key={order.id} order={order} />
         ))}
       </GestureHandlerRootView>

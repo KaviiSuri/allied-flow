@@ -9,7 +9,6 @@ import {
   View,
 } from "react-native";
 import type { RouterOutputs } from "~/utils/api";
-import { useAbility } from "~/providers/auth";
 import {
   Table,
   TableHeading,
@@ -22,6 +21,7 @@ import { BadgeStatus } from "~/components/shared/badge";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import RightDrawerLayout from "~/components/layouts/RightDrawerLayout/rightDrawerLayout";
 import { ActionBadge } from "~/components/core/actionBadge";
+import { useUser } from "~/providers/auth";
 const windowHeight = Dimensions.get("window").height - 64;
 
 interface IClient {
@@ -36,12 +36,9 @@ interface IClient {
 
 export default function SentInquiries({
   inquiries,
-  currentTab,
 }: {
   inquiries: RouterOutputs["inquiry"]["list"]["items"][0][];
-  currentTab: "All" | "New" | "Sent" | "Negotiation";
 }) {
-  // const ability = useAbility();
   const [quoteVisible, setQuoteVisible] = useState(false);
   const toggleQuoteVisible = () => {
     setQuoteVisible(!quoteVisible);
@@ -51,6 +48,7 @@ export default function SentInquiries({
     console.log(inquiries);
   }, [inquiries]);
 
+  const { user } = useUser();
   const formatProducts = (input: string): string => {
     // Split the input string into an array
     const entities = input.split(",").map((entity) => entity.trim());
@@ -115,9 +113,12 @@ export default function SentInquiries({
             <TableData style={{ fontSize: 12, color: "#475467" }}>
               Date
             </TableData>
-            <TableData style={{ fontSize: 12, color: "#475467" }}>
-              Client Name
-            </TableData>
+
+            {user?.team.type !== "CLIENT" && (
+              <TableData style={{ fontSize: 12, color: "#475467" }}>
+                Client Name
+              </TableData>
+            )}
             <TableData style={{ fontSize: 12, color: "#475467" }}>
               Product Name
             </TableData>
@@ -141,35 +142,38 @@ export default function SentInquiries({
                       {new Date(inquiry.createdAt).toLocaleDateString()}
                       {/* </Text> */}
                     </TableData>
-                    <Pressable
-                      style={{
-                        flex: 1,
-                        paddingHorizontal: 16,
-                        paddingVertical: 14,
-                        flexDirection: "row",
-                        alignItems: "flex-start",
-                        gap: 4,
-                      }}
-                      onPress={() => {
-                        setClientDetailsVisible(true);
-                        setCurrentClientDetails(inquiry.buyer);
-                        console.log(currentClientDetails);
-                      }}
-                    >
-                      <Icon
-                        style={{ paddingTop: 4 }}
-                        name="office-building-outline"
-                      />
-                      <Text
+
+                    {user?.team.type !== "CLIENT" && (
+                      <Pressable
                         style={{
-                          fontFamily: "Avenir",
-                          textDecorationColor: "black",
-                          textDecorationLine: "underline",
+                          flex: 1,
+                          paddingHorizontal: 16,
+                          paddingVertical: 14,
+                          flexDirection: "row",
+                          alignItems: "flex-start",
+                          gap: 4,
+                        }}
+                        onPress={() => {
+                          setClientDetailsVisible(true);
+                          setCurrentClientDetails(inquiry.buyer);
+                          console.log(currentClientDetails);
                         }}
                       >
-                        {inquiry.buyer.name}
-                      </Text>
-                    </Pressable>
+                        <Icon
+                          style={{ paddingTop: 4 }}
+                          name="office-building-outline"
+                        />
+                        <Text
+                          style={{
+                            fontFamily: "Avenir",
+                            textDecorationColor: "black",
+                            textDecorationLine: "underline",
+                          }}
+                        >
+                          {inquiry.buyer.name}
+                        </Text>
+                      </Pressable>
+                    )}
                     <TableData>
                       <Text style={{ fontFamily: "Avenir" }}>
                         {/* {inquiry.productNames} */}
@@ -181,38 +185,41 @@ export default function SentInquiries({
                         iconName="open-in-new"
                         actionText="View Quote"
                         handleAction={() =>
-                          router.navigate(`inquiry/${inquiry.id}`)
+                          router.push(`../(tabs)/inquiry/${inquiry.id}`)
                         }
                       />
                     )}
-                    {inquiry.status === "RAISED" && (
-                      <ActionBadge
-                        iconName="open-in-new"
-                        actionText="Send Quote"
-                        handleAction={() =>
-                          router.navigate(`inquiry/sendQuote/${inquiry.id}`)
-                        }
-                      />
-                    )}
+                    {inquiry.status === "RAISED" &&
+                      (user?.team.type === "CLIENT" ? (
+                        <ActionBadge
+                          iconName="notifications-on"
+                          actionText="Follow Up"
+                          materialIcon={true}
+                          handleAction={() =>
+                            router.push(`../(tabs)/inquiry/${inquiry.id}`)
+                          }
+                        />
+                      ) : (
+                        <ActionBadge
+                          iconName="open-in-new"
+                          actionText="Send Quote"
+                          handleAction={() =>
+                            router.push(
+                              `../(tabs)/inquiry/sendQuote/${inquiry.id}`,
+                            )
+                          }
+                        />
+                      ))}
                     {(inquiry.status === "ACCEPTED" ||
                       inquiry.status === "REJECTED") && (
                       <ActionBadge
                         iconName="open-in-new"
                         actionText="View Quote"
                         handleAction={() =>
-                          router.navigate(`inquiry/${inquiry.id}`)
+                          router.push(`../(tabs)/inquiry/${inquiry.id}`)
                         }
                       />
                     )}
-                    {/*currentTab === "Negotiation" && (
-                      <ActionBadge
-                        iconName="alarm-light-outline"
-                        actionText="Follow Up"
-                        handleAction={() =>
-                          router.navigate(`inquiry/${inquiry.id}`)
-                        }
-                      />
-                    )*/}
                     <TableData>
                       <BadgeStatus status={inquiry.status} />
                     </TableData>

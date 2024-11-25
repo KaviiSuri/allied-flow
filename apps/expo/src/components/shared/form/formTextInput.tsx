@@ -3,7 +3,7 @@ import { View, Text, TextInput } from "react-native";
 import type { TextInputProps, ViewStyle } from "react-native";
 
 interface FormTextInputProps extends TextInputProps {
-  label: string;
+  label?: string;
   placeholder: string;
   numberOfLines?: number;
   style?: ViewStyle;
@@ -17,17 +17,19 @@ function FormTextInput({
 }: FormTextInputProps) {
   return (
     <View style={style}>
-      <Text
-        style={{
-          fontSize: 14,
-          fontWeight: 400,
-          paddingBottom: 8,
-          fontFamily: "Avenir",
-          color: "#475467",
-        }}
-      >
-        {label}
-      </Text>
+      {label && (
+        <Text
+          style={{
+            fontSize: 14,
+            fontWeight: 400,
+            paddingBottom: 8,
+            fontFamily: "Avenir",
+            color: "#475467",
+          }}
+        >
+          {label}
+        </Text>
+      )}
       <TextInput
         style={{
           fontFamily: "Avenir",

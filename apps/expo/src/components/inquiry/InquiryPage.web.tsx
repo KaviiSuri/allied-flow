@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -22,24 +22,27 @@ import { ErrorState } from "../shared/displayStates/ErrorState";
 
 export const InquiryPage = () => {
   const [activeNestedTab, setActiveNestedTab] = useState<
-    "All" | "New" | "Sent" | "Negotiation"
-  >("All");
+    "NEGOTIATING" | "RAISED" | "ACCEPTED" | "REJECTED" | undefined
+  >(undefined);
   const [drawerVisible, setDrawerVisible] = useState(false);
+  const [currentStatus, setCurrentStatus] = useState<
+    "NEGOTIATING" | "RAISED" | "ACCEPTED" | "REJECTED" | undefined
+  >(undefined);
   const [searchResult, setSearchResult] = useState<string>("");
-  // const [filter, setFilter] = useState<string>("All");
   const { user } = useUser();
   const ability = useAbility();
   const utils = api.useUtils();
-  const { data, isError, isLoading } = api.inquiry.list.useInfiniteQuery(
-    {},
-    {
-      getNextPageParam: (lastPage) => {
-        if (lastPage.items.length === 0) return null;
-        return lastPage.nextCursor;
+  const { data, isError, isLoading, hasNextPage, fetchNextPage } =
+    api.inquiry.list.useInfiniteQuery(
+      { status: currentStatus, search: searchResult },
+      {
+        getNextPageParam: (lastPage) => {
+          if (lastPage.items.length === 0) return null;
+          return lastPage.nextCursor;
+        },
+        enabled: ability.can("list", "Inquiry"),
       },
-      enabled: ability.can("list", "Inquiry"),
-    },
-  );
+    );
   const inquiries = useMemo(
     () => data?.pages.flatMap((page) => page.items) ?? [],
     [data],
@@ -105,7 +108,9 @@ export const InquiryPage = () => {
     if (!seller) {
       return;
     }
-    const sellerId = user.team.id;
+
+    const sellerId = seller.id;
+
     await raiseInquiry({
       tnc: "",
       remarks,
@@ -120,15 +125,40 @@ export const InquiryPage = () => {
   };
 
   const renderNestedScreen = () => {
-    return <SentInquiries currentTab={activeNestedTab} inquiries={inquiries} />;
+    return <SentInquiries inquiries={inquiries} />;
   };
 
   useEffect(() => {
-    console.log(isLoading, isError, "Loading and Error");
-  }, [isError, isLoading]);
+    setCurrentStatus(activeNestedTab);
+  }, [activeNestedTab]);
+
+  useEffect(() => {
+    if (data?.pages && data.pages?.length < 2) {
+      if (hasNextPage) {
+        fetchNextPage();
+      }
+    }
+  }, [data]);
+
+  const scrollViewRef = useRef(null);
+
+  const handleScroll = (event: any) => {
+    const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+    const isScrolledToBottom =
+      layoutMeasurement.height + contentOffset.y >= contentSize.height - 20;
+    if (isScrolledToBottom && hasNextPage) {
+      fetchNextPage();
+    }
+  };
+
   return (
     <View>
-      <ScrollView style={{ flex: 1, backgroundColor: "#f9f9f9" }}>
+      <ScrollView
+        style={{ flex: 1, backgroundColor: "#f9f9f9" }}
+        ref={scrollViewRef}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+      >
         <CreateInquiryForm
           open={drawerVisible}
           toggleOpen={toggleDrawer}
@@ -157,23 +187,23 @@ export const InquiryPage = () => {
                   paddingVertical: 12,
                   paddingHorizontal: 4,
                 },
-                activeNestedTab === "All" && {
+                activeNestedTab === undefined && {
                   borderBottomWidth: 2,
                   borderColor: "#2F80F5",
                 },
               ]}
-              onPress={() => setActiveNestedTab("All")}
+              onPress={() => setActiveNestedTab(undefined)}
             >
               <Text
                 style={{
                   fontFamily: "Avenir",
-                  color: activeNestedTab == "All" ? "#475569" : "#64748B",
+                  color: activeNestedTab === undefined ? "#475569" : "#64748B",
                   fontSize: 16,
                   fontWeight: 400,
                   marginHorizontal: 6,
                 }}
               >
-                All
+                All {user?.team?.type === "CLIENT" ? "Inquiries" : ""}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -182,23 +212,23 @@ export const InquiryPage = () => {
                   paddingVertical: 12,
                   paddingHorizontal: 4,
                 },
-                activeNestedTab === "New" && {
+                activeNestedTab === "RAISED" && {
                   borderBottomWidth: 2,
                   borderColor: "#2F80F5",
                 },
               ]}
-              onPress={() => setActiveNestedTab("New")}
+              onPress={() => setActiveNestedTab("RAISED")}
             >
               <Text
                 style={{
                   fontFamily: "Avenir",
-                  color: activeNestedTab == "New" ? "#475569" : "#64748B",
+                  color: activeNestedTab === "RAISED" ? "#475569" : "#64748B",
                   fontSize: 16,
                   fontWeight: 400,
                   marginHorizontal: 6,
                 }}
               >
-                New
+                {user?.team?.type === "CLIENT" ? "Inquiry Raised" : "New"}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -207,49 +237,76 @@ export const InquiryPage = () => {
                   paddingVertical: 12,
                   paddingHorizontal: 4,
                 },
-                activeNestedTab === "Sent" && {
+                activeNestedTab === "NEGOTIATING" && {
                   borderBottomWidth: 2,
                   borderColor: "#2F80F5",
                 },
               ]}
-              onPress={() => setActiveNestedTab("Sent")}
-            >
-              <Text
-                style={{
-                  fontFamily: "Avenir",
-                  color: activeNestedTab == "Sent" ? "#475569" : "#64748B",
-                  fontSize: 16,
-                  fontWeight: 400,
-                  marginHorizontal: 6,
-                }}
-              >
-                Sent
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                {
-                  paddingVertical: 12,
-                  paddingHorizontal: 4,
-                },
-                activeNestedTab === "Negotiation" && {
-                  borderBottomWidth: 2,
-                  borderColor: "#2F80F5",
-                },
-              ]}
-              onPress={() => setActiveNestedTab("Negotiation")}
+              onPress={() => setActiveNestedTab("NEGOTIATING")}
             >
               <Text
                 style={{
                   fontFamily: "Avenir",
                   color:
-                    activeNestedTab == "Negotiation" ? "#475569" : "#64748B",
+                    activeNestedTab == "NEGOTIATING" ? "#475569" : "#64748B",
                   fontSize: 16,
                   fontWeight: 400,
                   marginHorizontal: 6,
                 }}
               >
                 Negotiation
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                {
+                  paddingVertical: 12,
+                  paddingHorizontal: 4,
+                },
+                activeNestedTab === "ACCEPTED" && {
+                  borderBottomWidth: 2,
+                  borderColor: "#2F80F5",
+                },
+              ]}
+              onPress={() => setActiveNestedTab("ACCEPTED")}
+            >
+              <Text
+                style={{
+                  fontFamily: "Avenir",
+                  color: activeNestedTab == "ACCEPTED" ? "#475569" : "#64748B",
+                  fontSize: 16,
+                  fontWeight: 400,
+                  marginHorizontal: 6,
+                }}
+              >
+                {user?.team?.type === "CLIENT" ? "Order Placed" : "Accepted"}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                {
+                  paddingVertical: 12,
+                  paddingHorizontal: 4,
+                },
+                activeNestedTab === "REJECTED" && {
+                  borderBottomWidth: 2,
+                  borderColor: "#2F80F5",
+                },
+              ]}
+              onPress={() => setActiveNestedTab("REJECTED")}
+            >
+              <Text
+                style={{
+                  fontFamily: "Avenir",
+                  color: activeNestedTab == "REJECTED" ? "#475569" : "#64748B",
+                  fontSize: 16,
+                  fontWeight: 400,
+                  marginHorizontal: 6,
+                }}
+              >
+                {user?.team?.type === "CLIENT"
+                  ? "Inquiry Rejected"
+                  : "Rejected"}
               </Text>
             </TouchableOpacity>
           </View>
@@ -262,7 +319,7 @@ export const InquiryPage = () => {
               }}
             >
               <SearchBox
-                placeholder="Search inquiry external"
+                placeholder="Search by products"
                 setValue={setSearchResult}
                 value={searchResult}
               />

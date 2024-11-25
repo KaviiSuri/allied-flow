@@ -14,7 +14,7 @@ import { MenuItem } from "./shared/dropdown/multiSelect";
 
 export const Logout: React.FC = () => {
   const [logout, _setLogout] = useState("");
-  const { signOut } = useLogto();
+  const { signOut, client } = useLogto();
 
   const handleClick = () => {
     /* empty */

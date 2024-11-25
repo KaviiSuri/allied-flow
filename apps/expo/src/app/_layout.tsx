@@ -39,7 +39,7 @@ export default function RootLayout() {
       <TRPCProvider>
         <Stack
           screenOptions={{
-            headerShown: false,
+            headerShown: true,
           }}
         >
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />

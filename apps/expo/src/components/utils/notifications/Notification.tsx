@@ -232,6 +232,7 @@ function NotificationContent(props: NotificationProps) {
 function Notification(props: NotificationProps) {
   return (
     <View
+      key={props.id}
       style={{
         flexDirection: "row",
         paddingHorizontal: 16,

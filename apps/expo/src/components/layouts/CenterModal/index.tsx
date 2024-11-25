@@ -8,6 +8,21 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/Octicons";
 import { PrimaryButton, SecondaryButton } from "~/components/core/button";
+import { useUser } from "~/providers/auth";
+
+const formatTime = (time: string | undefined) => {
+  if (!time) return "2023-06-14 12:00 PM"; // Default date if time is undefined
+
+  const date = new Date(time);
+  return date.toLocaleString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+};
 
 export const CenterModalComponent = ({
   visible,
@@ -16,6 +31,11 @@ export const CenterModalComponent = ({
   onUpdateRequest,
   onAcceptRequest,
   onRejectRequest,
+  time,
+  isClient,
+  createdByClient,
+  buyerName,
+  updateQuoteActive,
 }: {
   visible: boolean;
   setVisible: React.Dispatch<React.SetStateAction<boolean>>;
@@ -23,6 +43,11 @@ export const CenterModalComponent = ({
   onUpdateRequest: () => void;
   onAcceptRequest: () => void;
   onRejectRequest: () => void;
+  time: string | undefined;
+  isClient: boolean;
+  createdByClient: boolean;
+  buyerName: string;
+  updateQuoteActive: boolean;
 }) => {
   return (
     <Modal
@@ -49,7 +74,9 @@ export const CenterModalComponent = ({
                       fontWeight: 600,
                     }}
                   >
-                    Requested a price update
+                    {isClient
+                      ? "AACIPL requested a price update"
+                      : `${buyerName} requested a price update`}
                   </Text>
                   <Text
                     style={{
@@ -59,7 +86,7 @@ export const CenterModalComponent = ({
                       color: "#64748B",
                     }}
                   >
-                    2023-06-14 12:00 PM
+                    {formatTime(time)}
                   </Text>
                 </View>
               </View>
@@ -81,10 +108,12 @@ export const CenterModalComponent = ({
                     text="Update Request"
                     onPress={onUpdateRequest}
                   />
-                  <PrimaryButton
-                    text="Accept Request"
-                    onPress={onAcceptRequest}
-                  />
+                  {!updateQuoteActive && (
+                    <PrimaryButton
+                      text="Accept Request"
+                      onPress={onAcceptRequest}
+                    />
+                  )}
                 </View>
               </View>
             </View>

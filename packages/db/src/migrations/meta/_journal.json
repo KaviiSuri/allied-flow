@@ -22,6 +22,13 @@
       "when": 1726405907013,
       "tag": "0002_clever_starbolt",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1731567776576,
+      "tag": "0003_many_hellcat",
+      "breakpoints": true
     }
   ]
 }

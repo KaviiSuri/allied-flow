@@ -23,6 +23,7 @@ import {
   TableRow,
 } from "~/components/shared/table";
 import { useProductById } from "~/hooks/useProductById";
+import { useUser } from "~/providers/auth";
 import type { RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
 
@@ -51,6 +52,9 @@ export default function InquiriesDetails() {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [activeNestedTab, setActiveNestedTab] = useState("Details");
   const [negotiationVisible, setNegotiationVisible] = useState(false);
+  const [createdBy, setCreatedBy] = useState("SELLER");
+  const [currentUser, setCurrentUser] = useState("SELLER");
+  const [updateQuoteActive, setUpdateQuoteActive] = useState(false);
 
   const [negotiatedItems, setNegotiatedItems] = useState<QuoteItemMap>({});
 
@@ -82,6 +86,10 @@ export default function InquiriesDetails() {
     });
 
   const handleNegotiate = () => {
+    if (!updateQuoteActive) {
+      setUpdateQuoteActive(true);
+      return;
+    }
     console.log("negotiatedItems", negotiatedItems);
     if (isPending || !data) {
       return;
@@ -122,10 +130,64 @@ export default function InquiriesDetails() {
       type: "REGULAR",
     });
   };
+
+  const { mutate: rejectInquiry } = api.inquiry.reject.useMutation({
+    onSuccess: () => {
+      Toast.show({
+        type: "success",
+        text1: "Inquiry Rejected",
+      });
+      utils.inquiry.getDetails.invalidate({
+        inquiryId: inquiryNumber as string,
+      });
+    },
+  });
+
   const handleCancel = () => {
+    if (!data?.inquiry || !data.latestQuote || isFinalized) {
+      return;
+    }
     setNegotiatedItems({});
     setNegotiationVisible(false);
+    rejectInquiry({ inquiryId: data.inquiry.id, quoteId: data.latestQuote.id });
   };
+
+  const { user } = useUser();
+  useEffect(() => {
+    if (data && data?.latestQuote?.createdByTeam) {
+      if (data.latestQuote.createdByTeam === "ADMIN") {
+        setCreatedBy("SELLER");
+      } else {
+        setCreatedBy("CLIENT");
+      }
+    }
+
+    if (user && user.team.type) {
+      if (user.team.type === "SELLER") {
+        setCurrentUser("SELLER");
+      } else {
+        setCurrentUser("CLIENT");
+      }
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (data && data?.latestQuote?.createdBy) {
+      if (currentUser !== createdBy) {
+        setNegotiationVisible(true);
+      } else {
+        setNegotiationVisible(false);
+      }
+    }
+    console.log(
+      currentUser,
+      createdBy,
+      data?.latestQuote?.createdByTeam,
+      user?.team.type,
+      "DATA HERE",
+    );
+    console.log(data, "DATA HERE");
+  }, [data, createdBy, currentUser]);
 
   const renderNestedScreen = () => {
     switch (activeNestedTab) {
@@ -172,11 +234,17 @@ export default function InquiriesDetails() {
         onUpdateRequest={handleNegotiate}
         onAcceptRequest={handleOrder}
         onRejectRequest={handleCancel}
+        time={data?.latestQuote?.createdAt}
+        isClient={currentUser === "CLIENT"}
+        createdByClient={createdBy === "CLIENT"}
+        buyerName={data?.buyerTeam !== undefined ? data?.buyerTeam.name : ""}
+        updateQuoteActive={updateQuoteActive}
       >
         <NegotiationTable
           quoteItems={data?.latestQuote?.quoteItems ?? []}
           negotiationItems={negotiatedItems}
           handleQuoteItemUpdate={handleQuoteItemUpdate}
+          updateQuoteActive={updateQuoteActive}
         />
         <FormTextInput label="Remarks" placeholder="Enter remarks here" />
       </CenterModalComponent>
@@ -219,24 +287,27 @@ export default function InquiriesDetails() {
                 Sample
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={
-                activeNestedTab === "Order" ? styles.activeTab : styles.tab
-              }
-              onPress={() => setActiveNestedTab("Order")}
-            >
-              <Text
-                style={{
-                  fontFamily: "Avenir",
-                  color: activeNestedTab == "Order" ? "#475569" : "#64748B",
-                  fontSize: 16,
-                  fontWeight: 400,
-                  marginHorizontal: 6,
-                }}
+
+            {data?.inquiry.status === "ACCEPTED" && (
+              <TouchableOpacity
+                style={
+                  activeNestedTab === "Order" ? styles.activeTab : styles.tab
+                }
+                onPress={() => setActiveNestedTab("Order")}
               >
-                Order
-              </Text>
-            </TouchableOpacity>
+                <Text
+                  style={{
+                    fontFamily: "Avenir",
+                    color: activeNestedTab == "Order" ? "#475569" : "#64748B",
+                    fontSize: 16,
+                    fontWeight: 400,
+                    marginHorizontal: 6,
+                  }}
+                >
+                  Order
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
 
           <View
@@ -247,8 +318,9 @@ export default function InquiriesDetails() {
             }}
           >
             <SecondaryButton
-              text="Update Quote"
+              text={user?.team.type === "CLIENT" ? "Negotiate" : "Update Quote"}
               onPress={() => {
+                setUpdateQuoteActive(true);
                 setNegotiationVisible(true);
               }}
             />
@@ -377,10 +449,12 @@ const NegotiationTable = ({
   negotiationItems,
   quoteItems,
   handleQuoteItemUpdate,
+  updateQuoteActive,
 }: {
   negotiationItems: QuoteItemMap;
   quoteItems: QuoteItem[];
   handleQuoteItemUpdate: (quoteItem: QuoteItem) => void;
+  updateQuoteActive: boolean;
 }) => {
   return (
     <Table style={styles.tableContainer}>
@@ -419,7 +493,7 @@ const NegotiationTable = ({
             borderColor: "#DCDFEA",
           }}
         >
-          Target Price
+          {updateQuoteActive ? "Target Price" : "Previous Price"}
         </TableData>
         <TableData
           style={{
@@ -431,7 +505,7 @@ const NegotiationTable = ({
             borderColor: "#DCDFEA",
           }}
         >
-          Revised Price
+          {updateQuoteActive ? "Target Price" : "Revised Price"}
         </TableData>
       </TableHeading>
       {/* random data  */}
@@ -442,6 +516,7 @@ const NegotiationTable = ({
           quoteItem={quoteItem}
           negotiatedItem={negotiationItems[quoteItem.productId]}
           updateQuoteItem={handleQuoteItemUpdate}
+          updateQuoteActive={updateQuoteActive}
         />
       ))}
     </Table>
@@ -452,10 +527,12 @@ function ProductRow({
   quoteItem,
   negotiatedItem,
   updateQuoteItem,
+  updateQuoteActive,
 }: {
   quoteItem: QuoteItem;
   negotiatedItem?: QuoteItem;
   updateQuoteItem: (quoteItem: QuoteItem) => void;
+  updateQuoteActive: boolean;
 }) {
   const { product } = useProductById(quoteItem.productId);
   if (!product) {
@@ -497,7 +574,9 @@ function ProductRow({
           borderColor: "#DCDFEA",
         }}
       >
-        Rs {quoteItem.price}
+        {updateQuoteActive
+          ? "Rs " + quoteItem.price
+          : "Rs " + quoteItem.prevPrice}
       </TableData>
       <TableData
         style={{
@@ -509,25 +588,32 @@ function ProductRow({
           borderColor: "#DCDFEA",
         }}
       >
-        <FormTextInput
-          placeholder="Price"
-          label=""
-          value={negotiatedItem?.price ? negotiatedItem.price.toString() : ""}
-          style={{
-            maxWidth: 100,
-          }}
-          onChangeText={(value) => {
-            const newPrice = parseFloat(value);
-            if (isNaN(newPrice)) {
-              return;
-            }
-            updateQuoteItem({
-              ...quoteItem,
-              ...negotiatedItem,
-              price: newPrice,
-            });
-          }}
-        />
+        {updateQuoteActive ? (
+          <FormTextInput
+            placeholder="Price"
+            label=""
+            value={negotiatedItem?.price ? negotiatedItem.price.toString() : ""}
+            keyboardType="numeric"
+            style={{
+              maxWidth: 100,
+              padding: 0,
+              borderWidth: 0,
+            }}
+            onChangeText={(value) => {
+              const newPrice = parseFloat(value);
+              if (isNaN(newPrice)) {
+                return;
+              }
+              updateQuoteItem({
+                ...quoteItem,
+                ...negotiatedItem,
+                price: newPrice,
+              });
+            }}
+          />
+        ) : (
+          "Rs " + quoteItem.price
+        )}
       </TableData>
     </TableRow>
   );

@@ -115,9 +115,25 @@ export default function InquiriesDetails() {
       type: "REGULAR",
     });
   };
+  const { mutate: rejectInquiry } = api.inquiry.reject.useMutation({
+    onSuccess: () => {
+      Toast.show({
+        type: "success",
+        text1: "Inquiry Rejected",
+      });
+      utils.inquiry.getDetails.invalidate({
+        inquiryId: inquiryNumber as string,
+      });
+    },
+  });
+
   const handleCancel = () => {
+    if (!data?.inquiry || !data.latestQuote || isFinalized) {
+      return;
+    }
     setNegotiatedItems({});
     setOpenCreateForm(false);
+    rejectInquiry({ inquiryId: data.inquiry.id, quoteId: data.latestQuote.id });
   };
 
   const renderNestedScreen = () => {

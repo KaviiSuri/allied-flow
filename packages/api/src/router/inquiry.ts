@@ -60,6 +60,8 @@ export const inquiryRouter = {
           input.productRequests,
           ctx.user.id,
           ctx.user.teamId,
+            input.buyerId,
+            input.sellerId,
         );
 
         return inquiry;

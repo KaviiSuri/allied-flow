@@ -10,7 +10,6 @@ import Icon from "react-native-vector-icons/Octicons";
 import { PrimaryButton, SecondaryButton } from "~/components/core/button";
 import { useUser } from "~/providers/auth";
 
-
 const formatTime = (time: string | undefined) => {
   if (!time) return "2023-06-14 12:00 PM"; // Default date if time is undefined
 
@@ -75,7 +74,9 @@ export const CenterModalComponent = ({
                       fontWeight: 600,
                     }}
                   >
-                    {isClient ? "AACIPL requested a price update" : `${buyerName} requested a price update`}
+                    {isClient
+                      ? "AACIPL requested a price update"
+                      : `${buyerName} requested a price update`}
                   </Text>
                   <Text
                     style={{

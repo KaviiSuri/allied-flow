@@ -39,11 +39,13 @@ export const ActionBadge = ({
         {actionText}
       </Text>
       {materialIcon ? (
-        <MaterialIcon style={{ paddingTop: 4, color: "#2f80f5" }} name={iconName} />
+        <MaterialIcon
+          style={{ paddingTop: 4, color: "#2f80f5" }}
+          name={iconName}
+        />
       ) : (
         <Icon style={{ paddingTop: 4, color: "#2f80f5" }} name={iconName} />
-      )
-      }
+      )}
     </Pressable>
   );
 };

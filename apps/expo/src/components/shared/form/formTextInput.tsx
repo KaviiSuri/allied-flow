@@ -29,8 +29,7 @@ function FormTextInput({
         >
           {label}
         </Text>
-      )
-      }
+      )}
       <TextInput
         style={{
           fontFamily: "Avenir",

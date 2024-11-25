@@ -200,7 +200,9 @@ export default function InquiriesDetails() {
             </Text>
           )}
           <View style={{ width: 118 }}>
-            <BadgeStatus status={data?.inquiry.status ? data.inquiry.status : "RAISED"} />
+            <BadgeStatus
+              status={data?.inquiry.status ? data.inquiry.status : "RAISED"}
+            />
           </View>
         </View>
         <View
@@ -373,9 +375,11 @@ export const RemarksForm = ({
   setRemark: React.Dispatch<React.SetStateAction<string>>;
 }) => {
   return (
-    <View style={{
-      marginBottom: 100,
-    }}>
+    <View
+      style={{
+        marginBottom: 100,
+      }}
+    >
       <View style={orderStyles.orderCardContainer}>
         <View style={orderStyles.orderCard}>
           <View style={orderStyles.innerSection}>

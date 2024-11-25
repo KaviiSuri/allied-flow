@@ -26,7 +26,7 @@ export const SearchClientBox = ({
     setValue(text);
     if (text && list.length > 0) {
       const matches = list.filter((item) =>
-        item.toLowerCase().includes(text.toLowerCase())
+        item.toLowerCase().includes(text.toLowerCase()),
       );
       setFilteredItems(matches);
     } else {
@@ -42,7 +42,6 @@ export const SearchClientBox = ({
     setValue(item);
     setFilteredItems([]);
   };
-
 
   const handleBlur = () => {
     blurTimeout.current = setTimeout(() => {
@@ -62,7 +61,9 @@ export const SearchClientBox = ({
           onBlur={() => {
             handleBlur();
           }}
-          onFocus={() => {handleSearch(value);}}
+          onFocus={() => {
+            handleSearch(value);
+          }}
         />
       </View>
 

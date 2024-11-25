@@ -114,12 +114,11 @@ export default function SentInquiries({
               Date
             </TableData>
 
-            {
-              user?.team.type !== "CLIENT" && (
-                <TableData style={{ fontSize: 12, color: "#475467" }}>
-                  Client Name
-                </TableData>
-              )}
+            {user?.team.type !== "CLIENT" && (
+              <TableData style={{ fontSize: 12, color: "#475467" }}>
+                Client Name
+              </TableData>
+            )}
             <TableData style={{ fontSize: 12, color: "#475467" }}>
               Product Name
             </TableData>
@@ -144,38 +143,37 @@ export default function SentInquiries({
                       {/* </Text> */}
                     </TableData>
 
-                    {
-                      user?.team.type !== "CLIENT" && (
-                        <Pressable
+                    {user?.team.type !== "CLIENT" && (
+                      <Pressable
+                        style={{
+                          flex: 1,
+                          paddingHorizontal: 16,
+                          paddingVertical: 14,
+                          flexDirection: "row",
+                          alignItems: "flex-start",
+                          gap: 4,
+                        }}
+                        onPress={() => {
+                          setClientDetailsVisible(true);
+                          setCurrentClientDetails(inquiry.buyer);
+                          console.log(currentClientDetails);
+                        }}
+                      >
+                        <Icon
+                          style={{ paddingTop: 4 }}
+                          name="office-building-outline"
+                        />
+                        <Text
                           style={{
-                            flex: 1,
-                            paddingHorizontal: 16,
-                            paddingVertical: 14,
-                            flexDirection: "row",
-                            alignItems: "flex-start",
-                            gap: 4,
-                          }}
-                          onPress={() => {
-                            setClientDetailsVisible(true);
-                            setCurrentClientDetails(inquiry.buyer);
-                            console.log(currentClientDetails);
+                            fontFamily: "Avenir",
+                            textDecorationColor: "black",
+                            textDecorationLine: "underline",
                           }}
                         >
-                          <Icon
-                            style={{ paddingTop: 4 }}
-                            name="office-building-outline"
-                          />
-                          <Text
-                            style={{
-                              fontFamily: "Avenir",
-                              textDecorationColor: "black",
-                              textDecorationLine: "underline",
-                            }}
-                          >
-                            {inquiry.buyer.name}
-                          </Text>
-                        </Pressable>
-                      )}
+                          {inquiry.buyer.name}
+                        </Text>
+                      </Pressable>
+                    )}
                     <TableData>
                       <Text style={{ fontFamily: "Avenir" }}>
                         {/* {inquiry.productNames} */}
@@ -191,8 +189,8 @@ export default function SentInquiries({
                         }
                       />
                     )}
-                    {inquiry.status === "RAISED" && (
-                      user?.team.type === "CLIENT" ? (
+                    {inquiry.status === "RAISED" &&
+                      (user?.team.type === "CLIENT" ? (
                         <ActionBadge
                           iconName="notifications-on"
                           actionText="Follow Up"
@@ -206,21 +204,22 @@ export default function SentInquiries({
                           iconName="open-in-new"
                           actionText="Send Quote"
                           handleAction={() =>
-                            router.push(`../(tabs)/inquiry/sendQuote/${inquiry.id}`)
+                            router.push(
+                              `../(tabs)/inquiry/sendQuote/${inquiry.id}`,
+                            )
                           }
                         />
-                      )
-                    )}
+                      ))}
                     {(inquiry.status === "ACCEPTED" ||
                       inquiry.status === "REJECTED") && (
-                        <ActionBadge
-                          iconName="open-in-new"
-                          actionText="View Quote"
-                          handleAction={() =>
-                            router.push(`../(tabs)/inquiry/${inquiry.id}`)
-                          }
-                        />
-                      )}
+                      <ActionBadge
+                        iconName="open-in-new"
+                        actionText="View Quote"
+                        handleAction={() =>
+                          router.push(`../(tabs)/inquiry/${inquiry.id}`)
+                        }
+                      />
+                    )}
                     <TableData>
                       <BadgeStatus status={inquiry.status} />
                     </TableData>

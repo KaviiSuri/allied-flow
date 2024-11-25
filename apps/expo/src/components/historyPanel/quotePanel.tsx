@@ -22,11 +22,13 @@ export const QuotePanel = ({
   setTerms: (terms: string) => void;
 }) => {
   return (
-    <View style={{
-      width: "100%",
-      maxWidth: 600,
-      alignSelf: "center",
-    }}>
+    <View
+      style={{
+        width: "100%",
+        maxWidth: 600,
+        alignSelf: "center",
+      }}
+    >
       {/* map this */}
       {latestQuote?.quoteItems.map((quoteItem) => (
         <QuoteTableList

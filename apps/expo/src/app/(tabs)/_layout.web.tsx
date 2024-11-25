@@ -13,10 +13,7 @@ import { useLogto } from "@logto/rn";
 import { Redirect, useRouter } from "expo-router";
 import { Logout } from "~/components/Logout";
 import { logtoService } from "~/config/logto";
-import AuthProvider, {
-  AuthConsumer,
-  useAbility,
-} from "~/providers/auth";
+import AuthProvider, { AuthConsumer, useAbility } from "~/providers/auth";
 import DashboardIcon from "~/app/assets/images/dashboard-icon.png";
 import NotificationButton from "~/components/utils/notifications/NotificationButton";
 import { dummyNotificationData } from "./notifications";
@@ -91,8 +88,7 @@ export default function WebLayout() {
                   console.log(el, ability, router, "EL");
                   return (
                     <>
-                      <View style={{ marginLeft: 24 }}>
-                      </View>
+                      <View style={{ marginLeft: 24 }}></View>
                     </>
                   );
                 },
@@ -127,8 +123,8 @@ export default function WebLayout() {
                         // @ts-expect-error types broken here
                         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                         !ability.can(drawer.action, drawer.subject) && {
-                        display: "none",
-                      }),
+                          display: "none",
+                        }),
                       ...(drawer.hideDesktop && {
                         display: "none",
                       }),

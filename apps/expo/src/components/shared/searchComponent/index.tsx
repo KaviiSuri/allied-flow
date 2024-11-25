@@ -1,4 +1,11 @@
-import { StyleSheet, TextInput, View, FlatList, Text, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  TextInput,
+  View,
+  FlatList,
+  Text,
+  TouchableOpacity,
+} from "react-native";
 import Icon from "react-native-vector-icons/AntDesign";
 import { useState } from "react";
 
@@ -19,8 +26,8 @@ export const SearchBox = ({
     setValue(text);
     if (text && list.length > 0) {
       // Filter list only if it has items
-      const matches = list.filter(item =>
-        item.toLowerCase().includes(text.toLowerCase())
+      const matches = list.filter((item) =>
+        item.toLowerCase().includes(text.toLowerCase()),
       );
       setFilteredItems(matches);
     } else {

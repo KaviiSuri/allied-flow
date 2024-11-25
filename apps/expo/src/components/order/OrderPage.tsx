@@ -66,21 +66,20 @@ export const OrderPage = ({
 
   const [searchResult, setSearchResult] = useState<string>("");
 
-
   useEffect(() => {
     if (data?.pages && data.pages?.length < 2) {
       if (hasNextPage) {
         fetchNextPage();
       }
     }
-  }, [data])
-
+  }, [data]);
 
   const scrollViewRef = useRef(null);
 
   const handleScroll = (event: any) => {
     const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
-    const isScrolledToBottom = layoutMeasurement.height + contentOffset.y >= contentSize.height - 20;
+    const isScrolledToBottom =
+      layoutMeasurement.height + contentOffset.y >= contentSize.height - 20;
     if (isScrolledToBottom && hasNextPage) {
       fetchNextPage();
     }

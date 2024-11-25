@@ -36,7 +36,9 @@ export const InquiryPage = () => {
   const [searchResult, setSearchResult] = useState<string>("");
   const [filter, setFilter] = useState<string>("All");
   const [openCreateForm, setOpenCreateForm] = useState<boolean>(false);
-  const [activeNestedTab, setActiveNestedTab] = useState<"NEGOTIATING" | "RAISED" | "ACCEPTED" | "REJECTED" | undefined>(undefined);
+  const [activeNestedTab, setActiveNestedTab] = useState<
+    "NEGOTIATING" | "RAISED" | "ACCEPTED" | "REJECTED" | undefined
+  >(undefined);
   const { user } = useUser();
   const ability = useAbility();
   const utils = api.useUtils();
@@ -105,9 +107,9 @@ export const InquiryPage = () => {
       productRequests.map((product) =>
         product.id === productRequest.id
           ? {
-            ...product,
-            ...productRequest,
-          }
+              ...product,
+              ...productRequest,
+            }
           : product,
       ),
     );
@@ -362,9 +364,7 @@ const InquiryCard = ({
       <View style={orderStyles.orderCardContainer}>
         <View style={orderStyles.orderCard}>
           <View style={orderStyles.innerSection}>
-            <BadgeStatus
-              status={inquiry.status}
-            />
+            <BadgeStatus status={inquiry.status} />
             <Icon name="ellipsis-v"></Icon>
           </View>
           <View style={orderStyles.innerSection}>
@@ -389,16 +389,14 @@ const InquiryCard = ({
                 {new Date(inquiry.createdAt).toLocaleDateString()}
               </Text>
             </View>
-            {
-              user?.team.type !== "CLIENT" && (
-                <View style={{ flex: 1, gap: 4 }}>
-                  <Text style={orderStyles.orderHeader}>Client</Text>
-                  <Text style={orderStyles.orderMainText}>
-                    {inquiry.buyer.name}
-                  </Text>
-                </View>
-              )
-            }
+            {user?.team.type !== "CLIENT" && (
+              <View style={{ flex: 1, gap: 4 }}>
+                <Text style={orderStyles.orderHeader}>Client</Text>
+                <Text style={orderStyles.orderMainText}>
+                  {inquiry.buyer.name}
+                </Text>
+              </View>
+            )}
           </View>
         </View>
         <View style={orderStyles.actionContainer}>
@@ -423,7 +421,9 @@ const InquiryCard = ({
             <ActionBadgeMobile
               iconName="open-in-new"
               actionText="View Quote"
-              handleAction={() => router.push(`../../app/(tabs)/inquiry/${inquiry.id}`)}
+              handleAction={() =>
+                router.push(`../../app/(tabs)/inquiry/${inquiry.id}`)
+              }
             />
           )}
           {/* (filter === "Negotiation" && (

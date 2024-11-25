@@ -1,7 +1,14 @@
 import { useEffect, useState } from "react";
 import { Badge } from "~/components/core/badge";
 
-type StatusType = "EXPIRED" | "RAISED" | "REJECTED" | "RECEIVED" | "ACCEPTED" | "PLACED" | "NEGOTIATING";
+type StatusType =
+  | "EXPIRED"
+  | "RAISED"
+  | "REJECTED"
+  | "RECEIVED"
+  | "ACCEPTED"
+  | "PLACED"
+  | "NEGOTIATING";
 
 export const BadgeStatus = ({ status }: { status: string }) => {
   const defaultConfig = {
@@ -56,7 +63,7 @@ export const BadgeStatus = ({ status }: { status: string }) => {
         badgeText: "Inquiry Raised",
         bg: "#fceefb",
         accentColor: "#5e0b5a",
-      }
+      },
     };
 
     const newConfig = statusSettings[status as StatusType] || defaultConfig;
@@ -65,14 +72,14 @@ export const BadgeStatus = ({ status }: { status: string }) => {
 
   return (
     <>
-      {statusConfig.badgeText &&
+      {statusConfig.badgeText && (
         <Badge
           IconName={statusConfig.iconName}
           badgeText={statusConfig.badgeText}
           bg={statusConfig.bg}
           accentColor={statusConfig.accentColor}
         />
-      }
+      )}
     </>
   );
 };

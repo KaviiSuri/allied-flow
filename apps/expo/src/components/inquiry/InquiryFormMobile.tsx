@@ -68,7 +68,6 @@ export const InquiryForm = ({
 
   const [selectedClient, setSelectedClient] = useState<string>("");
 
-
   return (
     <View
       style={{
@@ -90,7 +89,7 @@ export const InquiryForm = ({
         </View>
       )}
       {productRequests.length > 0 &&
-        productRequests.map((product,index) => (
+        productRequests.map((product, index) => (
           <ProductForm
             onDelete={deleteProductRequest}
             onChange={updateProductRequest}
@@ -182,11 +181,9 @@ const ProductForm = ({
   const [productName, setProductName] = useState<string>("");
   useEffect(() => {
     if (!productName) return;
-    const selectedProduct = productList?.find(
-      (p) => p.name === productName,
-    );
+    const selectedProduct = productList?.find((p) => p.name === productName);
     setSelectedProduct(selectedProduct ?? null);
-  },[productName]);
+  }, [productName]);
   return (
     <Animated.View
       key={product.productId}
@@ -222,10 +219,12 @@ const ProductForm = ({
               </Text>
             </TouchableOpacity>
           </View>
-          <View style={{
-            position: "relative",
-            zIndex: 1,
-          }}>
+          <View
+            style={{
+              position: "relative",
+              zIndex: 1,
+            }}
+          >
             <SearchClientBox
               placeholder="Search product"
               value={productName}
@@ -275,7 +274,7 @@ const ProductForm = ({
                 isNaN(product.quantity)
                   ? "0"
                   : // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-                    product.quantity.toString() ?? "0"
+                    (product.quantity.toString() ?? "0")
               }
               onChangeText={(t) => {
                 const quantity = parseFloat(t);

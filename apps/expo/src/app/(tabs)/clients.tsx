@@ -326,10 +326,10 @@ export default function Clients() {
         >
           <View>
             <SearchBox
-             placeholder="Search clients"
-             value={searchProducts}
-             setValue={setSearchProducts}
-             />
+              placeholder="Search clients"
+              value={searchProducts}
+              setValue={setSearchProducts}
+            />
           </View>
           <Can I="create" a="Team">
             <View style={{ flexDirection: "row", gap: 16 }}>
@@ -368,9 +368,15 @@ export default function Clients() {
               {data?.map((team) => (
                 <TableRow key={team.id}>
                   <TableData>{team.name}</TableData>
-                  <TableData>{team.adminUser?.name ? team.adminUser?.name : "-"}</TableData>
-                  <TableData>{team.adminUser?.phone ? team.adminUser?.phone:"-"}</TableData>
-                  <TableData>{team.adminUser?.email ? team.adminUser?.email : "-"}</TableData>
+                  <TableData>
+                    {team.adminUser?.name ? team.adminUser?.name : "-"}
+                  </TableData>
+                  <TableData>
+                    {team.adminUser?.phone ? team.adminUser?.phone : "-"}
+                  </TableData>
+                  <TableData>
+                    {team.adminUser?.email ? team.adminUser?.email : "-"}
+                  </TableData>
                   <View
                     style={{
                       paddingHorizontal: 16,

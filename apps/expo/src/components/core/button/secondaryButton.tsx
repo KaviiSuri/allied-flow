@@ -12,20 +12,22 @@ function SecondaryButton(props: {
 }) {
   return (
     <TouchableOpacity
-      style={[{
-        paddingHorizontal: 12,
-        paddingVertical: 8,
-        backgroundColor: props.isLoading ? "#D0D5DD" : "#FFFFFF",
-        borderRadius: 8,
-        borderColor: "#D0D5DD",
-        borderWidth: 1,
-        shadowOffset: { height: 1, width: 0 },
-        shadowOpacity: 0.05,
-        shadowColor: "#101828",
-        alignItems: "center",
-        justifyContent: "center",
-        cursor: "pointer",
-      }]}
+      style={[
+        {
+          paddingHorizontal: 12,
+          paddingVertical: 8,
+          backgroundColor: props.isLoading ? "#D0D5DD" : "#FFFFFF",
+          borderRadius: 8,
+          borderColor: "#D0D5DD",
+          borderWidth: 1,
+          shadowOffset: { height: 1, width: 0 },
+          shadowOpacity: 0.05,
+          shadowColor: "#101828",
+          alignItems: "center",
+          justifyContent: "center",
+          cursor: "pointer",
+        },
+      ]}
       onPress={props.onPress}
       disabled={props.disabled ?? props.isLoading}
     >

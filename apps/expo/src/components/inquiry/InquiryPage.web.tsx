@@ -32,15 +32,17 @@ export const InquiryPage = () => {
   const { user } = useUser();
   const ability = useAbility();
   const utils = api.useUtils();
-  const { data, isError, isLoading, hasNextPage, fetchNextPage } = api.inquiry.list.useInfiniteQuery(
-    { status: currentStatus, search: searchResult }, {
-    getNextPageParam: (lastPage) => {
-      if (lastPage.items.length === 0) return null;
-      return lastPage.nextCursor;
-    },
-    enabled: ability.can("list", "Inquiry"),
-  },
-  );
+  const { data, isError, isLoading, hasNextPage, fetchNextPage } =
+    api.inquiry.list.useInfiniteQuery(
+      { status: currentStatus, search: searchResult },
+      {
+        getNextPageParam: (lastPage) => {
+          if (lastPage.items.length === 0) return null;
+          return lastPage.nextCursor;
+        },
+        enabled: ability.can("list", "Inquiry"),
+      },
+    );
   const inquiries = useMemo(
     () => data?.pages.flatMap((page) => page.items) ?? [],
     [data],
@@ -75,9 +77,9 @@ export const InquiryPage = () => {
       productRequests.map((product) =>
         product.id === productRequest.id
           ? {
-            ...product,
-            ...productRequest,
-          }
+              ...product,
+              ...productRequest,
+            }
           : product,
       ),
     );
@@ -123,7 +125,7 @@ export const InquiryPage = () => {
   };
 
   const renderNestedScreen = () => {
-    return <SentInquiries inquiries={inquiries} />
+    return <SentInquiries inquiries={inquiries} />;
   };
 
   useEffect(() => {
@@ -136,14 +138,14 @@ export const InquiryPage = () => {
         fetchNextPage();
       }
     }
-  }, [data])
-
+  }, [data]);
 
   const scrollViewRef = useRef(null);
 
   const handleScroll = (event: any) => {
     const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
-    const isScrolledToBottom = layoutMeasurement.height + contentOffset.y >= contentSize.height - 20;
+    const isScrolledToBottom =
+      layoutMeasurement.height + contentOffset.y >= contentSize.height - 20;
     if (isScrolledToBottom && hasNextPage) {
       fetchNextPage();
     }
@@ -302,7 +304,9 @@ export const InquiryPage = () => {
                   marginHorizontal: 6,
                 }}
               >
-                {user?.team?.type === "CLIENT" ? "Inquiry Rejected" : "Rejected"}
+                {user?.team?.type === "CLIENT"
+                  ? "Inquiry Rejected"
+                  : "Rejected"}
               </Text>
             </TouchableOpacity>
           </View>
@@ -333,7 +337,7 @@ export const InquiryPage = () => {
           renderNestedScreen()
         )}
       </ScrollView>
-    </View >
+    </View>
   );
 };
 
@@ -406,7 +410,7 @@ function CreateInquiryForm(props: {
           <PrimaryButton
             text="Raise Inquiry"
             onPress={props.handleSave}
-          // isLoading={props.isLoading}
+            // isLoading={props.isLoading}
           />
         </View>
       </View>

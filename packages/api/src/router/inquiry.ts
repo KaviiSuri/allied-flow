@@ -39,7 +39,9 @@ export const inquiryRouter = {
               .map((productRequest) => productRequest.productName)
               .join(", "),
             searchQuery: input.productRequests
-              .map((productRequest) => productRequest.productName.toLowerCase().trim())
+              .map((productRequest) =>
+                productRequest.productName.toLowerCase().trim(),
+              )
               .join(" "),
           })
           .returning();
@@ -241,7 +243,9 @@ export const inquiryRouter = {
       z.object({
         limit: z.number().min(1).max(100).default(10),
         cursor: z.string().optional(),
-        status: z.enum(["NEGOTIATING", "ACCEPTED", "REJECTED", "RAISED"]).optional(),
+        status: z
+          .enum(["NEGOTIATING", "ACCEPTED", "REJECTED", "RAISED"])
+          .optional(),
         search: z.string().optional(),
       }),
     )
@@ -257,10 +261,11 @@ export const inquiryRouter = {
             ),
             cursor ? lt(inquiries.createdAt, cursor) : undefined,
             status ? eq(inquiries.status, status) : undefined,
-            input.search ? like(
-              inquiries.searchQuery,
-              `%${input.search.toLowerCase().trim()}%`,
-            )
+            input.search
+              ? like(
+                  inquiries.searchQuery,
+                  `%${input.search.toLowerCase().trim()}%`,
+                )
               : undefined,
           ),
         orderBy: (inquiries, { desc }) => desc(inquiries.createdAt),

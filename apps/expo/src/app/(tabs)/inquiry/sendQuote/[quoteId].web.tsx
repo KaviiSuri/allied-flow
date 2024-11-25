@@ -1,6 +1,13 @@
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Dimensions,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import Toast from "react-native-toast-message";
 import { PrimaryButton, SecondaryButton } from "~/components/core/button";
 import { HistoryPanelTable } from "~/components/historyPanel";
@@ -92,11 +99,19 @@ export default () => {
           terms={terms}
           setTerms={setTerms}
           handleSave={handleSave}
-          handleOrdrHistory={() => { setShowHistory(true) }}
+          handleOrdrHistory={() => {
+            setShowHistory(true);
+          }}
         />
       )}
       {/* order history */}
-      {showHistory && <OrderHistory handleOrdrHistory={() => { setShowHistory(false) }} />}
+      {showHistory && (
+        <OrderHistory
+          handleOrdrHistory={() => {
+            setShowHistory(false);
+          }}
+        />
+      )}
     </View>
   );
 };
@@ -143,12 +158,16 @@ const QuoteDetails = ({
         <View style={{ flexDirection: "row" }}>
           <MaterialCommunityIcons name="office-building" size={24} />
           <Text style={styles.header}>{clientName}</Text>
-          <Text style={{
-            fontFamily: "Avenir",
-            fontSize: 16,
-            marginLeft: 8,
-            color: "#94a3b8",
-          }}>#{inquiryDetails.buyerId}</Text>
+          <Text
+            style={{
+              fontFamily: "Avenir",
+              fontSize: 16,
+              marginLeft: 8,
+              color: "#94a3b8",
+            }}
+          >
+            #{inquiryDetails.buyerId}
+          </Text>
         </View>
         <View style={{ flexDirection: "row", gap: 8 }}>
           <SecondaryButton text="Order History" onPress={handleOrdrHistory} />
@@ -168,11 +187,11 @@ const QuoteDetails = ({
   );
 };
 
-const OrderHistory = ({ handleOrdrHistory }:
-  {
-    handleOrdrHistory: () => void;
-  }
-) => {
+const OrderHistory = ({
+  handleOrdrHistory,
+}: {
+  handleOrdrHistory: () => void;
+}) => {
   return (
     <View style={styles.container}>
       <View style={[styles.headerContainer, styles.rightHeader]}>

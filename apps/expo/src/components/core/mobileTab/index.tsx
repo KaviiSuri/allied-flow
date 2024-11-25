@@ -12,7 +12,6 @@ export const MobileTab: React.FC<MobileTabProps> = ({
   activeFilter,
   setFilter,
 }) => {
-
   return (
     <Pressable
       onPress={() => setFilter(currentFilter)}

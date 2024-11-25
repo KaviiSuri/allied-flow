@@ -63,15 +63,18 @@ const create = async (
     )
     .returning();
 
-  const createdSamples = await tx.insert(orders).values({
-    id: nanoid(),
-    inquiryId,
-    quoteId: quote.id,
-    type: "SAMPLE",
-    buyerId: userId,
-    sellerId: teamId,
-    status: "PLACED",
-  }).returning();
+  const createdSamples = await tx
+    .insert(orders)
+    .values({
+      id: nanoid(),
+      inquiryId,
+      quoteId: quote.id,
+      type: "SAMPLE",
+      buyerId: userId,
+      sellerId: teamId,
+      status: "PLACED",
+    })
+    .returning();
 
   const sampleOrder = createdSamples[0];
 

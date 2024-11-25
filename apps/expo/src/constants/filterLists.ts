@@ -5,4 +5,10 @@ export const clientFilterList = [
   "Order Placed",
   "Quote expired",
 ];
-export const sellerFilterList = ["All", "New", "Negotiation", "Accepted", "Rejected"];
+export const sellerFilterList = [
+  "All",
+  "New",
+  "Negotiation",
+  "Accepted",
+  "Rejected",
+];

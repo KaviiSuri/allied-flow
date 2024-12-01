@@ -1,5 +1,5 @@
-import type { InferSelectModel, SQL } from "drizzle-orm";
-import { relations, sql } from "drizzle-orm";
+import type { InferSelectModel } from "drizzle-orm";
+import { relations } from "drizzle-orm";
 import {
   text,
   sqliteTable,
@@ -30,11 +30,13 @@ export type UserWithTeam = InferSelectModel<typeof users> & {
   team: InferSelectModel<typeof teams>;
 };
 
-export const usersRelations = relations(users, ({ one }) => ({
+export const usersRelations = relations(users, ({ one, many }) => ({
   team: one(teams, {
     fields: [users.teamId],
     references: [teams.id],
   }),
+  devices: many(devices),
+  notifications: many(notifications),
 }));
 
 export const teams = sqliteTable("teams", {
@@ -336,3 +338,75 @@ export type InquiryAuditLogData =
   | AcceptLogData
   | RejectLogData
   | NegotiateLogData;
+
+export const notifications = sqliteTable("notifications", {
+  id: text("id").primaryKey().unique(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id),
+  type: text("type", {
+    enum: [
+      "ORDER_PLACED",
+      "ORDER_DISPATCHED",
+      "ORDER_SHIPPED",
+      "INQUIRY_RECEIVED",
+      "NEW_QUOTE_RECEIVED",
+      "QUOTE_ACCEPTED",
+      "QUOTE_REJECTED",
+    ],
+  }).notNull(),
+  orderId: text("order_id"),
+  orderType: text("order_type", {
+    enum: ["REGULAR", "SAMPLE"],
+  }),
+  inquiryId: text("inquiry_id"),
+  quoteId: text("quote_id"),
+  message: text("message").notNull(),
+  createdAt: text("created_at")
+    .$defaultFn(() => new Date().toISOString())
+    .notNull(),
+  read: integer("read", {
+    mode: "boolean",
+  }).notNull(),
+});
+
+export type Notification = InferSelectModel<typeof notifications>;
+
+export const insertNotificationSchema = createInsertSchema(notifications);
+
+export const notificationsRelations = relations(notifications, ({ one }) => ({
+  user: one(users, {
+    fields: [notifications.userId],
+    references: [users.id],
+  }),
+  order: one(orders, {
+    fields: [notifications.orderId],
+    references: [orders.id],
+  }),
+  inquiry: one(inquiries, {
+    fields: [notifications.inquiryId],
+    references: [inquiries.id],
+  }),
+  quote: one(quotes, {
+    fields: [notifications.quoteId],
+    references: [quotes.id],
+  }),
+}));
+
+export const devices = sqliteTable("devices", {
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id),
+  expoPushToken: text("expo_push_token").notNull().primaryKey().unique(),
+});
+
+export type Device = InferSelectModel<typeof devices>;
+
+export const insertDeviceSchema = createInsertSchema(devices);
+
+export const deviceRelations = relations(devices, ({ one }) => ({
+  user: one(users, {
+    fields: [devices.userId],
+    references: [users.id],
+  }),
+}));

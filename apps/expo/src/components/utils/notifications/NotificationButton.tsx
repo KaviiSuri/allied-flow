@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { Image, Pressable, Text, View } from "react-native";
 import NotificationList from "./NotificationList";
-import type { NotificationProps } from "./Notification";
 
-function NotificationButton(props: { data: NotificationProps[] }) {
+function NotificationButton() {
   const [notificationsVisible, setNotificationsVisible] = useState(false);
   return (
     <View style={{ position: "relative", width: 20, height: 20 }}>
@@ -39,7 +38,7 @@ function NotificationButton(props: { data: NotificationProps[] }) {
         >
           Notifications
         </Text>
-        <NotificationList data={props.data} />
+        <NotificationList />
       </View>
     </View>
   );

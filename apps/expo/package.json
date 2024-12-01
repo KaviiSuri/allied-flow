@@ -16,6 +16,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@azure/core-asynciterator-polyfill": "^1.0.2",
     "@bacons/text-decoder": "^0.0.0",
     "@casl/ability": "^6.7.1",
     "@casl/react": "^4.0.0",
@@ -28,15 +29,17 @@
     "@rneui/themed": "4.0.0-rc.8",
     "@shopify/flash-list": "1.7.1",
     "@tanstack/react-query": "^5.35.5",
-    "@trpc/client": "11.0.0-rc.364",
-    "@trpc/react-query": "11.0.0-rc.364",
-    "@trpc/server": "11.0.0-rc.364",
+    "@trpc/client": "11.0.0-rc.522",
+    "@trpc/react-query": "11.0.0-rc.522",
+    "@trpc/server": "11.0.0-rc.522",
     "expo": "~52.0.7",
     "expo-constants": "~17.0.3",
     "expo-crypto": "~14.0.1",
     "expo-dev-client": "~5.0.2",
+    "expo-device": "~6.0.2",
     "expo-linear-gradient": "^14.0.1",
     "expo-linking": "~7.0.2",
+    "expo-notifications": "~0.28.17",
     "expo-router": "~4.0.6",
     "expo-secure-store": "~14.0.0",
     "expo-splash-screen": "~0.29.11",
@@ -62,7 +65,9 @@
     "react-native-vector-icons": "^10.1.0",
     "react-native-web": "~0.19.10",
     "react-responsive": "10.0.0",
-    "superjson": "2.2.1"
+    "rn-eventsource-reborn": "^1.0.5",
+    "superjson": "2.2.1",
+    "web-streams-polyfill": "^4.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.24.5",

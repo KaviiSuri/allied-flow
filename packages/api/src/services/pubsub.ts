@@ -205,6 +205,7 @@ export const getAllNotifications = async (
     orderBy: (notifications, { desc }) => desc(notifications.createdAt),
     limit,
   });
+  console.log("notifications", notifications);
 
   return notifications
     .map((notification) => {

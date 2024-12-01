@@ -27,7 +27,7 @@
     "@repo/permissions": "workspace:*",
     "@repo/server-config": "workspace:*",
     "@repo/validators": "workspace:*",
-    "@trpc/server": "11.0.0-rc.522",
+    "@trpc/server": "11.0.0-rc.648",
     "expo-server-sdk": "^3.11.0",
     "ioredis": "^5.4.1",
     "nanoid": "^5.0.7",

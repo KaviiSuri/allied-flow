@@ -14,8 +14,10 @@ import type { AppRouter } from "@repo/api";
 import { useLogto } from "@logto/rn";
 import { logtoService } from "~/config/logto";
 import "@azure/core-asynciterator-polyfill";
+import { EventSourcePolyfill } from "event-source-polyfill";
 import { RNEventSource } from "rn-eventsource-reborn";
 import { ReadableStream, TransformStream } from "web-streams-polyfill";
+import { Platform } from "react-native";
 
 // RNEventSource extends EventSource's functionality, you can add this to make the typing reflect this but it's not a requirement
 declare global {
@@ -24,13 +26,8 @@ declare global {
 }
 
 // @ts-expect-error - TransformStream is not yet in the globalThis
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-globalThis.EventSource = globalThis.EventSource || RNEventSource;
-// @ts-expect-error - TransformStream is not yet in the globalThis
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+globalThis.EventSource = Platform.OS === "web" ? EventSourcePolyfill : globalThis.EventSource || RNEventSource;
 globalThis.ReadableStream = globalThis.ReadableStream || ReadableStream;
-// @ts-expect-error - TransformStream is not yet in the globalThis
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 globalThis.TransformStream = globalThis.TransformStream || TransformStream;
 
 /**
@@ -87,6 +84,7 @@ export function TRPCProvider(props: { children: React.ReactNode }) {
               try {
                 const token = `Bearer ${await getAccessToken(logtoService.config.resources[0])}`;
                 headers.set("authorization", token);
+                console.log(">>> token", token);
                 return {
                   headers: Object.fromEntries(headers),
                 };

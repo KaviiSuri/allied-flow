@@ -112,6 +112,7 @@ export const protectedProcedure = t.procedure.use(
   async ({ ctx, next, meta }) => {
     const { claims } = ctx;
     if (!claims) {
+      console.log('claims', claims)
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }
     const user = await db.query.users.findFirst({
@@ -121,7 +122,7 @@ export const protectedProcedure = t.procedure.use(
       },
     });
     if (!user) {
-      throw new TRPCError({ code: "UNAUTHORIZED" });
+      throw new TRPCError({ code: "FORBIDDEN" });
     }
     const ability = defineAbilityFor(user);
     // @ts-expect-error - this is a hack to get around the fact that the type of meta is not inferred

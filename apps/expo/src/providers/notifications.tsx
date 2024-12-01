@@ -64,6 +64,9 @@ export const NotificationProvider = ({
   }, [data, user]);
 
   useEffect(() => {
+    if (Platform.OS === "web") {
+      return;
+    }
     registerForPushNotificationsAsync()
       .then((token) => {
         if (!token) {

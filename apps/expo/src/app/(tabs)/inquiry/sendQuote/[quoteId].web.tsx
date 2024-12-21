@@ -105,8 +105,10 @@ export default () => {
         />
       )}
       {/* order history */}
-      {showHistory && (
+      {showHistory && data && (
         <OrderHistory
+          buyerId={data?.inquiry.buyerId}
+          productIds={Object.keys(negoiatedItems)}
           handleOrdrHistory={() => {
             setShowHistory(false);
           }}
@@ -189,9 +191,16 @@ const QuoteDetails = ({
 
 const OrderHistory = ({
   handleOrdrHistory,
+  buyerId,
+  productIds,
 }: {
   handleOrdrHistory: () => void;
+  buyerId: string;
+  productIds: string[];
 }) => {
+  const [filter, setFilter] = useState<"SAME_CUSTOMER" | "SAME_PRODUCTS">(
+    "SAME_CUSTOMER",
+  );
   return (
     <View style={styles.container}>
       <View style={[styles.headerContainer, styles.rightHeader]}>
@@ -203,7 +212,11 @@ const OrderHistory = ({
       <View style={styles.historyPanel}>
         <View></View>
         <View>
-          <HistoryPanelTable />
+          <HistoryPanelTable
+            buyerId={buyerId}
+            productIds={productIds}
+            filter={filter}
+          />
         </View>
       </View>
     </View>

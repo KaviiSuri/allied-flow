@@ -286,7 +286,23 @@ export const orderItemsRelations = relations(orderItems, ({ one }) => ({
   }),
 }));
 
-export const ordersRelations = relations(orders, ({ many }) => ({
+export const ordersRelations = relations(orders, ({ many, one }) => ({
+  buyer: one(teams, {
+    fields: [orders.buyerId],
+    references: [teams.id],
+  }),
+  seller: one(teams, {
+    fields: [orders.sellerId],
+    references: [teams.id],
+  }),
+  inquiry: one(inquiries, {
+    fields: [orders.inquiryId],
+    references: [inquiries.id],
+  }),
+  quote: one(quotes, {
+    fields: [orders.quoteId],
+    references: [quotes.id],
+  }),
   orderItems: many(orderItems),
 }));
 

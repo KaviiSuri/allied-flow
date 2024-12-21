@@ -112,7 +112,7 @@ export const protectedProcedure = t.procedure.use(
   async ({ ctx, next, meta }) => {
     const { claims } = ctx;
     if (!claims) {
-      console.log('claims', claims)
+      console.log("claims", claims);
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }
     const user = await db.query.users.findFirst({

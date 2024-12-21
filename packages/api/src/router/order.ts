@@ -150,6 +150,8 @@ export const ordersRouter = {
           .optional(),
         inquiryId: z.string().optional(),
         limit: z.number().min(1).max(100).default(10),
+        buyerId: z.string().optional(),
+        productIds: z.array(z.string()).optional(),
         type: z.enum(["REGULAR", "SAMPLE"]),
         cursor: z.string().optional(),
       }),
@@ -168,13 +170,21 @@ export const ordersRouter = {
             input.inquiryId ? eq(orders.inquiryId, input.inquiryId) : undefined,
             input.status ? eq(orders.status, input.status) : undefined,
             input.cursor ? lt(orders.createdAt, input.cursor) : undefined,
+            input.buyerId ? eq(orders.buyerId, input.buyerId) : undefined,
           ),
         orderBy: (orders, { desc }) => desc(orders.createdAt),
         with: {
+          buyer: true,
           orderItems: {
             with: {
               product: true,
             },
+            ...(input.productIds && {
+              where: (orderItems, { inArray }) =>
+                input.productIds
+                  ? inArray(orderItems.productId, input.productIds)
+                  : undefined,
+            }),
           },
         },
         limit: input.limit,

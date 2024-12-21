@@ -26,7 +26,10 @@ declare global {
 }
 
 // @ts-expect-error - TransformStream is not yet in the globalThis
-globalThis.EventSource = Platform.OS === "web" ? EventSourcePolyfill : globalThis.EventSource || RNEventSource;
+globalThis.EventSource =
+  Platform.OS === "web"
+    ? EventSourcePolyfill
+    : globalThis.EventSource || RNEventSource;
 globalThis.ReadableStream = globalThis.ReadableStream || ReadableStream;
 globalThis.TransformStream = globalThis.TransformStream || TransformStream;
 

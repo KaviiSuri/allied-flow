@@ -35,19 +35,28 @@ export const usersRouter = {
         }),
     )
     .mutation(async ({ ctx, input }) => {
-      const user = await usersApi.createUser({
-        primaryEmail: input.email,
-        name: input.name,
-        primaryPhone: input.phone,
-      });
-      if (user.status !== 200) {
-        console.error(user);
+      let user: Awaited<ReturnType<typeof usersApi.createUser>>;
+      try {
+        user = await usersApi.createUser({
+          primaryEmail: input.email,
+          name: input.name,
+          primaryPhone: input.phone,
+        });
+
+        if (user.status !== 200) {
+          throw new TRPCError({
+            message: "Failed to create user in Logto",
+            code: "INTERNAL_SERVER_ERROR",
+          });
+        }
+        console.log("user", user);
+      } catch (error: any) {
+        console.log("error", error);
         throw new TRPCError({
-          message: "Failed to create user",
+          message: error.response.data.details,
           code: "INTERNAL_SERVER_ERROR",
         });
       }
-      console.log("user", user.data);
 
       const insertedUserId = await ctx.db
         .insert(users)

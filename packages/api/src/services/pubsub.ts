@@ -5,7 +5,7 @@ import type { TransactionType, db } from "@repo/db/client";
 import { devices, notifications } from "@repo/db/schema";
 import { nanoid } from "nanoid";
 import { and, eq, inArray, lt } from "@repo/db";
-import { sendPushNotifications } from "./expo";
+import { sendPushNotifications } from "./expo.js";
 import { env } from "@repo/server-config";
 
 const redis = new Redis(env.REDIS_URL);

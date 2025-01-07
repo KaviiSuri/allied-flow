@@ -116,15 +116,20 @@ export const ordersRouter = {
         }
 
         await trx.insert(orderItems).values(
-          quote.quoteItems.map((quoteItem) => ({
-            orderId: order.id,
-            productId: quoteItem.productId,
-            price: quoteItem.price,
-            quantity: quoteItem.quantity,
-            unit: quoteItem.unit,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-          })),
+          quote.quoteItems
+            .filter(
+              (quoteItem) =>
+                quoteItem.sampleRequested || input.type !== "SAMPLE",
+            )
+            .map((quoteItem) => ({
+              orderId: order.id,
+              productId: quoteItem.productId,
+              price: quoteItem.price,
+              quantity: quoteItem.quantity,
+              unit: quoteItem.unit,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+            })),
         );
         await trx
           .update(inquiries)

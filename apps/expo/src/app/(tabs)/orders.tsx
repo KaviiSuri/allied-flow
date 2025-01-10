@@ -1,5 +1,5 @@
 import { SafeAreaView } from "react-native";
-import { OrderPage } from "~/components/order/OrderPage";
+import { OrderPage } from "~/components/orders/OrderPage";
 
 export default function Orders() {
   return (

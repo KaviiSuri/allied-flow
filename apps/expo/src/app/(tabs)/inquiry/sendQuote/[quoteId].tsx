@@ -42,6 +42,7 @@ export default function SendQuote() {
     },
     {},
   );
+  // const { data: productList, isLoading: isLoadingProduct } = api.products.read.useQuery();
   const [negoiatedItems, setNegotiatedItems] = useState<QuoteItemMap>({});
 
   const [terms, setTerms] = useState("");
@@ -56,6 +57,7 @@ export default function SendQuote() {
       negotiatedItems[quoteItem.productId] = quoteItem;
     });
 
+    console.log(data, negoiatedItems, "DATA TESTING");
     setNegotiatedItems(negotiatedItems);
   }, [data]);
 
@@ -82,10 +84,34 @@ export default function SendQuote() {
           .catch();
       },
     });
+  const { mutate: createOrderFromInquiry } =
+    api.orders.createFromInquiry.useMutation({
+      onSuccess: () => {
+        Toast.show({
+          type: "success",
+          text1: "Inquiry placed with sample request successfully",
+        });
+        utils.orders.invalidate().catch(console.error);
+      },
+    });
+
+ const handleSampleRequest = () => {
+    if (!data?.inquiry || !data.latestQuote ) {
+      return;
+    }
+    createOrderFromInquiry({
+      inquiryId: data.inquiry.id,
+      quoteId: data.latestQuote.id,
+      type: "SAMPLE",
+    });
+  };
+
   const handleSave = () => {
     if (isPending || !data) {
       return;
     }
+
+    handleSampleRequest()
     negotiate({
       inquiryId: data.inquiry.id,
       items: Object.values(negoiatedItems),
@@ -96,6 +122,7 @@ export default function SendQuote() {
         text1: "Negotiation failed",
       });
     });
+
   };
   return (
     <SafeAreaView style={styles.container}>

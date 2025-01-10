@@ -1,5 +1,5 @@
 import { SafeAreaView, Text } from "react-native";
-import { OrderPage } from "~/components/order/OrderPage";
+import { OrderPage } from "~/components/orders/OrderPage";
 import { SamplePage } from "~/components/sample/SamplesPage";
 
 export default function Samples() {

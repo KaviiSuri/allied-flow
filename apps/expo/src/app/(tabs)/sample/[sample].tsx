@@ -59,16 +59,16 @@ export default function OrderDetails() {
   }
 
   if (isError || !order) {
-    return <Text style={styles.errorText}>Error loading order details</Text>;
+    return <Text style={styles.errorText}>Error loading sample details</Text>;
   }
 
   return (
     <ScrollView style={styles.container}>
       <View style={styles.headerComponent}>
         <View style={{ display: "flex", flexDirection: "row", flex: 1 }}>
-          <Text style={styles.titleSecondary}>Orders /</Text>
+          <Text style={styles.titleSecondary}>Samples /</Text>
           {order && (
-            <Text style={styles.titlePrimary}>Order Number #{order.id}</Text>
+            <Text style={styles.titlePrimary}>Sample Number #{order.id}</Text>
           )}
           <View style={{ marginLeft: 4 }}>
             {order && <BadgeStatus status={order.status} />}
@@ -97,7 +97,7 @@ export default function OrderDetails() {
 
           {order.status !== "REJECTED" && (
             <OrderActionButton
-              btnText="Reject Order"
+              btnText="Reject Sample"
               bgColor="#FAF1F2"
               accentColor="#B91C1C"
               isLoading={isError || isLoading}

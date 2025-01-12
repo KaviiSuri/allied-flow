@@ -32,11 +32,19 @@ import React from "react";
 
 const windowHeight = Dimensions.get("window").height - 64;
 
-export const OrderPage = () => {
+export const OrderPage = ({
+  type,
+  inquiryId,
+}: {
+  type: "REGULAR" | "SAMPLE";
+  inquiryId?: string;
+
+  }) => {
   const { data, isError, isLoading, hasNextPage, fetchNextPage } =
     api.orders.list.useInfiniteQuery(
       {
-        type: "REGULAR",
+        type,
+        inquiryId,
       },
       {
         getNextPageParam: (lastPage) => {

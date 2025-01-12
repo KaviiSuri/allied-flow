@@ -27,6 +27,8 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import EditIcon from "~/app/assets/images/edit-icon.svg";
 import TrashIcon from "~/app/assets/images/trash-icon.svg";
 import { Can } from "~/providers/auth";
+import { router } from "expo-router";
+import React from "react";
 
 const windowHeight = Dimensions.get("window").height - 64;
 
@@ -317,6 +319,7 @@ function OrderItem({ order }: { order: RouterOutputs["orders"]["list"][0] }) {
               shadowOpacity: 0.05,
               shadowColor: "#101828",
             }}
+            onPress={() => router.push(`/order/${order.id}`)}
           >
             <EditIcon />
           </Pressable>

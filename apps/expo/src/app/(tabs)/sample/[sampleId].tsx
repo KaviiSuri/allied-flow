@@ -53,7 +53,7 @@ export default function OrderDetails() {
   }, [OrderData]);
   const order = useMemo(() => {
     return OrderData;
-  }, []);
+  }, [OrderData]);
 
   if (isLoading) {
     return <ActivityIndicator size="large" color="#0000ff" />;

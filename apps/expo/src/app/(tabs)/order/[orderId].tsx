@@ -23,6 +23,7 @@ import { api } from "~/utils/api";
 const windowHeight = Dimensions.get("window").height - 64;
 export default function OrderDetails() {
   const { orderId } = useLocalSearchParams();
+  console.log('orderId', orderId)
   const {
     data: OrderData,
     isError,
@@ -52,7 +53,7 @@ export default function OrderDetails() {
   }, [OrderData]);
   const order = useMemo(() => {
     return OrderData;
-  }, []);
+  }, [OrderData]);
 
   if (isLoading) {
     return <ActivityIndicator size="large" color="#0000ff" />;

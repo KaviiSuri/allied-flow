@@ -8,6 +8,9 @@ import {
   TouchableWithoutFeedback,
   KeyboardAvoidingView,
   Platform,
+  FlatList,
+  RefreshControl,
+  ActivityIndicator,
 } from "react-native";
 import { SearchBox } from "../shared/searchComponent";
 import React, { useEffect, useMemo, useState } from "react";
@@ -42,23 +45,32 @@ export const InquiryPage = () => {
   const { user } = useUser();
   const ability = useAbility();
   const utils = api.useUtils();
-  const { data, isLoading, isError } = api.inquiry.list.useInfiniteQuery(
-    {
-      search: searchResult,
-      status: activeNestedTab,
-    },
-    {
-      getNextPageParam: (lastPage) => {
-        if (lastPage.items.length === 0) return null;
-        return lastPage.nextCursor;
+  const { data, isError, isLoading, hasNextPage, fetchNextPage, refetch } =
+    api.inquiry.list.useInfiniteQuery(
+      {
+        search: searchResult,
+        status: activeNestedTab,
       },
-      enabled: ability.can("list", "Inquiry"),
-    },
-  );
+      {
+        getNextPageParam: (lastPage) => {
+          if (lastPage.items.length === 0) return null;
+          return lastPage.nextCursor;
+        },
+        enabled: ability.can("list", "Inquiry"),
+      },
+    );
   const inquiries = useMemo(
     () => data?.pages.flatMap((page) => page.items) ?? [],
     [data],
   );
+
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  }, [refetch]);
 
   const [remarks, setRemarks] = useState<string>("");
 
@@ -149,6 +161,40 @@ export const InquiryPage = () => {
     });
   }
 
+  const renderInquiryItem = ({
+    item,
+  }: {
+    item: RouterOutputs["inquiry"]["list"]["items"][0];
+  }) => <InquiryCard inquiry={item} />;
+
+  const renderFooter = () => {
+    if (!isLoading) return null;
+    return (
+      <View style={{ alignItems: "center", paddingVertical: 20 }}>
+        <ActivityIndicator size="small" />
+      </View>
+    );
+  };
+
+  const renderFilterTabs = () => (
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={styles.filterTabsContainer}
+    >
+      {(user?.team.type === "CLIENT" ? clientFilterList : sellerFilterList).map(
+        (filterName: string, index: number) => (
+          <MobileTab
+            activeFilter={filter === filterName}
+            setFilter={setFilter}
+            currentFilter={filterName}
+            key={index}
+          />
+        ),
+      )}
+    </ScrollView>
+  );
+
   return (
     <View style={[styles.container, { backgroundColor: "white" }]}>
       {/* Fixed SearchBox at the top */}
@@ -169,16 +215,31 @@ export const InquiryPage = () => {
       ) : isError ? (
         <ErrorState errorMessage={"Something went wrong, please try again."} />
       ) : (
-        <ScrollView style={styles.orderBodyContainer}>
-          <InquiryList
-            filter={filter}
-            setFilter={setFilter}
-            inquiries={inquiries}
-            filterList={
-              user?.team.type === "CLIENT" ? clientFilterList : sellerFilterList
+        <FlatList
+          style={[
+            styles.orderBodyContainer,
+            {
+              paddingTop: 16,
+              paddingBottom: 80,
+              paddingLeft: 8,
+              paddingRight: 8,
+            },
+          ]}
+          data={inquiries}
+          renderItem={renderInquiryItem}
+          keyExtractor={(item) => item.id}
+          onEndReached={() => {
+            if (hasNextPage) {
+              fetchNextPage();
             }
-          />
-        </ScrollView>
+          }}
+          onEndReachedThreshold={0.5}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+          ListHeaderComponent={renderFilterTabs}
+          ListFooterComponent={renderFooter}
+        />
       )}
 
       {/* create flow */}
@@ -421,18 +482,9 @@ const InquiryCard = ({
             <ActionBadgeMobile
               iconName="open-in-new"
               actionText="View Quote"
-              handleAction={() =>
-                router.push(`../../app/(tabs)/inquiry/${inquiry.id}`)
-              }
+              handleAction={() => router.navigate(`/inquiry/${inquiry.id}`)}
             />
           )}
-          {/* (filter === "Negotiation" && (
-            <ActionBadgeMobile
-              iconName="alarm-light-outline"
-              actionText="Follow Up"
-              handleAction={() => router.navigate(`inquiry/${inquiry.id}`)}
-            />
-          )*/}
         </View>
       </View>
     </View>

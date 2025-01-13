@@ -85,6 +85,7 @@ export const InquiryPage = () => {
     );
   };
   const [clientId, setClientId] = useState<string | null>(null);
+  const [orderId, setOrderId] = useState<string | null>(null);
 
   const { mutateAsync: raiseInquiry } = api.inquiry.raise.useMutation({
     onSuccess: () => {
@@ -98,7 +99,10 @@ export const InquiryPage = () => {
     },
   });
 
+
+
   async function handleSave() {
+    console.log(productRequests, "PRODUCT REQUESTS");
     if (!user) return;
     if (!clientId) return;
     const sellers = await utils.teams.readTeams.fetch({

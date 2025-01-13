@@ -70,10 +70,34 @@ export default () => {
           .catch();
       },
     });
+
+  const { mutate: createOrderFromInquiry } =
+    api.orders.createFromInquiry.useMutation({
+      onSuccess: () => {
+        Toast.show({
+          type: "success",
+          text1: "Inquiry placed with sample request successfully",
+        });
+        utils.orders.invalidate().catch(console.error);
+      },
+    });
+
+
+ const handleSampleRequest = () => {
+    if (!data?.inquiry || !data.latestQuote ) {
+      return;
+    }
+    createOrderFromInquiry({
+      inquiryId: data.inquiry.id,
+      quoteId: data.latestQuote.id,
+      type: "SAMPLE",
+    });
+  };
   const handleSave = () => {
     if (isPending || !data) {
       return;
     }
+    handleSampleRequest();
     negotiate({
       inquiryId: data.inquiry.id,
       items: Object.values(negoiatedItems),

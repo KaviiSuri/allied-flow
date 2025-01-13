@@ -26,14 +26,24 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ios: {
     bundleIdentifier: "com.aacipl.alliedflow",
     supportsTablet: true,
+    infoPlist: {
+      NSUserTrackingUsageDescription:
+        "This identifier will be used to send you push notifications.",
+      UIBackgroundModes: ["fetch", "remote-notification"],
+    },
   },
   android: {
     package: "com.aacipl.alliedflow",
-    googleServicesFile: "./google-services.json",
+    googleServicesFile: process.env.GOOGLE_SERVICES_JSON,
     adaptiveIcon: {
       foregroundImage: "./assets/icon.png",
       backgroundColor: "#1F104A",
     },
+    permissions: ["RECEIVE_BOOT_COMPLETED", "VIBRATE"],
+  },
+  notification: {
+    icon: "./assets/icon.png",
+    color: "#ffffff",
   },
   // extra: {
   //   eas: {

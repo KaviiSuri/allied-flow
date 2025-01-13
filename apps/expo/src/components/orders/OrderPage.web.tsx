@@ -32,6 +32,7 @@ import React from "react";
 
 const windowHeight = Dimensions.get("window").height - 64;
 
+
 export const OrderPage = ({
   type,
   inquiryId,

@@ -32,6 +32,7 @@ import React from "react";
 
 const windowHeight = Dimensions.get("window").height - 64;
 
+
 export const OrderPage = ({
   type,
   inquiryId,
@@ -93,7 +94,7 @@ export const OrderPage = ({
             errorMessage={"Something went wrong, please try again."}
           />
         ) : (
-          <SampleTable orders={orders} />
+          <SampleTable orders={orders} type={type} />
         )}
       </ScrollView>
     </>
@@ -149,8 +150,10 @@ const HeaderComponent = () => {
 
 const SampleTable = ({
   orders,
+  type
 }: {
   orders: RouterOutputs["orders"]["list"];
+  type: string
 }) => {
   return (
     <View
@@ -227,14 +230,14 @@ const SampleTable = ({
         </TableHeading>
         {/* random data  */}
         {orders.map((order) => (
-          <OrderItem order={order} key={order.id} />
+          <OrderItem order={order} type={type} key={order.id} />
         ))}
       </Table>
     </View>
   );
 };
 
-function OrderItem({ order }: { order: RouterOutputs["orders"]["list"][0] }) {
+function OrderItem({ order,type }: { order: RouterOutputs["orders"]["list"][0], type: string }) {
   return (
     <TableRow style={styles.tableRow} id={"1"} key={1}>
       <TableData
@@ -315,6 +318,24 @@ function OrderItem({ order }: { order: RouterOutputs["orders"]["list"][0] }) {
             flex: 1,
           }}
         >
+          {
+            type==="SAMPLE" ? 
+          <Pressable
+            style={{
+              borderColor: "#E2E8F0",
+              borderWidth: 1,
+              borderRadius: 8,
+              maxHeight: 32,
+              padding: 8,
+              shadowOffset: { height: 1, width: 0 },
+              shadowOpacity: 0.05,
+              shadowColor: "#101828",
+            }}
+            onPress={() => router.push(`/sample/${order.id}`)}
+          >
+            <EditIcon />
+          </Pressable>
+          :
           <Pressable
             style={{
               borderColor: "#E2E8F0",
@@ -334,6 +355,7 @@ function OrderItem({ order }: { order: RouterOutputs["orders"]["list"][0] }) {
           >
             <EditIcon />
           </Pressable>
+          }
           <Pressable
             style={{
               borderColor: "#E2E8F0",

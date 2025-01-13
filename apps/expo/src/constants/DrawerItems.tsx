@@ -99,4 +99,10 @@ export default [
     hideDesktop: true,
     mobileView: false,
   },
+  {
+    path: "sample/[sampleId]",
+    name: "",
+    hideDesktop: true,
+    mobileView: false,
+  },
 ] as const;

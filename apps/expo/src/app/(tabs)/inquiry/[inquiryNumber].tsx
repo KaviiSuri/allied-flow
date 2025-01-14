@@ -20,6 +20,7 @@ import { FormTextInput } from "~/components/shared/form";
 import { SearchBox } from "~/components/shared/searchComponent";
 import type { RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
+import SampleDetails from "../sample/[sampleId]";
 
 type QuoteItem = NonNullable<
   RouterOutputs["inquiry"]["getDetails"]["latestQuote"]
@@ -150,19 +151,11 @@ export default function InquiriesDetails() {
         );
       case "Sample":
         return (
-          <OrderPage
-            showHeader={false}
-            type="SAMPLE"
-            inquiryId={inquiryNumber as string}
-          />
+          <SampleDetails _sampleId={data.inquiry.id} />
         );
       case "Order":
         return (
-          <OrderPage
-            showHeader={false}
-            type="REGULAR"
-            inquiryId={inquiryNumber as string}
-          />
+          <SampleDetails _sampleId={data.inquiry.id} />
         );
       default:
         return (

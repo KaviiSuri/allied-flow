@@ -228,7 +228,7 @@ function OrderCard({
           {order.orderItems.map((oi) => oi.product.name).join(", ")}
         </Text>
       </View>
-      {type === "Sample" ? (
+      {type === "SAMPLE" ? (
         <Pressable
           style={orderStyles.innerSectionFlexStart}
           onPress={() => router.push(`/sample/${order.id}`)}
@@ -261,7 +261,7 @@ function OrderCard({
   );
 }
 
-const orderStyles = StyleSheet.create({
+export const orderStyles = StyleSheet.create({
   orderCard: {
     padding: 16,
     backgroundColor: "white",

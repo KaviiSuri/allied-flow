@@ -1,4 +1,4 @@
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useMemo, useState } from "react";
 import {
   View,
@@ -8,22 +8,19 @@ import {
   Dimensions,
   ScrollView,
   TouchableOpacity,
+  Pressable,
 } from "react-native";
+import Icon from "react-native-vector-icons/AntDesign";
 import { PrimaryButton, SecondaryButton } from "~/components/core/button";
+import { orderStyles } from "~/components/orders/OrderPage";
 import { BadgeStatus } from "~/components/shared/badge";
-import {
-  Table,
-  TableData,
-  TableHeading,
-  TableRow,
-} from "~/components/shared/table";
 import { Can } from "~/providers/auth";
 import { api } from "~/utils/api";
 
 const windowHeight = Dimensions.get("window").height - 64;
 export default function OrderDetails() {
   const { orderId } = useLocalSearchParams();
-  console.log('orderId', orderId)
+  console.log("orderId", orderId);
   const {
     data: OrderData,
     isError,
@@ -66,16 +63,47 @@ export default function OrderDetails() {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.headerComponent}>
-        <View style={{ display: "flex", flexDirection: "row", flex: 1 }}>
-          <Text style={styles.titleSecondary}>Orders /</Text>
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            flex: 1,
+            width: "100%",
+          }}
+        >
+          <TouchableOpacity
+            onPress={() => {
+              router.back();
+              router.push("/samples");
+            }}
+          >
+            <Icon name="arrowleft" size={24} color="black" />
+          </TouchableOpacity>
+          <Text style={styles.titleSecondary}>Orders/</Text>
           {order && (
             <Text style={styles.titlePrimary}>Order Number #{order.id}</Text>
           )}
-          <View style={{ marginLeft: 4 }}>
+        </View>
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            flex: 1,
+            width: "100%",
+          }}
+        >
+          <View style={{ marginVertical: 12 }}>
             {order && <BadgeStatus status={order.status} />}
           </View>
         </View>
-        <View style={{ display: "flex", flexDirection: "row", gap: "8px" }}>
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            gap: 12,
+            width: "100%",
+          }}
+        >
           {order.status !== "DISPATCHED" && (
             <OrderActionButton
               btnText="Dispatched"
@@ -107,85 +135,16 @@ export default function OrderDetails() {
           )}
         </View>
       </View>
-      <View style={orderStyles.viewContainer}>
-        <Table
-          style={{
-            borderRadius: 8,
-            backgroundColor: "white",
-          }}
-        >
-          <TableHeading style={{ backgroundColor: "#F1F5F9" }}>
-            <TableData
-              style={{
-                fontSize: 14,
-                color: "#1E293B",
-                fontWeight: 500,
-                flex: 1,
-                borderRightWidth: 1,
-                borderColor: "#DCDFEA",
-              }}
-            >
-              Product ID
-            </TableData>
-            <TableData
-              style={{
-                fontSize: 14,
-                color: "#1E293B",
-                fontWeight: 500,
-                flex: 2,
-                borderRightWidth: 1,
-                borderColor: "#DCDFEA",
-              }}
-            >
-              Product Name
-            </TableData>
-            <TableData
-              style={{
-                fontSize: 14,
-                color: "#1E293B",
-                fontWeight: 500,
-                flex: 1,
-                borderRightWidth: 1,
-                borderColor: "#DCDFEA",
-              }}
-            >
-              Quantity
-            </TableData>
-            <TableData
-              style={{
-                fontSize: 14,
-                color: "#1E293B",
-                fontWeight: 500,
-                flex: 1,
-                borderRightWidth: 1,
-                borderColor: "#DCDFEA",
-              }}
-            >
-              Price
-            </TableData>
-            <Can I="delete" a="Order">
-              <TableData
-                style={{
-                  fontSize: 14,
-                  color: "#1E293B",
-                  fontWeight: 500,
-                  flex: 1 / 3,
-                }}
-              >
-                Last updated
-              </TableData>
-            </Can>
-          </TableHeading>
-          {/* random data  */}
-          {order.orderItems.map((product) => (
-            <ProductItem productInfo={product} />
-          ))}
-        </Table>
+      <View style={mobileOrderStyles.viewContainer}>
+        {/* random data  */}
+        {order.orderItems.map((product) => (
+          <ProductItem productInfo={product} />
+        ))}
       </View>
     </ScrollView>
   );
 }
-const orderStyles = StyleSheet.create({
+const mobileOrderStyles = StyleSheet.create({
   viewContainer: {
     paddingVertical: 12,
     paddingHorizontal: 16,
@@ -223,75 +182,40 @@ const ProductItem = ({
     if (curr_product) setProductName(curr_product?.name);
   }, [productList]);
   return (
-    <TableRow
-      style={{ flex: 1 }}
-      id={productInfo.productId}
-      key={productInfo.productId}
-    >
-      <TableData
-        style={{
-          fontSize: 14,
-          color: "#1E293B",
-          fontWeight: 500,
-          flex: 1,
-          borderRightWidth: 1,
-          borderColor: "#DCDFEA",
-        }}
-      >
-        {productInfo.productId}
-      </TableData>
-      <TableData
-        style={{
-          fontSize: 14,
-          color: "#1E293B",
-          fontWeight: 500,
-          flex: 2,
-          borderRightWidth: 1,
-          borderColor: "#DCDFEA",
-        }}
-      >
-        {productName}
-      </TableData>
-      <TableData
-        style={{
-          fontSize: 14,
-          color: "#1E293B",
-          fontWeight: 500,
-          flex: 1,
-          borderRightWidth: 1,
-          borderColor: "#DCDFEA",
-        }}
-      >
-        {productInfo.quantity} {productInfo.unit}
-      </TableData>
-      <TableData
-        style={{
-          fontSize: 14,
-          color: "#1E293B",
-          fontWeight: 500,
-          flex: 1,
-          borderRightWidth: 1,
-          borderColor: "#DCDFEA",
-        }}
-      >
-        {productInfo.price}
-      </TableData>
-      <TableData
-        style={{
-          fontSize: 14,
-          color: "#1E293B",
-          fontWeight: 500,
-          flex: 1 / 3,
-        }}
-      >
-        {new Date(productInfo.updatedAt).toLocaleString("en-US", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-          hour: "2-digit",
-        })}
-      </TableData>
-    </TableRow>
+    <View style={orderStyles.orderCard}>
+      <View style={orderStyles.innerSection}>
+        <Text style={orderStyles.headerText}>{productName}</Text>
+      </View>
+      <View style={orderStyles.innerSectionFlexStart}>
+        <View style={{ flex: 1, gap: 4 }}>
+          <Text style={orderStyles.orderHeader}>Product Id</Text>
+          <Text style={orderStyles.orderMainText}>{productInfo.productId}</Text>
+        </View>
+        <View style={{ flex: 1, gap: 4 }}>
+          <Text style={orderStyles.orderHeader}>Quantity</Text>
+          <Text style={orderStyles.orderMainText}>
+            {productInfo.quantity} {productInfo.unit}
+          </Text>
+        </View>
+      </View>
+      <View style={orderStyles.innerSectionFlexStart}>
+        <View style={{ flex: 1, gap: 4 }}>
+          <Text style={orderStyles.orderHeader}>Price</Text>
+          <Text style={orderStyles.orderMainText}>{productInfo.price}</Text>
+        </View>
+        <View style={{ flex: 1, gap: 4 }}>
+          <Text style={orderStyles.orderHeader}>Last Updated</Text>
+          <Text style={orderStyles.orderMainText}>
+            {new Date(productInfo.updatedAt).toLocaleString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+              hour: "2-digit",
+            })}
+          </Text>
+        </View>
+      </View>
+    </View>
   );
 };
 
@@ -351,7 +275,7 @@ const styles = StyleSheet.create({
   headerComponent: {
     width: "100%",
     display: "flex",
-    flexDirection: "row",
+    flexDirection: "column",
     alignItems: "center",
     backgroundColor: "white",
     paddingHorizontal: 16,

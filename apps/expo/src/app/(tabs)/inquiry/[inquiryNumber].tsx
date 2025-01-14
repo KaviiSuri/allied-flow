@@ -1,5 +1,6 @@
 import { router, useLocalSearchParams } from "expo-router";
 import { useState, useEffect } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -20,7 +21,6 @@ import { FormTextInput } from "~/components/shared/form";
 import { SearchBox } from "~/components/shared/searchComponent";
 import type { RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
-import SampleDetails from "../sample/[sampleId]";
 
 type QuoteItem = NonNullable<
   RouterOutputs["inquiry"]["getDetails"]["latestQuote"]
@@ -151,11 +151,19 @@ export default function InquiriesDetails() {
         );
       case "Sample":
         return (
-          <SampleDetails _sampleId={data.inquiry.id} />
+          <OrderPage
+            showHeader={false}
+            type="SAMPLE"
+            inquiryId={inquiryNumber as string}
+          />
         );
       case "Order":
         return (
-          <SampleDetails _sampleId={data.inquiry.id} />
+          <OrderPage
+            showHeader={false}
+            type="REGULAR"
+            inquiryId={inquiryNumber as string}
+          />
         );
       default:
         return (

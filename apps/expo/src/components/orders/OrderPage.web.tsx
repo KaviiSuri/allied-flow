@@ -39,8 +39,7 @@ export const OrderPage = ({
 }: {
   type: "REGULAR" | "SAMPLE";
   inquiryId?: string;
-
-  }) => {
+}) => {
   const { data, isError, isLoading, hasNextPage, fetchNextPage } =
     api.orders.list.useInfiniteQuery(
       {
@@ -348,7 +347,11 @@ function OrderItem({ order,type }: { order: RouterOutputs["orders"]["list"][0], 
               shadowOpacity: 0.05,
               shadowColor: "#101828",
             }}
-            onPress={() => router.push(`/order/${order.id}`)}
+            onPress={() =>
+              router.push(
+                `/${order.type === "SAMPLE" ? "sample" : "order"}/${order.id}`,
+              )
+            }
           >
             <EditIcon />
           </Pressable>

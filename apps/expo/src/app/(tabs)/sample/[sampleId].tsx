@@ -22,11 +22,12 @@ import { api } from "~/utils/api";
 
 const windowHeight = Dimensions.get("window").height - 64;
 export default function OrderDetails() {
-  const { orderId } = useLocalSearchParams();
+  const { sample: orderId } = useLocalSearchParams();
   const {
     data: OrderData,
     isError,
     isLoading,
+    error,
   } = api.orders.read.useQuery(
     {
       id: orderId as string,

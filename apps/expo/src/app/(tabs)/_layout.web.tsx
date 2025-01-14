@@ -16,7 +16,7 @@ import { logtoService } from "~/config/logto";
 import AuthProvider, { AuthConsumer, useAbility } from "~/providers/auth";
 import DashboardIcon from "~/app/assets/images/dashboard-icon.png";
 import NotificationButton from "~/components/utils/notifications/NotificationButton";
-import { dummyNotificationData } from "./notifications";
+import { NotificationProvider } from "~/providers/notifications";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function CustomDrawerContent(props: any) {
@@ -72,93 +72,88 @@ export default function WebLayout() {
       <GestureHandlerRootView>
         <AuthConsumer>
           {(_, ability) => (
-            <Drawer
-              initialRouteName="index"
-              screenOptions={{
-                drawerType: "permanent",
-                headerStyle: {
-                  backgroundColor: "#F9F9F9",
-                },
-                headerTitleStyle: {
-                  fontFamily: "Avenir",
-                  fontWeight: 800,
-                  fontSize: 18,
-                },
-                headerLeft: (el: any) => {
-                  console.log(el, ability, router, "EL");
-                  return (
-                    <>
-                      <View style={{ marginLeft: 24 }}></View>
-                    </>
-                  );
-                },
-                headerRight: () => {
-                  return (
-                    <View style={{ gap: 16, marginRight: 24 }}>
-                      <NotificationButton data={dummyNotificationData} />
-                    </View>
-                  );
-                },
-              }}
-              drawerContent={CustomDrawerContent}
-            >
-              {DrawerItems.map((drawer) => (
-                <Drawer.Screen
-                  key={drawer.path}
-                  name={drawer.path}
-                  options={{
-                    title: drawer.name,
-                    headerTitle: drawer.name,
-                    headerTitleStyle: {
-                      fontFamily: "Avenir",
-                      fontWeight: 800,
-                      fontSize: 18,
-                    },
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                    drawerItemStyle: {
-                      // @ts-expect-error types broken here
-                      ...(drawer.action &&
+            <NotificationProvider>
+              <Drawer
+                initialRouteName="index"
+                screenOptions={{
+                  drawerType: "permanent",
+                  headerStyle: {
+                    backgroundColor: "#F9F9F9",
+                  },
+                  headerTitleStyle: {
+                    fontFamily: "Avenir",
+                    fontWeight: 800,
+                    fontSize: 18,
+                  },
+                  headerLeft: () => null,
+                  headerRight: () => {
+                    return (
+                      <View style={{ gap: 16, marginRight: 24 }}>
+                        <NotificationButton />
+                      </View>
+                    );
+                  },
+                }}
+                drawerContent={CustomDrawerContent}
+              >
+                {DrawerItems.map((drawer) => (
+                  <Drawer.Screen
+                    key={drawer.path}
+                    name={drawer.path}
+                    options={{
+                      title: drawer.name,
+                      headerTitle: drawer.name,
+                      headerTitleStyle: {
+                        fontFamily: "Avenir",
+                        fontWeight: 800,
+                        fontSize: 18,
+                      },
+                      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                      drawerItemStyle: {
                         // @ts-expect-error types broken here
-                        drawer.subject &&
-                        // @ts-expect-error types broken here
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                        !ability.can(drawer.action, drawer.subject) && {
+                        ...(drawer.action &&
+                          // @ts-expect-error types broken here
+                          drawer.subject &&
+                          // @ts-expect-error types broken here
+                          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+                          !ability.can(drawer.action, drawer.subject) && {
+                            display: "none",
+                          }),
+                        ...(drawer.hideDesktop && {
                           display: "none",
                         }),
-                      ...(drawer.hideDesktop && {
-                        display: "none",
-                      }),
-                    },
-                    drawerLabel: ({ focused }: { focused: boolean }) => (
-                      <Text
-                        style={{
-                          fontFamily: "Avenir",
-                          fontSize: 16,
-                          lineHeight: 24,
-                          fontWeight: focused ? "800" : "500",
-                          color: focused ? "#2F80F5" : "#475569",
-                        }}
-                      >
-                        {drawer.name}
-                      </Text>
-                    ),
-                    drawerIcon: ({ focused }: { focused: boolean }) => (
-                      <Image
-                        // @ts-expect-error types broken here
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                        source={drawer.icon}
-                        style={{
-                          width: 20,
-                          height: 20,
-                        }}
-                        resizeMode={"contain"}
-                        tintColor={focused ? "#2F80F5" : "#475569"}
-                      />
-                    ),
-                  }}
-                />
-              ))}
-            </Drawer>
+                      },
+                      drawerLabel: ({ focused }) => (
+                        <Text
+                          style={{
+                            fontFamily: "Avenir",
+                            fontSize: 16,
+                            lineHeight: 24,
+                            fontWeight: focused ? "800" : "500",
+                            color: focused ? "#2F80F5" : "#475569",
+                          }}
+                        >
+                          {drawer.name}
+                        </Text>
+                      ),
+                      drawerIcon: ({ focused }) => (
+                        <Image
+                          // @ts-expect-error types broken here
+                          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                          source={drawer.icon}
+                          style={{
+                            width: 20,
+                            height: 20,
+                          }}
+                          resizeMode={"contain"}
+                          tintColor={focused ? "#2F80F5" : "#475569"}
+                        />
+                      ),
+                    }}
+                  />
+                ))}
+              </Drawer>
+            </NotificationProvider>
           )}
         </AuthConsumer>
       </GestureHandlerRootView>

@@ -16,6 +16,8 @@ const envSchema = z.object({
   LOGTO_TENANT_ID: z.string(),
   DATABASE_URL: z.string(),
   DATABASE_TOKEN: z.string().optional(),
+  EXPO_ACCESS_TOKEN: z.string(),
+  REDIS_URL: z.string().default("redis://localhost:6379"),
 });
 
 // Parse and validate the environment variables

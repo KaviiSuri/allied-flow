@@ -1,15 +1,60 @@
 import { TRPCError } from "@trpc/server";
 import type { TRPCRouterRecord } from "@trpc/server";
 import { protectedProcedure } from "../trpc.js";
-import {
-  inquiries,
-  insertOrderSchema,
-  orderItems,
-  orders,
-} from "@repo/db/schema";
+import type { Order } from "@repo/db/schema";
+import { inquiries, orderItems, orders } from "@repo/db/schema";
 import { nanoid } from "nanoid";
 import { and, eq, lt } from "@repo/db";
 import { z } from "zod";
+import type { Notification } from "../services/pubsub.js";
+import { createNotification, sendNotifications } from "../services/pubsub.js";
+import type { db } from "@repo/db/client";
+
+async function getOrderStakeHolders(tx: typeof db, order: Order) {
+  const buyerTeamUsers = await tx.query.users.findMany({
+    where: (users) => eq(users.teamId, order.buyerId),
+  });
+
+  return buyerTeamUsers;
+}
+
+async function createAndSendOrderNotification(tx: typeof db, order: Order) {
+  let type: Notification["type"] = "ORDER_PLACED";
+  switch (order.status) {
+    case "PLACED":
+      type = "ORDER_PLACED";
+      break;
+    case "DISPATCHED":
+      type = "ORDER_DISPATCHED";
+      break;
+    case "DELIVERED":
+      type = "ORDER_SHIPPED";
+      break;
+  }
+  const notificationPayload = {
+    userId: "",
+    id: "",
+    read: false,
+    type,
+    orderType: order.type,
+    orderId: order.id,
+    message: `Order ${order.id} has been ${type.toLowerCase().split("_")[1]}`,
+    createdAt: new Date().toISOString(),
+  } satisfies Notification;
+  const stakeholders = await getOrderStakeHolders(tx, order);
+  const notifications = stakeholders.map((stakeholder) => ({
+    ...notificationPayload,
+    userId: stakeholder.id,
+  }));
+  const persistedNotificaitons = await Promise.all(
+    notifications.map((notification) => createNotification(tx, notification)),
+  );
+
+  await sendNotifications(
+    tx,
+    persistedNotificaitons.filter((n) => !!n) as Notification[],
+  );
+}
 
 export const ordersRouter = {
   createFromInquiry: protectedProcedure
@@ -71,15 +116,20 @@ export const ordersRouter = {
         }
 
         await trx.insert(orderItems).values(
-          quote.quoteItems.map((quoteItem) => ({
-            orderId: order.id,
-            productId: quoteItem.productId,
-            price: quoteItem.price,
-            quantity: quoteItem.quantity,
-            unit: quoteItem.unit,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-          })),
+          quote.quoteItems
+            .filter(
+              (quoteItem) =>
+                quoteItem.sampleRequested || input.type !== "SAMPLE",
+            )
+            .map((quoteItem) => ({
+              orderId: order.id,
+              productId: quoteItem.productId,
+              price: quoteItem.price,
+              quantity: quoteItem.quantity,
+              unit: quoteItem.unit,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+            })),
         );
         await trx
           .update(inquiries)
@@ -87,9 +137,9 @@ export const ordersRouter = {
             status: "ACCEPTED",
           })
           .where(eq(inquiries.id, input.inquiryId));
-
         return order;
       });
+      createAndSendOrderNotification(ctx.db, order).catch(console.error);
       return order;
     }),
 
@@ -105,6 +155,8 @@ export const ordersRouter = {
           .optional(),
         inquiryId: z.string().optional(),
         limit: z.number().min(1).max(100).default(10),
+        buyerId: z.string().optional(),
+        productIds: z.array(z.string()).optional(),
         type: z.enum(["REGULAR", "SAMPLE"]),
         cursor: z.string().optional(),
       }),
@@ -123,13 +175,21 @@ export const ordersRouter = {
             input.inquiryId ? eq(orders.inquiryId, input.inquiryId) : undefined,
             input.status ? eq(orders.status, input.status) : undefined,
             input.cursor ? lt(orders.createdAt, input.cursor) : undefined,
+            input.buyerId ? eq(orders.buyerId, input.buyerId) : undefined,
           ),
         orderBy: (orders, { desc }) => desc(orders.createdAt),
         with: {
+          buyer: true,
           orderItems: {
             with: {
               product: true,
             },
+            ...(input.productIds && {
+              where: (orderItems, { inArray }) =>
+                input.productIds
+                  ? inArray(orderItems.productId, input.productIds)
+                  : undefined,
+            }),
           },
         },
         limit: input.limit,
@@ -195,6 +255,9 @@ export const ordersRouter = {
           message: "Failed to update order",
         });
       }
+      createAndSendOrderNotification(ctx.db, updatedOrder[0]).catch(
+        console.error,
+      );
 
       return updatedOrder[0];
     }),

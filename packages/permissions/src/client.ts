@@ -8,6 +8,7 @@ export const clientPermissions: Record<Role, DefinePermissions> = {
     can("negotiate", "Inquiry");
     can("accept", "Inquiry");
     can("reject", "Inquiry");
+    can("create", "Order");
     can("getDetails", "Inquiry");
   },
   ADMIN: (user, { can }) => {
@@ -27,6 +28,7 @@ export const clientPermissions: Record<Role, DefinePermissions> = {
     can("reject", "Inquiry");
     can("getDetails", "Inquiry");
     can("read", "Order");
+    can("create", "Order");
     can("list", "Order");
   },
 
@@ -38,6 +40,7 @@ export const clientPermissions: Record<Role, DefinePermissions> = {
     can("accept", "Inquiry");
     can("reject", "Inquiry");
     can("getDetails", "Inquiry");
+    can("create", "Order");
   },
 
   LOGISTICS: (user, { can }) => {

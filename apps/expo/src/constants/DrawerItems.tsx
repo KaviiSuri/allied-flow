@@ -93,4 +93,16 @@ export default [
     hideDesktop: true,
     mobileView: false,
   },
+  {
+    path: "order/[orderId]",
+    name: "",
+    hideDesktop: true,
+    mobileView: false,
+  },
+  {
+    path: "sample/[sampleId]",
+    name: "",
+    hideDesktop: true,
+    mobileView: false,
+  },
 ] as const;

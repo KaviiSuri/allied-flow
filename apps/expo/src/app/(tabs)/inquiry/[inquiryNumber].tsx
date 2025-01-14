@@ -14,7 +14,7 @@ import Icon from "react-native-vector-icons/AntDesign";
 import { DetailsSectionMobile } from "~/components/inquiryDetails/mobile/Details";
 import { orderStyles } from "~/components/inquiryDetails/mobile/Order";
 import { BottomDrawer } from "~/components/layouts/BottomDrawerLayout";
-import { OrderPage } from "~/components/order/OrderPage";
+import { OrderPage } from "~/components/orders/OrderPage";
 import { BadgeStatus } from "~/components/shared/badge";
 import { FormTextInput } from "~/components/shared/form";
 import { SearchBox } from "~/components/shared/searchComponent";

@@ -70,10 +70,34 @@ export default () => {
           .catch();
       },
     });
+
+  const { mutate: createOrderFromInquiry } =
+    api.orders.createFromInquiry.useMutation({
+      onSuccess: () => {
+        Toast.show({
+          type: "success",
+          text1: "Inquiry placed with sample request successfully",
+        });
+        utils.orders.invalidate().catch(console.error);
+      },
+    });
+
+
+ const handleSampleRequest = () => {
+    if (!data?.inquiry || !data.latestQuote ) {
+      return;
+    }
+    createOrderFromInquiry({
+      inquiryId: data.inquiry.id,
+      quoteId: data.latestQuote.id,
+      type: "SAMPLE",
+    });
+  };
   const handleSave = () => {
     if (isPending || !data) {
       return;
     }
+    handleSampleRequest();
     negotiate({
       inquiryId: data.inquiry.id,
       items: Object.values(negoiatedItems),
@@ -105,8 +129,10 @@ export default () => {
         />
       )}
       {/* order history */}
-      {showHistory && (
+      {showHistory && data && (
         <OrderHistory
+          buyerId={data?.inquiry.buyerId}
+          productIds={Object.keys(negoiatedItems)}
           handleOrdrHistory={() => {
             setShowHistory(false);
           }}
@@ -189,9 +215,16 @@ const QuoteDetails = ({
 
 const OrderHistory = ({
   handleOrdrHistory,
+  buyerId,
+  productIds,
 }: {
   handleOrdrHistory: () => void;
+  buyerId: string;
+  productIds: string[];
 }) => {
+  const [filter, setFilter] = useState<"SAME_CUSTOMER" | "SAME_PRODUCTS">(
+    "SAME_CUSTOMER",
+  );
   return (
     <View style={styles.container}>
       <View style={[styles.headerContainer, styles.rightHeader]}>
@@ -203,7 +236,11 @@ const OrderHistory = ({
       <View style={styles.historyPanel}>
         <View></View>
         <View>
-          <HistoryPanelTable />
+          <HistoryPanelTable
+            buyerId={buyerId}
+            productIds={productIds}
+            filter={filter}
+          />
         </View>
       </View>
     </View>

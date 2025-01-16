@@ -21,7 +21,7 @@ import { Can } from "~/providers/auth";
 import { api } from "~/utils/api";
 
 const windowHeight = Dimensions.get("window").height - 64;
-export default function SampleDetails({_sampleId}: {_sampleId?:string}) {
+export default function SampleDetails({ _sampleId }: { _sampleId?: string }) {
   const { sampleId: orderId } = useLocalSearchParams();
   const {
     data: OrderData,
@@ -30,7 +30,7 @@ export default function SampleDetails({_sampleId}: {_sampleId?:string}) {
     error,
   } = api.orders.read.useQuery(
     {
-      id: _sampleId || orderId as string,
+      id: _sampleId || (orderId as string),
     },
     {},
   );
@@ -149,7 +149,7 @@ export default function SampleDetails({_sampleId}: {_sampleId?:string}) {
                 borderColor: "#DCDFEA",
               }}
             >
-              Quantity
+              CAS
             </TableData>
             <TableData
               style={{
@@ -161,7 +161,7 @@ export default function SampleDetails({_sampleId}: {_sampleId?:string}) {
                 borderColor: "#DCDFEA",
               }}
             >
-              Price
+              MAKE
             </TableData>
             <Can I="delete" a="Order">
               <TableData
@@ -208,6 +208,8 @@ const ProductItem = ({
   };
 }) => {
   const [productName, setProductName] = useState("");
+  const [cas, setCas] = useState("");
+  const [make, setMake] = useState("");
   const {
     data: productData,
     isLoading,
@@ -220,7 +222,11 @@ const ProductItem = ({
     const curr_product = productList?.find(
       (product) => product.id === productInfo.productId,
     );
-    if (curr_product) setProductName(curr_product?.name);
+    if (curr_product) {
+      setProductName(curr_product?.name);
+      setCas(curr_product?.cas);
+      setMake(curr_product?.make);
+    }
   }, [productList]);
   return (
     <TableRow
@@ -262,7 +268,7 @@ const ProductItem = ({
           borderColor: "#DCDFEA",
         }}
       >
-        {productInfo.quantity} {productInfo.unit}
+        {cas ? cas : "-"}
       </TableData>
       <TableData
         style={{
@@ -274,7 +280,7 @@ const ProductItem = ({
           borderColor: "#DCDFEA",
         }}
       >
-        {productInfo.price}
+        {make? make: "-" }
       </TableData>
       <TableData
         style={{

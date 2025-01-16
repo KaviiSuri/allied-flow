@@ -13,6 +13,7 @@ import {
 import Toast from "react-native-toast-message";
 import { PrimaryButton, SecondaryButton } from "~/components/core/button";
 import { DetailsTabs } from "~/components/detailsTabs";
+import { InquirySamples } from "~/components/inquiry/InquiryItems";
 import { InquiryDetailsPage } from "~/components/inquiryDetailsPage";
 import { CenterModalComponent } from "~/components/layouts/CenterModal";
 import { FormTextInput } from "~/components/shared/form";
@@ -57,6 +58,8 @@ export default function InquiriesDetails() {
   const [updateQuoteActive, setUpdateQuoteActive] = useState(false);
 
   const [negotiatedItems, setNegotiatedItems] = useState<QuoteItemMap>({});
+  const [sampleItems, setSampleItems] = useState<any>();
+  const [orderItems, setOrderItems] = useState<any>()
 
   const handleQuoteItemUpdate = (quoteItem: QuoteItem) => {
     setNegotiatedItems((prev) => ({
@@ -186,7 +189,10 @@ export default function InquiriesDetails() {
       user?.team.type,
       "DATA HERE",
     );
-    console.log(data, "DATA HERE");
+
+    const sampleList = data?.latestQuote?.quoteItems.filter((quoteItem)=> quoteItem.sampleRequested)
+    setSampleItems(sampleList)
+    setOrderItems(data?.latestQuote?.quoteItems)
   }, [data, createdBy, currentUser]);
 
   const renderNestedScreen = () => {
@@ -200,9 +206,9 @@ export default function InquiriesDetails() {
           />
         );
       case "Sample":
-        return <Sample />;
+        return <InquirySamples items={sampleItems} type="SAMPLE"/>;
       case "Order":
-        return <Sample />;
+        return <InquirySamples items={orderItems} type="ORDERS"/>;
       default:
         return (
           <InquiryDetails

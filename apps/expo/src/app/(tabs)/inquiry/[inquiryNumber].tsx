@@ -12,6 +12,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import Icon from "react-native-vector-icons/AntDesign";
+import { InquirySamples } from "~/components/inquiry/InquiryItems";
 import { DetailsSectionMobile } from "~/components/inquiryDetails/mobile/Details";
 import { orderStyles } from "~/components/inquiryDetails/mobile/Order";
 import { BottomDrawer } from "~/components/layouts/BottomDrawerLayout";
@@ -48,7 +49,8 @@ export default function InquiriesDetails() {
   const [remark, setRemark] = useState<string>("");
 
   const [negoiatedItems, setNegotiatedItems] = useState<QuoteItemMap>({});
-
+  const [sampleItems, setSampleItems] = useState<any>();
+  const [orderItems, setOrderItems] = useState<any>();
   useEffect(() => {
     setNegotiatedItems({});
   }, [inquiryNumber]);
@@ -137,6 +139,13 @@ export default function InquiriesDetails() {
     rejectInquiry({ inquiryId: data.inquiry.id, quoteId: data.latestQuote.id });
   };
 
+  useEffect(() => {
+    const sampleList = data?.latestQuote?.quoteItems.filter(
+      (quoteItem) => quoteItem.sampleRequested,
+    );
+    setSampleItems(sampleList);
+    setOrderItems(data?.latestQuote?.quoteItems);
+  }, [data]);
   const renderNestedScreen = () => {
     if (isLoading || !data) {
       return <Text>Loading...</Text>;
@@ -150,21 +159,9 @@ export default function InquiriesDetails() {
           />
         );
       case "Sample":
-        return (
-          <OrderPage
-            showHeader={false}
-            type="SAMPLE"
-            inquiryId={inquiryNumber as string}
-          />
-        );
+        return <InquirySamples items={sampleItems} type="SAMPLE" />;
       case "Order":
-        return (
-          <OrderPage
-            showHeader={false}
-            type="REGULAR"
-            inquiryId={inquiryNumber as string}
-          />
-        );
+        return <InquirySamples items={orderItems} type="ORDERS"/>;
       default:
         return (
           <DetailsSectionMobile

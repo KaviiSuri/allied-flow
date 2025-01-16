@@ -12,6 +12,7 @@ import type { ViewProps } from "react-native-svg/lib/typescript/fabric/utils";
 import { LoadingState } from "../shared/displayStates/LoadingState";
 import { ErrorState } from "../shared/displayStates/ErrorState";
 import { router } from "expo-router";
+import { BadgeStatus } from "../shared/badge";
 
 export const OrderPage = ({
   type,
@@ -204,24 +205,9 @@ function OrderCard({
   return (
     <View style={orderStyles.orderCard}>
       <View style={orderStyles.innerSection}>
-        {order.status === "DISPATCHED" && (
-          <Badge
-            IconName="checkcircleo"
-            badgeText={
-              type === "Sample" ? "Sample Dispatched" : "Order Dispatched"
-            }
-            bg="#f0f9f6"
-            accentColor="#047857"
+          <BadgeStatus
+          status={order.status}
           />
-        )}
-        {order.status === "PLACED" && (
-          <Badge
-            IconName="checkcircleo"
-            badgeText={type === "Sample" ? "Sample placed" : "Order placed"}
-            bg="#f1f5f9"
-            accentColor="#334155"
-          />
-        )}
       </View>
       <View style={orderStyles.innerSection}>
         <Text style={orderStyles.headerText}>
@@ -234,7 +220,7 @@ function OrderCard({
           onPress={() => router.push(`/sample/${order.id}`)}
         >
           <View style={{ flex: 1, gap: 4 }}>
-            <Text style={orderStyles.orderHeader}>Order ID</Text>
+            <Text style={orderStyles.orderHeader}>Sample ID</Text>
             <Text style={orderStyles.orderMainText}>{order.id}</Text>
           </View>
           <View style={{ flex: 1, gap: 4 }}>

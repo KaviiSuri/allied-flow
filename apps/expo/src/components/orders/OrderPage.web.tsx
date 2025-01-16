@@ -29,6 +29,7 @@ import TrashIcon from "~/app/assets/images/trash-icon.svg";
 import { Can } from "~/providers/auth";
 import { router } from "expo-router";
 import React from "react";
+import { BadgeStatus } from "../shared/badge";
 
 const windowHeight = Dimensions.get("window").height - 64;
 
@@ -274,22 +275,9 @@ function OrderItem({ order,type }: { order: RouterOutputs["orders"]["list"][0], 
           borderColor: "#DCDFEA",
         }}
       >
-        {order.status === "DISPATCHED" && (
-          <Badge
-            IconName="checkcircleo"
-            badgeText="Order Dispatched"
-            bg="#f0f9f6"
-            accentColor="#047857"
+          <BadgeStatus
+          status={order.status}
           />
-        )}
-        {order.status === "PLACED" && (
-          <Badge
-            IconName="checkcircleo"
-            badgeText="Order placed"
-            bg="#f1f5f9"
-            accentColor="#334155"
-          />
-        )}
       </TableData>
       <TableData
         style={{

@@ -57,6 +57,7 @@ export const usersRouter = {
           code: "INTERNAL_SERVER_ERROR",
         });
       }
+      console.log("user", user.data);
 
       const insertedUserId = await ctx.db
         .insert(users)

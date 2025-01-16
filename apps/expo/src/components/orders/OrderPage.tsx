@@ -11,6 +11,8 @@ import { PrimaryButton } from "../core/button";
 import type { ViewProps } from "react-native-svg/lib/typescript/fabric/utils";
 import { LoadingState } from "../shared/displayStates/LoadingState";
 import { ErrorState } from "../shared/displayStates/ErrorState";
+import { router } from "expo-router";
+import { BadgeStatus } from "../shared/badge";
 
 export const OrderPage = ({
   type,
@@ -90,7 +92,11 @@ export const OrderPage = ({
       {showHeader && (
         <View style={styles.searchBoxContainer}>
           <SearchBox
-            placeholder="Search product, Order ID"
+            placeholder={
+              type === "SAMPLE"
+                ? "Search product, Sample ID"
+                : "Search product, Order ID"
+            }
             setValue={setSearchResult}
             value={searchResult}
           />
@@ -118,6 +124,7 @@ export const OrderPage = ({
             filter={filter}
             setFilter={setFilter}
             orders={orders}
+            type={type}
           />
 
           {hasNextPage && (
@@ -142,11 +149,13 @@ const OrderBody = ({
   setFilter,
   orders,
   style,
+  type,
 }: {
   filter: string;
   setFilter: React.Dispatch<React.SetStateAction<string>>;
   orders: RouterOutputs["orders"]["list"];
   style?: ViewProps["style"];
+  type: string;
 }) => {
   return (
     <View style={[styles.orderBodyContent, style]}>
@@ -179,57 +188,66 @@ const OrderBody = ({
         {/* orders */}
 
         {orders.map((order, index) => (
-          <OrderCard key={order.id} order={order} />
+          <OrderCard key={order.id} order={order} type={type} />
         ))}
       </GestureHandlerRootView>
     </View>
   );
 };
 
-function OrderCard({ order }: { order: RouterOutputs["orders"]["list"][0] }) {
+function OrderCard({
+  order,
+  type,
+}: {
+  order: RouterOutputs["orders"]["list"][0];
+  type: string;
+}) {
   return (
     <View style={orderStyles.orderCard}>
       <View style={orderStyles.innerSection}>
-        {order.status === "DISPATCHED" && (
-          <Badge
-            IconName="checkcircleo"
-            badgeText="Order Dispatched"
-            bg="#f0f9f6"
-            accentColor="#047857"
+          <BadgeStatus
+          status={order.status}
           />
-        )}
-        {order.status === "PLACED" && (
-          <Badge
-            IconName="checkcircleo"
-            badgeText="Order placed"
-            bg="#f1f5f9"
-            accentColor="#334155"
-          />
-        )}
-        <Pressable>
-          <Icon name="ellipsis-v"></Icon>
-        </Pressable>
       </View>
       <View style={orderStyles.innerSection}>
         <Text style={orderStyles.headerText}>
           {order.orderItems.map((oi) => oi.product.name).join(", ")}
         </Text>
       </View>
-      <View style={orderStyles.innerSectionFlexStart}>
-        <View style={{ flex: 1, gap: 4 }}>
-          <Text style={orderStyles.orderHeader}>Order ID</Text>
-          <Text style={orderStyles.orderMainText}>{order.id}</Text>
-        </View>
-        <View style={{ flex: 1, gap: 4 }}>
-          <Text style={orderStyles.orderHeader}>Inquiry Number</Text>
-          <Text style={orderStyles.orderMainText}>{order.inquiryId}</Text>
-        </View>
-      </View>
+      {type === "SAMPLE" ? (
+        <Pressable
+          style={orderStyles.innerSectionFlexStart}
+          onPress={() => router.push(`/sample/${order.id}`)}
+        >
+          <View style={{ flex: 1, gap: 4 }}>
+            <Text style={orderStyles.orderHeader}>Sample ID</Text>
+            <Text style={orderStyles.orderMainText}>{order.id}</Text>
+          </View>
+          <View style={{ flex: 1, gap: 4 }}>
+            <Text style={orderStyles.orderHeader}>Inquiry Number</Text>
+            <Text style={orderStyles.orderMainText}>{order.inquiryId}</Text>
+          </View>
+        </Pressable>
+      ) : (
+        <Pressable
+          style={orderStyles.innerSectionFlexStart}
+          onPress={() => router.push(`/order/${order.id}`)}
+        >
+          <View style={{ flex: 1, gap: 4 }}>
+            <Text style={orderStyles.orderHeader}>Order ID</Text>
+            <Text style={orderStyles.orderMainText}>{order.id}</Text>
+          </View>
+          <View style={{ flex: 1, gap: 4 }}>
+            <Text style={orderStyles.orderHeader}>Inquiry Number</Text>
+            <Text style={orderStyles.orderMainText}>{order.inquiryId}</Text>
+          </View>
+        </Pressable>
+      )}
     </View>
   );
 }
 
-const orderStyles = StyleSheet.create({
+export const orderStyles = StyleSheet.create({
   orderCard: {
     padding: 16,
     backgroundColor: "white",

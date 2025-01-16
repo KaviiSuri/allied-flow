@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Badge } from "~/components/core/badge";
-
+import React from "react";
 type StatusType =
   | "EXPIRED"
   | "RAISED"
@@ -8,6 +8,7 @@ type StatusType =
   | "RECEIVED"
   | "ACCEPTED"
   | "PLACED"
+  | "DISPATCHED"
   | "NEGOTIATING";
 
 export const BadgeStatus = ({ status }: { status: string }) => {
@@ -55,6 +56,12 @@ export const BadgeStatus = ({ status }: { status: string }) => {
       NEGOTIATING: {
         iconName: "checkcircleo",
         badgeText: "Negotiation",
+        bg: "#efebfe",
+        accentColor: "#21134e",
+      },
+      DISPATCHED: {
+        iconName: "checkcircleo",
+        badgeText: "Dispatched",
         bg: "#efebfe",
         accentColor: "#21134e",
       },

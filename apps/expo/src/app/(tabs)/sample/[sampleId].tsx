@@ -18,7 +18,7 @@ import { Can } from "~/providers/auth";
 import { api } from "~/utils/api";
 
 const windowHeight = Dimensions.get("window").height - 64;
-export default function SampleDetails({_sampleId}: {_sampleId?:string}) {
+export default function SampleDetails({ _sampleId }: { _sampleId?: string }) {
   const { sampleId: orderId } = useLocalSearchParams();
   const {
     data: OrderData,
@@ -26,7 +26,7 @@ export default function SampleDetails({_sampleId}: {_sampleId?:string}) {
     isLoading,
   } = api.orders.read.useQuery(
     {
-      id: _sampleId || orderId as string,
+      id: _sampleId || (orderId as string),
     },
     {},
   );
@@ -68,7 +68,7 @@ export default function SampleDetails({_sampleId}: {_sampleId?:string}) {
             flexDirection: "row",
             flex: 1,
             width: "100%",
-            alignItems: "center"
+            alignItems: "center",
           }}
         >
           <TouchableOpacity
@@ -167,6 +167,8 @@ const ProductItem = ({
   };
 }) => {
   const [productName, setProductName] = useState("");
+  const [cas, setCas] = useState("");
+  const [make, setMake] = useState("");
   const {
     data: productData,
     isLoading,
@@ -179,7 +181,11 @@ const ProductItem = ({
     const curr_product = productList?.find(
       (product) => product.id === productInfo.productId,
     );
-    if (curr_product) setProductName(curr_product?.name);
+    if (curr_product) {
+      setProductName(curr_product?.name);
+      setCas(curr_product.cas);
+      setMake(curr_product.make);
+    }
   }, [productList]);
   return (
     <View style={orderStyles.orderCard}>
@@ -192,18 +198,6 @@ const ProductItem = ({
           <Text style={orderStyles.orderMainText}>{productInfo.productId}</Text>
         </View>
         <View style={{ flex: 1, gap: 4 }}>
-          <Text style={orderStyles.orderHeader}>Quantity</Text>
-          <Text style={orderStyles.orderMainText}>
-            {productInfo.quantity} {productInfo.unit}
-          </Text>
-        </View>
-      </View>
-      <View style={orderStyles.innerSectionFlexStart}>
-        <View style={{ flex: 1, gap: 4 }}>
-          <Text style={orderStyles.orderHeader}>Price</Text>
-          <Text style={orderStyles.orderMainText}>{productInfo.price}</Text>
-        </View>
-        <View style={{ flex: 1, gap: 4 }}>
           <Text style={orderStyles.orderHeader}>Last Updated</Text>
           <Text style={orderStyles.orderMainText}>
             {new Date(productInfo.updatedAt).toLocaleString("en-US", {
@@ -213,6 +207,16 @@ const ProductItem = ({
               hour: "2-digit",
             })}
           </Text>
+        </View>
+      </View>
+      <View style={orderStyles.innerSectionFlexStart}>
+        <View style={{ flex: 1, gap: 4 }}>
+          <Text style={orderStyles.orderHeader}>CAS</Text>
+          <Text style={orderStyles.orderMainText}>{cas ? cas :"-"}</Text>
+        </View>
+        <View style={{ flex: 1, gap: 4 }}>
+          <Text style={orderStyles.orderHeader}>Make</Text>
+          <Text style={orderStyles.orderMainText}>{make ? make :"-"}</Text>
         </View>
       </View>
     </View>

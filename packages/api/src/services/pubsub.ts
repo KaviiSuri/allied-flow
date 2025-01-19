@@ -7,6 +7,8 @@ import { nanoid } from "nanoid";
 import { and, eq, inArray, lt } from "@repo/db";
 import { sendPushNotifications } from "./expo.js";
 import { env } from "@repo/server-config";
+import { sendWhatsappNotifications } from "./whatsapp.js";
+import { sendEmailNotifications } from "./resend.js";
 
 const redis = new Redis(env.REDIS_URL);
 
@@ -116,6 +118,9 @@ export const sendNotifications = async (
   const pushTokensForUsers = await tx.query.devices.findMany({
     where: (devices) =>
       inArray(devices.userId, [...new Set(notifications.map((n) => n.userId))]),
+    with: {
+      user: true,
+    },
   });
 
   const pushTokensByUserId = pushTokensForUsers.reduce(
@@ -128,6 +133,26 @@ export const sendNotifications = async (
       return acc;
     },
     {} as Record<string, string[]>,
+  );
+
+  const phoneNumberByUserId = pushTokensForUsers.reduce(
+    (acc, device) => {
+      if (!acc[device.userId]) {
+        acc[device.userId] = device.user.phone;
+      }
+      return acc;
+    },
+    {} as Record<string, string>,
+  );
+
+  const emailByUserId = pushTokensForUsers.reduce(
+    (acc, device) => {
+      if (!acc[device.userId]) {
+        acc[device.userId] = device.user.email;
+      }
+      return acc;
+    },
+    {} as Record<string, string>,
   );
 
   const tokensToCleanup: string[][] = [];
@@ -150,6 +175,23 @@ export const sendNotifications = async (
             );
             tokensToCleanup.push(failedTokens);
           })(),
+        );
+      }
+
+      const phoneNumber = phoneNumberByUserId[notification.userId];
+      if (phoneNumber) {
+        notificationPromises.push(
+          sendWhatsappNotifications(
+            [phoneNumber],
+            notification,
+          ),
+        );
+      }
+
+      const email = emailByUserId[notification.userId];
+      if (email) {
+        notificationPromises.push(
+          sendEmailNotifications([email], notification),
         );
       }
 

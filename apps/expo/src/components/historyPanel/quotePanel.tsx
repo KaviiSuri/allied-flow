@@ -3,6 +3,7 @@ import { StyleSheet, Text, TextInput, View } from "react-native";
 import { Badge } from "../core/badge";
 import type { RouterOutputs } from "@repo/api";
 import { api } from "~/utils/api";
+import FilePickerExample from "../shared/filePicker";
 
 type QuoteItem = NonNullable<
   RouterOutputs["inquiry"]["getDetails"]["latestQuote"]
@@ -107,6 +108,10 @@ const QuoteTableList = ({
           <Text style={styles.quoteCardInfoHeaderText}>Make</Text>
           <Text style={styles.quoteCardInfoText}>{product.make}</Text>
         </View>
+      </View>
+
+      <View style={styles.formContainer}>
+        <FilePickerExample />
       </View>
 
       <View style={styles.formContainer}>

@@ -29,5 +29,10 @@
     "turbo": "^2.0.4",
     "typescript": "^5.4.5"
   },
-  "prettier": "@repo/prettier-config"
+  "prettier": "@repo/prettier-config",
+  "pnpm": {
+    "patchedDependencies": {
+      "@wapijs/wapi.js@0.1.1": "patches/@wapijs__wapi.js@0.1.1.patch"
+    }
+  }
 }

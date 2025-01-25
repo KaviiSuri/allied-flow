@@ -24,6 +24,11 @@ const envSchema = z.object({
   WHATSAPP_WEBHOOK_SECRET: z.string(),
   RESEND_API_KEY: z.string(),
   RESEND_FROM_EMAIL: z.string(),
+  // Firebase Configuration
+  FIREBASE_PROJECT_ID: z.string(),
+  FIREBASE_CLIENT_EMAIL: z.string(),
+  FIREBASE_PRIVATE_KEY: z.string(),
+  FIREBASE_STORAGE_BUCKET: z.string(),
 });
 
 // Parse and validate the environment variables

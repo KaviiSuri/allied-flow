@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { protectedProcedure } from "../trpc";
-import { generateUploadUrls, StorageFolderName } from "../services/firebase";
+import { generateUploadUrls, StorageFolderName } from "../services/s3";
 import { TRPCRouterRecord } from "@trpc/server";
 
 export const filesRouter = {

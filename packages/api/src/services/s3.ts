@@ -33,13 +33,15 @@ export async function generateUploadUrls(
   teamId: string,
   userId: string
 ): Promise<FileUploadUrls> {
+  const urlSafeFileName = encodeURIComponent(fileName);
   // Create a storage path with team and user context
-  const storagePath = `${teamId}/${userId}/${folderName}/${Date.now()}-${fileName}`;
+  const storagePath = `${teamId}/${userId}/${folderName}/${Date.now()}-${urlSafeFileName}`;
 
   // Generate a signed URL for upload (expires in 10 minutes)
   const putCommand = new PutObjectCommand({
     Bucket: env.AWS_S3_BUCKET,
     Key: storagePath,
+    ContentType: "application/octet-stream",
   });
   const uploadUrl = await getSignedUrl(s3Client, putCommand, { expiresIn: 600 }); // 10 minutes
 

@@ -164,7 +164,6 @@ export const quoteItems = sqliteTable(
     techDocumentUrl: text("tech_document_url"),
     techDocumentName: text("tech_document_name"),
     techDocumentUploadedAt: text("tech_document_uploaded_at"),
-    techDocumentUploadedBy: text("tech_document_uploaded_by").references(() => users.id),
     createdAt: text("created_at")
       .$defaultFn(() => new Date().toISOString())
       .notNull(),
@@ -193,10 +192,6 @@ export const quoteItemsRelations = relations(quoteItems, ({ one }) => ({
   product: one(products, {
     fields: [quoteItems.productId],
     references: [products.id],
-  }),
-  techDocumentUploader: one(users, {
-    fields: [quoteItems.techDocumentUploadedBy],
-    references: [users.id],
   }),
 }));
 

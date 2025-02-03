@@ -65,6 +65,7 @@ const QuoteTableList = ({
   updateQuoteItem: (quoteItem: QuoteItem) => void;
   negotiationItem?: QuoteItem;
 }) => {
+  console.log('quoteItem current', quoteItem)
   const { data: productList, isLoading } = api.products.read.useQuery();
   const { user } = useUser();
   if (isLoading || !user) {
@@ -113,27 +114,46 @@ const QuoteTableList = ({
       </View>
 
       <View style={styles.formContainer}>
-        <FilePicker 
-          onUploadComplete={({ downloadUrl, storagePath, name }) => {
-            updateQuoteItem({
-              ...quoteItem,
-              ...negotiationItem,
-              techDocumentName: name,
-              techDocumentUrl: downloadUrl,
-              techDocumentStoragePath: storagePath,
-              techDocumentUploadedAt: new Date().toISOString(),
-              techDocumentUploadedBy: user.id,
-            });
-          }}
-          onUploadError={() => {
-            Toast.show({
-              type: "error",
-              text1: "Error uploading file",
-              text2: "Please try again",
-            });
-          }}
-          folderName="technical-documents"
-        />
+        {quoteItem.techDocumentRequested && (
+          <FilePicker
+            currentFile={
+              !!negotiationItem?.techDocumentUrl
+                ? {
+                    name: negotiationItem.techDocumentName ?? undefined,
+                    url: negotiationItem.techDocumentUrl,
+                  }
+                : undefined
+            }
+            onUploadComplete={({ downloadUrl, storagePath, name }) => {
+              updateQuoteItem({
+                ...quoteItem,
+                ...negotiationItem,
+                techDocumentName: name,
+                techDocumentUrl: downloadUrl,
+                techDocumentStoragePath: storagePath,
+                techDocumentUploadedAt: new Date().toISOString(),
+              });
+            }}
+            onRemoveFile={() =>
+              updateQuoteItem({
+                ...quoteItem,
+                ...negotiationItem,
+                techDocumentName: null,
+                techDocumentUrl: null,
+                techDocumentStoragePath: null,
+                techDocumentUploadedAt: null,
+              })
+            }
+            onUploadError={() => {
+              Toast.show({
+                type: "error",
+                text1: "Error uploading file",
+                text2: "Please try again",
+              });
+            }}
+            folderName="technical-documents"
+          />
+        )}
       </View>
 
       <View style={styles.formContainer}>

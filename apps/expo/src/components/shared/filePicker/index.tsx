@@ -37,7 +37,7 @@ const FilePickerExample = () => {
         gap : 8
       }}>
         <Icon size={24} name="upload" color={"black"} />
-        <Text>Upload technical documents here</Text>
+        <Text style={{color: "#696969"}}>Upload technical documents here</Text>
       </TouchableOpacity>
     </View>
   );

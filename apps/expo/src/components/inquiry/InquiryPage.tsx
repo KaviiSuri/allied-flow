@@ -282,7 +282,14 @@ export const InquiryPage = () => {
               <Icon style={createStyles.closeButtonIcon} name="times" />
             </TouchableOpacity>
           </View>
-          <ScrollView style={createStyles.formBody}>
+          <ScrollView
+            style={[
+              createStyles.formBody,
+              {
+                height: "auto",
+              },
+            ]}
+          >
             <View>
               <InquiryForm
                 productRequests={productRequests}

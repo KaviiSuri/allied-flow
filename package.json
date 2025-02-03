@@ -23,11 +23,16 @@
   },
   "devDependencies": {
     "@repo/prettier-config": "workspace:*",
-    "@turbo/gen": "^1.13.3",
+    "@turbo/gen": "^2.0.4",
     "@types/aws-lambda": "8.10.138",
     "prettier": "^3.2.5",
     "turbo": "^2.0.4",
     "typescript": "^5.4.5"
   },
-  "prettier": "@repo/prettier-config"
+  "prettier": "@repo/prettier-config",
+  "pnpm": {
+    "patchedDependencies": {
+      "@wapijs/wapi.js@0.1.1": "patches/@wapijs__wapi.js@0.1.1.patch"
+    }
+  }
 }

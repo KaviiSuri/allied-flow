@@ -24,6 +24,10 @@ const envSchema = z.object({
   WHATSAPP_WEBHOOK_SECRET: z.string(),
   RESEND_API_KEY: z.string(),
   RESEND_FROM_EMAIL: z.string(),
+  AWS_REGION: z.string(),
+  AWS_ACCESS_KEY_ID: z.string(),
+  AWS_SECRET_ACCESS_KEY: z.string(),
+  AWS_S3_BUCKET: z.string(),
 });
 
 // Parse and validate the environment variables

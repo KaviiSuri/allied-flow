@@ -56,3 +56,5 @@ dist/
 
 # sst
 .sst
+
+firebase-service-account.json

@@ -1,9 +1,8 @@
 import { env } from "@repo/server-config";
-import { TextMessage } from "@wapijs/wapi.js";
-import { Client } from "@wapijs/wapi.js";
+import Wapi from "@wapijs/wapi.js";
 import type { Notification } from "./pubsub";
 
-export const whatsappClient = new Client({
+export const whatsappClient = new Wapi.Client({
   apiAccessToken: env.WHATSAPP_API_KEY,
   businessAccountId: env.WHATSAPP_BUSINESS_ACCOUNT_ID,
   phoneNumberId: env.WHATSAPP_PHONE_NUMBER_ID,
@@ -50,7 +49,7 @@ export async function sendWhatsappNotifications(
   phoneNumbers: string[],
   notification: Notification,
 ) {
-  const textMessage = new TextMessage({
+  const textMessage = new Wapi.TextMessage({
     text: getNotificationMessage(notification),
   });
 

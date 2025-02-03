@@ -20,6 +20,8 @@
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.738.0",
+    "@aws-sdk/s3-request-presigner": "^3.535.0",
     "@casl/ability": "^6.7.1",
     "@logto/js": "^4.1.2",
     "@repo/db": "workspace:*",
@@ -30,6 +32,7 @@
     "@trpc/server": "11.0.0-rc.648",
     "@wapijs/wapi.js": "^0.1.1",
     "expo-server-sdk": "^3.11.0",
+    "express": "^4.19.2",
     "ioredis": "^5.4.1",
     "nanoid": "^5.0.7",
     "resend": "^4.1.1",

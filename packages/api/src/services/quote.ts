@@ -13,6 +13,9 @@ export const productRequestSchema = z.object({
   unit: z.string(),
   sampleRequested: z.boolean(),
   techDocumentRequested: z.boolean(),
+  techDocumentUrl: z.string().optional(),
+  techDocumentName: z.string().optional(),
+  techDocumentUploadedAt: z.string().optional(),
 });
 
 export type ProductRequest = z.infer<typeof productRequestSchema>;
@@ -59,6 +62,9 @@ const create = async (
         unit: productRequest.unit,
         sampleRequested: productRequest.sampleRequested,
         techDocumentRequested: productRequest.techDocumentRequested,
+        techDocumentUrl: productRequest.techDocumentUrl,
+        techDocumentName: productRequest.techDocumentName,
+        techDocumentUploadedAt: productRequest.techDocumentUploadedAt,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       })),
@@ -184,6 +190,15 @@ const negotiate = async (
           unit: updatedProductRequest.unit,
           sampleRequested: updatedProductRequest.sampleRequested,
           techDocumentRequested: updatedProductRequest.techDocumentRequested,
+          techDocumentUrl:
+            updatedProductRequest.techDocumentUrl ??
+            existingQuoteItem?.techDocumentUrl,
+          techDocumentName:
+            updatedProductRequest.techDocumentName ??
+            existingQuoteItem?.techDocumentName,
+          techDocumentUploadedAt:
+            updatedProductRequest.techDocumentUploadedAt ??
+            existingQuoteItem?.techDocumentUploadedAt,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         };

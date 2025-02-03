@@ -2,10 +2,10 @@ import {
   StyleSheet,
   TextInput,
   View,
-  FlatList,
+  ScrollView,
   Text,
-  Pressable,
 } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import Icon from "react-native-vector-icons/AntDesign";
 import { useState, useRef } from "react";
 
@@ -69,18 +69,17 @@ export const SearchClientBox = ({
 
       {list.length > 0 && filteredItems.length > 0 && (
         <View style={styles.suggestionsContainer}>
-          <FlatList
-            data={filteredItems}
-            keyExtractor={(item) => item}
-            renderItem={({ item }) => (
-              <Pressable
+          <ScrollView>
+            {filteredItems.map((item) => (
+              <TouchableOpacity
+                key={item}
                 style={styles.suggestionItem}
                 onPressIn={() => handleSuggestionPress(item)}
               >
                 <Text style={styles.suggestionText}>{item}</Text>
-              </Pressable>
-            )}
-          />
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
         </View>
       )}
     </View>
@@ -105,7 +104,6 @@ const styles = StyleSheet.create({
   placeholder: {
     color: "#1E293B",
     flex: 1,
-    outlineWidth: 0, // Remove default outline on focus
     fontSize: 16,
   },
   suggestionsContainer: {

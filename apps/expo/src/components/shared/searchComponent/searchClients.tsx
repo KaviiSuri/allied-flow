@@ -2,10 +2,10 @@ import {
   StyleSheet,
   TextInput,
   View,
-  FlatList,
+  ScrollView,
   Text,
-  TouchableOpacity,
 } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import Icon from "react-native-vector-icons/AntDesign";
 import { useState, useRef } from "react";
 
@@ -13,21 +13,20 @@ export const SearchClientBox = ({
   placeholder,
   setValue,
   value,
-  list = [],
+  list = [], // Default to an empty array if list is not provided
 }: {
   placeholder: string;
   setValue: React.Dispatch<React.SetStateAction<string>>;
   value: string;
-  list?: string[];
+  list?: string[]; // Optional list of items to match for autocomplete
 }) => {
   const [filteredItems, setFilteredItems] = useState<string[]>([]);
   const blurTimeout = useRef<NodeJS.Timeout | null>(null);
-
   const handleSearch = (text: string) => {
     setValue(text);
     if (text && list.length > 0) {
       const matches = list.filter((item) =>
-        item.toLowerCase().includes(text.toLowerCase())
+        item.toLowerCase().includes(text.toLowerCase()),
       );
       setFilteredItems(matches);
     } else {
@@ -36,6 +35,7 @@ export const SearchClientBox = ({
   };
 
   const handleSuggestionPress = (item: string) => {
+    console.log("LOGS: PRESS:", item);
     if (blurTimeout.current) {
       clearTimeout(blurTimeout.current);
     }
@@ -48,7 +48,6 @@ export const SearchClientBox = ({
       setFilteredItems([]);
     }, 100);
   };
-
   return (
     <View style={styles.container}>
       <View style={styles.searchBoxContainer}>
@@ -59,26 +58,29 @@ export const SearchClientBox = ({
           style={styles.placeholder}
           value={value}
           onChangeText={handleSearch}
-          onBlur={handleBlur}
-          onFocus={() => handleSearch(value)}
+          onBlur={() => {
+            handleBlur();
+          }}
+          onFocus={() => {
+            handleSearch(value);
+          }}
         />
       </View>
 
       {list.length > 0 && filteredItems.length > 0 && (
-        <FlatList
-          data={filteredItems}
-          keyExtractor={(item) => item}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={styles.suggestionItem}
-              onPress={() => handleSuggestionPress(item)}
-            >
-              <Text style={styles.suggestionText}>{item}</Text>
-            </TouchableOpacity>
-          )}
-          style={styles.suggestionsContainer}
-          keyboardShouldPersistTaps="handled"
-        />
+        <View style={styles.suggestionsContainer}>
+          <ScrollView>
+            {filteredItems.map((item) => (
+              <TouchableOpacity
+                key={item}
+                style={styles.suggestionItem}
+                onPressIn={() => handleSuggestionPress(item)}
+              >
+                <Text style={styles.suggestionText}>{item}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
       )}
     </View>
   );
@@ -96,6 +98,7 @@ const styles = StyleSheet.create({
     borderColor: "#E2E8F0",
     flexDirection: "row",
     alignItems: "center",
+    gap: 8,
     backgroundColor: "#ffffff",
   },
   placeholder: {
@@ -109,13 +112,13 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     zIndex: 999,
-    elevation: 5,
+    elevation: 5, // for Android
     maxHeight: 150,
     borderWidth: 1,
     borderColor: "#E2E8F0",
     borderRadius: 8,
-    backgroundColor: "#ffffff",
-    shadowColor: "#000",
+    backgroundColor: "#ffffff", // Background color for suggestions
+    shadowColor: "#000", // Shadow for iOS
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,

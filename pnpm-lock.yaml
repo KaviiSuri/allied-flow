@@ -101,6 +101,9 @@ importers:
       expo-device:
         specifier: ~6.0.2
         version: 6.0.2(expo@52.0.20)
+      expo-document-picker:
+        specifier: ^13.0.2
+        version: 13.0.2(expo@52.0.20)
       expo-linear-gradient:
         specifier: ^14.0.1
         version: 14.0.1(expo@52.0.20)(react-native@0.76.5)(react@18.3.1)
@@ -2774,7 +2777,7 @@ packages:
 
   /@expo/bunyan@4.0.1:
     resolution: {integrity: sha512-+Lla7nYSiHZirgK+U/uYzsLv/X+HaJienbD5AKX1UQZHYfWaP+9uuQluRB4GrEVWF0GZ7vEVp/jzaOT9k/SQlg==}
-    engines: {node: '>=0.10.0'}
+    engines: {'0': node >=0.10.0}
     dependencies:
       uuid: 8.3.2
     dev: false
@@ -8652,6 +8655,14 @@ packages:
     dependencies:
       expo: 52.0.20(@babel/core@7.26.0)(@babel/preset-env@7.26.0)(react-native@0.76.5)(react@18.3.1)
       ua-parser-js: 0.7.39
+    dev: false
+
+  /expo-document-picker@13.0.2(expo@52.0.20):
+    resolution: {integrity: sha512-Ssnmgx6OTsFEBOx5ktVyJmD5q+7pnGvPRrBHppiJYwX65cREVZuuJ8xAPhoqPHYn65+4WjaxS1lP2rDkSsMo8w==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      expo: 52.0.20(@babel/core@7.26.0)(@babel/preset-env@7.26.0)(react-native@0.76.5)(react@18.3.1)
     dev: false
 
   /expo-eas-client@0.13.1:

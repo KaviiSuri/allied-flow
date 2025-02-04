@@ -1,5 +1,7 @@
 import { env } from "@repo/server-config";
-import Wapi from "@wapijs/wapi.js";
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+const Wapi = require("@wapijs/wapi.js");
 import type { Notification } from "./pubsub";
 
 export const whatsappClient = new Wapi.Client({

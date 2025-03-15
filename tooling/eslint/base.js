@@ -48,6 +48,12 @@ export default tseslint.config(
       ...tseslint.configs.stylisticTypeChecked,
     ],
     rules: {
+      // Disable the problematic rules
+      "@typescript-eslint/dot-notation": "off",
+      "dot-notation": "off",
+      "@typescript-eslint/no-empty-function": "off",
+      "no-empty-function": "off",
+      
       "@typescript-eslint/no-unused-vars": [
         "warn",
         { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },

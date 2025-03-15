@@ -44,8 +44,8 @@ export const analyticsRouter = {
         filters: filtersSchema.optional(),
       })
     )
-    .query(async ({ ctx, input }) => {
-      return ctx.db.transaction(async (tx) => {
+    .query(async ({ input }) => {
+      return await db.transaction(async (tx) => {
         return analyticsService.getProductRankings(
           tx,
           input.dateRange,

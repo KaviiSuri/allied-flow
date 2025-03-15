@@ -1,6 +1,6 @@
 import type { TransactionType } from "@repo/db/client";
-import { and, eq, gte, lte, inArray, desc, sum, count, sql } from "@repo/db";
-import { orders, orderItems, inquiries, quotes, quoteItems } from "@repo/db/schema";
+import { and, eq, gte, lte, inArray, desc, sum, count, sql, asc } from "@repo/db";
+import { orders, orderItems, inquiries, quotes, quoteItems, products } from "@repo/db/schema";
 
 export interface DateRange {
   start_date: Date;
@@ -28,6 +28,20 @@ export interface InquiryMetrics {
     winPercentage: number;
   };
 }
+
+export interface ProductMetrics {
+  id: string;
+  name: string;
+  make: string;
+  cas: string;
+  metrics: {
+    revenue?: number;
+    orders?: number;
+  };
+}
+
+export type SortBy = "revenue" | "orders";
+export type SortOrder = "asc" | "desc";
 
 const getSalesMetrics = async (
   tx: TransactionType,
@@ -151,7 +165,63 @@ const getInquiryMetrics = async (
   };
 };
 
+const getProductRankings = async (
+  tx: TransactionType,
+  dateRange: DateRange,
+  options: {
+    sortBy: SortBy;
+    sortOrder: SortOrder;
+    limit?: number;
+    filters?: {
+      productIds?: string[];
+      clientIds?: string[];
+    };
+  }
+): Promise<ProductMetrics[]> => {
+  const query = tx
+    .select({
+      id: products.id,
+      name: products.name,
+      make: products.make,
+      cas: products.cas,
+      revenue: sql<number>`CAST(COALESCE(SUM(CASE WHEN ${orders.type} = 'REGULAR' AND ${orders.status} IN ('PLACED', 'DISPATCHED', 'DELIVERED') THEN ${orderItems.price} * ${orderItems.quantity} ELSE 0 END), 0) AS INTEGER)`,
+      orders: sql<number>`CAST(COUNT(DISTINCT CASE WHEN ${orders.type} = 'REGULAR' AND ${orders.status} IN ('PLACED', 'DISPATCHED', 'DELIVERED') THEN ${orders.id} END) AS INTEGER)`,
+    })
+    .from(products)
+    .leftJoin(orderItems, eq(products.id, orderItems.productId))
+    .leftJoin(orders, eq(orderItems.orderId, orders.id))
+    .where(
+      and(
+        gte(orders.createdAt, dateRange.start_date.toISOString()),
+        lte(orders.createdAt, dateRange.end_date.toISOString()),
+        options.filters?.clientIds ? inArray(orders.buyerId, options.filters.clientIds) : undefined,
+        options.filters?.productIds ? inArray(products.id, options.filters.productIds) : undefined
+      )
+    )
+    .groupBy(products.id, products.name, products.make, products.cas)
+    .orderBy(
+      options.sortBy === "revenue" 
+        ? options.sortOrder === "desc" ? desc(sql`revenue`) : asc(sql`revenue`)
+        : options.sortOrder === "desc" ? desc(sql`orders`) : asc(sql`orders`)
+    )
+    .limit(options.limit ?? 10);
+
+  const results = await query;
+
+  return results.map(result => ({
+    id: result.id,
+    name: result.name,
+    make: result.make,
+    cas: result.cas,
+    metrics: {
+      revenue: result.revenue,
+      orders: result.orders
+    }
+  }));
+};
+
 export const analyticsService = {
   getSalesMetrics,
-  getInquiryMetrics
+  getInquiryMetrics,
+  getProductRankings
 }; 

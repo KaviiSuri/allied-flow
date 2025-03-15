@@ -26,6 +26,7 @@ export const sellerPermissions: Record<Role, DefinePermissions> = {
     can("read", "Order");
     can("update", "Order");
     can("delete", "Order");
+    can("read", "Analytics");
   },
   MANAGEMENT: (user, { can }) => {
     // admin can do all actions on User and Team
@@ -46,6 +47,7 @@ export const sellerPermissions: Record<Role, DefinePermissions> = {
     can("read", "Order");
     can("update", "Order");
     can("delete", "Order");
+    can("read", "Analytics");
   },
 
   SALES: (user, { can }) => {

@@ -1,5 +1,5 @@
 import type { TransactionType } from "@repo/db/client";
-import { and, eq, gte, lte, inArray, desc, sum, count, sql, asc } from "@repo/db";
+import { and, eq, gte, lte, inArray, desc, sum, count, sql, asc, or } from "@repo/db";
 import { orders, orderItems, inquiries, quotes, quoteItems, products } from "@repo/db/schema";
 
 export interface DateRange {
@@ -42,6 +42,26 @@ export interface ProductMetrics {
 
 export type SortBy = "revenue" | "orders";
 export type SortOrder = "asc" | "desc";
+
+export type TimeSeriesGranularity = "day" | "week" | "month";
+
+export interface TimeSeriesPoint {
+  date: string;
+  revenue: number;
+}
+
+export interface TimeSeriesData {
+  data: TimeSeriesPoint[];
+}
+
+export interface TimeSeriesResponse {
+  current: TimeSeriesData;
+  previous?: TimeSeriesData;
+  metadata: {
+    interval: TimeSeriesGranularity;
+    currency: string;
+  };
+}
 
 const getSalesMetrics = async (
   tx: TransactionType,
@@ -220,8 +240,110 @@ const getProductRankings = async (
   }));
 };
 
+const getRevenueTimeSeries = async (
+  tx: TransactionType,
+  dateRange: DateRange,
+  options: {
+    comparison?: boolean;
+    filters?: {
+      productIds?: string[];
+      clientIds?: string[];
+    };
+  }
+): Promise<TimeSeriesResponse> => {
+  // Calculate the number of days in the range
+  const days = Math.ceil(
+    (dateRange.end_date.getTime() - dateRange.start_date.getTime()) / (1000 * 60 * 60 * 24)
+  );
+
+  // Determine granularity based on date range
+  const granularity: TimeSeriesGranularity = 
+    days <= 31 ? "day" :    // Up to 1 month -> daily
+    days <= 90 ? "week" :   // Up to 3 months -> weekly
+    "month";               // Otherwise -> monthly
+
+  // Calculate comparison date range if needed
+  const comparisonRange = options.comparison ? {
+    start_date: new Date(
+      dateRange.start_date.getFullYear() - 1,
+      dateRange.start_date.getMonth(),
+      dateRange.start_date.getDate()
+    ),
+    end_date: new Date(
+      dateRange.end_date.getFullYear() - 1,
+      dateRange.end_date.getMonth(),
+      dateRange.end_date.getDate()
+    )
+  } : null;
+
+  // Build date format based on granularity
+  const dateFormat = 
+    granularity === "day" ? "%Y-%m-%d" :
+    granularity === "week" ? "%Y-%W" :
+    "%Y-%m";
+
+  // Execute query
+  const results = await tx
+    .select({
+      date: sql<string>`strftime(${dateFormat}, ${orders.createdAt})`,
+      revenue: sql<number>`CAST(COALESCE(SUM(${orderItems.price} * ${orderItems.quantity}), 0) AS INTEGER)`,
+      isPreviousPeriod: sql<number>`CASE 
+        WHEN ${orders.createdAt} >= ${comparisonRange?.start_date.toISOString() ?? ''} 
+        AND ${orders.createdAt} <= ${comparisonRange?.end_date.toISOString() ?? ''}
+        THEN 1 ELSE 0 END`,
+    })
+    .from(orders)
+    .innerJoin(orderItems, eq(orders.id, orderItems.orderId))
+    .where(
+      and(
+        eq(orders.type, "REGULAR"),
+        inArray(orders.status, ["PLACED", "DISPATCHED", "DELIVERED"]),
+        options.filters?.clientIds ? inArray(orders.buyerId, options.filters.clientIds) : undefined,
+        options.filters?.productIds ? inArray(orderItems.productId, options.filters.productIds) : undefined,
+        or(
+          and(
+            gte(orders.createdAt, dateRange.start_date.toISOString()),
+            lte(orders.createdAt, dateRange.end_date.toISOString())
+          ),
+          options.comparison && comparisonRange ? and(
+            gte(orders.createdAt, comparisonRange.start_date.toISOString()),
+            lte(orders.createdAt, comparisonRange.end_date.toISOString())
+          ) : undefined
+        )
+      )
+    )
+    .groupBy(sql`date`)
+    .orderBy(sql`date`);
+
+  // Process results into separate series
+  const current: TimeSeriesPoint[] = [];
+  const previous: TimeSeriesPoint[] = [];
+
+  results.forEach(row => {
+    const point = {
+      date: row.date,
+      revenue: row.revenue
+    };
+    if (row.isPreviousPeriod === 1) {
+      previous.push(point);
+    } else {
+      current.push(point);
+    }
+  });
+
+  return {
+    current: { data: current },
+    ...(options.comparison ? { previous: { data: previous } } : {}),
+    metadata: {
+      interval: granularity,
+      currency: "Rs."
+    }
+  };
+};
+
 export const analyticsService = {
   getSalesMetrics,
   getInquiryMetrics,
-  getProductRankings
+  getProductRankings,
+  getRevenueTimeSeries
 }; 

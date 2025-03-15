@@ -2,6 +2,7 @@ import { z } from "zod";
 import { protectedProcedure } from "../trpc";
 import { analyticsService } from "../services/analytics";
 import type { TRPCRouterRecord } from "@trpc/server";
+import { db } from "@repo/db/client";
 
 const dateRangeSchema = z.object({
   start_date: z.date(),
@@ -15,17 +16,15 @@ const filtersSchema = z.object({
 
 export const analyticsRouter = {
   getSummary: protectedProcedure
-    .input(
-      z.object({
-        dateRange: dateRangeSchema,
-        filters: filtersSchema.optional(),
-      })
-    )
-    .query(async ({ ctx, input }) => {
-      return ctx.db.transaction(async (tx) => {
+    .input(dateRangeSchema.extend({
+      productIds: z.array(z.string()).optional(),
+      clientIds: z.array(z.string()).optional(),
+    }))
+    .query(async ({ input }) => {
+      return await db.transaction(async (tx) => {
         const [salesMetrics, inquiryMetrics] = await Promise.all([
-          analyticsService.getSalesMetrics(tx, input.dateRange, input.filters),
-          analyticsService.getInquiryMetrics(tx, input.dateRange, input.filters),
+          analyticsService.getSalesMetrics(tx, input),
+          analyticsService.getInquiryMetrics(tx, input),
         ]);
 
         return {
@@ -57,6 +56,31 @@ export const analyticsRouter = {
             filters: input.filters,
           }
         );
+      });
+    }),
+
+  getRevenueSeries: protectedProcedure
+    .input(
+      z.object({
+        dateRange: z.object({
+          start_date: z.date(),
+          end_date: z.date(),
+        }),
+        comparison: z.boolean().optional().default(false),
+        filters: z
+          .object({
+            productIds: z.array(z.string()).optional(),
+            clientIds: z.array(z.string()).optional(),
+          })
+          .optional(),
+      })
+    )
+    .query(async ({ input }) => {
+      return await db.transaction(async (tx) => {
+        return await analyticsService.getRevenueTimeSeries(tx, input.dateRange, {
+          comparison: input.comparison,
+          filters: input.filters,
+        });
       });
     }),
 } satisfies TRPCRouterRecord; 

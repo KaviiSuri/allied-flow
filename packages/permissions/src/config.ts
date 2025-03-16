@@ -40,6 +40,10 @@ export interface SubjectsWithTypes {
     type: Order;
     actions: "create" | "list" | "read" | "update" | "delete";
   };
+  Analytics: {
+    type: Record<string, never>;
+    actions: "read";
+  };
 }
 
 // Using a generic function to map SubjectsWithTypes to AppAbilities

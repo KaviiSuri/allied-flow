@@ -7,6 +7,7 @@ import { ordersRouter } from "./router/order.js";
 import { inquiryRouter } from "./router/inquiry.js";
 import { notificationsRouter } from "./router/notifications.js";
 import { filesRouter } from "./router/files.js";
+import { analyticsRouter } from "./router/analytics.js";
 
 export const appRouter = createTRPCRouter({
   auth: authRouter,
@@ -17,6 +18,7 @@ export const appRouter = createTRPCRouter({
   teams: teamsRouter,
   notifications: notificationsRouter,
   files: filesRouter,
+  analytics: analyticsRouter,
 });
 
 // export type definition of API

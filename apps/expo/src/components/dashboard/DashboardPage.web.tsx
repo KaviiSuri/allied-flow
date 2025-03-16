@@ -1,16 +1,31 @@
 import { Text, View } from "react-native";
 import { dashboardWebStyles } from "./css";
 import { BoardSection } from "./boardSection";
+import { ScrollView } from "react-native-gesture-handler";
+import { GraphComponent } from "./graphBasedComponent";
 
 export const DashboardPage = () => {
   return (
     <View style={dashboardWebStyles.container}>
-      {/* three small boards with info */}
-      <View style={{ flexDirection: "row", flex: 1, gap: 8 }}>
-        <BoardSection title="Total Orders" />
-        <BoardSection title="Total Orders" />
-        <BoardSection title="Total Orders" />
-      </View>
+      {/* dashboard body */}
+      <View>Header</View>
+      <ScrollView style={dashboardWebStyles.dashboardBody}>
+        <View style={dashboardWebStyles.singleSection}>
+          <Text style={dashboardWebStyles.sectionHeader}>Summary</Text>
+          <View style={dashboardWebStyles.boardSectionContainer}>
+            <BoardSection title="Sales revenue" score="1275" />
+            <BoardSection title="Sales revenue" score="1275" />
+            <BoardSection title="Sales revenue" score="1275" />
+            <BoardSection title="Sales revenue" score="1275" />
+            <BoardSection title="Sales revenue" score="1275" />
+            <BoardSection title="Sales revenue" score="1275" />
+          </View>
+
+          <View style={dashboardWebStyles.boardSectionContainer}>
+            <GraphComponent />
+          </View>
+        </View>
+      </ScrollView>
     </View>
   );
 };

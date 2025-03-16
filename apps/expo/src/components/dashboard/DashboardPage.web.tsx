@@ -3,6 +3,7 @@ import { dashboardWebStyles } from "./css";
 import { BoardSection } from "./boardSection";
 import { ScrollView } from "react-native-gesture-handler";
 import { GraphComponent } from "./graphBasedComponent";
+import { TableSection } from "./TableSection";
 
 export const DashboardPage = () => {
   return (
@@ -25,6 +26,8 @@ export const DashboardPage = () => {
             <GraphComponent />
           </View>
         </View>
+
+        <TableSection />
       </ScrollView>
     </View>
   );

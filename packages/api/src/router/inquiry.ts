@@ -111,7 +111,7 @@ const sendInquiryNegotiationNotifications = async (
   await sendNotifications(
     trx,
     persistedNotifications.filter((n) => !!n) as Notification[],
-  );
+  ).catch(console.error);
 };
 
 // Define the schema for raising an inquiry

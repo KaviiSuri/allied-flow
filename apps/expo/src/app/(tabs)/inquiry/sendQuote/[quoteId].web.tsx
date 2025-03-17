@@ -100,7 +100,12 @@ export default () => {
     handleSampleRequest();
     negotiate({
       inquiryId: data.inquiry.id,
-      items: Object.values(negoiatedItems),
+      items: Object.values(negoiatedItems).map((item) => ({
+        ...item,
+        techDocumentUrl: item.techDocumentUrl ?? undefined,
+        techDocumentName: item.techDocumentName ?? undefined,
+        techDocumentUploadedAt: item.techDocumentUploadedAt ?? undefined,
+      })),
       tnc: terms,
     }).catch(() => {
       Toast.show({

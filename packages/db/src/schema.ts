@@ -160,6 +160,10 @@ export const quoteItems = sqliteTable(
     techDocumentRequested: integer("tech_document_requested", {
       mode: "boolean",
     }).notNull(),
+    techDocumentStoragePath: text("tech_document_storage_path"),
+    techDocumentUrl: text("tech_document_url"),
+    techDocumentName: text("tech_document_name"),
+    techDocumentUploadedAt: text("tech_document_uploaded_at"),
     createdAt: text("created_at")
       .$defaultFn(() => new Date().toISOString())
       .notNull(),

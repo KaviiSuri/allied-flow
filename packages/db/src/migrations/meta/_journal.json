@@ -36,6 +36,13 @@
       "when": 1733042835347,
       "tag": "0004_sweet_bloodscream",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1738603781059,
+      "tag": "0005_stale_grandmaster",
+      "breakpoints": true
     }
   ]
 }

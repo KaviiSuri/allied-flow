@@ -2,7 +2,8 @@ import type { RouterOutputs } from "@repo/api";
 import { StyleSheet, Text, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { useProductById } from "~/hooks/useProductById";
-import { api } from "~/utils/api";
+import { downloadFile } from "~/utils/files";
+import { SecondaryButton } from "~/components/core/button";
 
 export const DetailsSectionMobile = ({
   quote,
@@ -52,6 +53,13 @@ const ProductCard = ({
   }
   if (!product) {
     return null;
+  }
+
+  function handleDownload() {
+    if (!product || !quoteItem.techDocumentUrl) {
+      return;
+    }
+    downloadFile(quoteItem.techDocumentUrl, `${product.name}.${quoteItem.techDocumentName}`);
   }
   return (
     <View>
@@ -103,6 +111,18 @@ const ProductCard = ({
               <Text style={orderStyles.orderMainText}>{product.desc}</Text>
             </View>
           </View>
+          {quoteItem.techDocumentUrl && (
+            <View style={orderStyles.innerSectionFlexStart}>
+              <View style={{ flex: 1, gap: 4 }}>
+                <Text style={orderStyles.orderHeader}>Tech Docs</Text>
+                <SecondaryButton
+                  text={"Download"}
+                  onPress={handleDownload}
+                  disabled={!quoteItem.techDocumentUrl}
+                />
+              </View>
+            </View>
+          )}
         </View>
       </View>
     </View>

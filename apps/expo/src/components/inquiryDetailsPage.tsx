@@ -3,6 +3,9 @@ import { Table, TableData, TableHeading, TableRow } from "./shared/table";
 import { useEffect } from "react";
 import type { RouterOutputs } from "@repo/api";
 import { api } from "~/utils/api";
+import { Link } from "expo-router";
+import { SecondaryButton } from "./core/button";
+import { downloadFile } from "~/utils/files";
 
 type QuoteItem = NonNullable<
   RouterOutputs["inquiry"]["getDetails"]["latestQuote"]
@@ -101,7 +104,9 @@ export const InquiryDetailsPage = ({
               fontWeight: 500,
               flex: 1 / 3,
             }}
-          ></TableData>
+          >
+            Tech Docs
+          </TableData>
         </TableHeading>
         {/* random data  */}
         {quote?.quoteItems.map((quoteItem) => (
@@ -123,6 +128,16 @@ const QuoteTableData = ({ quoteItem }: { quoteItem: QuoteItem }) => {
   if (!product) {
     return null;
   }
+  const handleDownload = async () => {
+    if (!quoteItem.techDocumentUrl) {
+      return;
+    }
+
+    downloadFile(
+      quoteItem.techDocumentUrl,
+      `${product.name}-${quoteItem.techDocumentName}`,
+    );
+  };
   return (
     <TableRow style={styles.tableRow} id={"1"} key={quoteItem.quoteId}>
       <TableData
@@ -201,7 +216,17 @@ const QuoteTableData = ({ quoteItem }: { quoteItem: QuoteItem }) => {
       </TableData>
       <TableData
         style={{ fontSize: 14, color: "#1E293B", fontWeight: 500, flex: 1 / 3 }}
-      ></TableData>
+      >
+        {quoteItem.techDocumentUrl ? (
+          <SecondaryButton
+            text={"Download"}
+            onPress={handleDownload}
+            disabled={!quoteItem.techDocumentUrl}
+          />
+        ) : (
+          <Text>No Tech Docs</Text>
+        )}
+      </TableData>
     </TableRow>
   );
 };

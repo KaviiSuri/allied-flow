@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
 import { Badge } from "../core/badge";
 import type { RouterOutputs } from "@repo/api";
 import { api } from "~/utils/api";
-import FilePickerExample from "../shared/filePicker";
+import FilePicker from "../shared/filePicker";
+import Toast from "react-native-toast-message";
+import { useUser } from "~/providers/auth";
 
 type QuoteItem = NonNullable<
   RouterOutputs["inquiry"]["getDetails"]["latestQuote"]
@@ -64,8 +65,10 @@ const QuoteTableList = ({
   updateQuoteItem: (quoteItem: QuoteItem) => void;
   negotiationItem?: QuoteItem;
 }) => {
+  console.log('quoteItem current', quoteItem)
   const { data: productList, isLoading } = api.products.read.useQuery();
-  if (isLoading) {
+  const { user } = useUser();
+  if (isLoading || !user) {
     return <Text>Loading...</Text>;
   }
 
@@ -111,7 +114,46 @@ const QuoteTableList = ({
       </View>
 
       <View style={styles.formContainer}>
-        <FilePickerExample />
+        {quoteItem.techDocumentRequested && (
+          <FilePicker
+            currentFile={
+              !!negotiationItem?.techDocumentUrl
+                ? {
+                    name: negotiationItem.techDocumentName ?? undefined,
+                    url: negotiationItem.techDocumentUrl,
+                  }
+                : undefined
+            }
+            onUploadComplete={({ downloadUrl, storagePath, name }) => {
+              updateQuoteItem({
+                ...quoteItem,
+                ...negotiationItem,
+                techDocumentName: name,
+                techDocumentUrl: downloadUrl,
+                techDocumentStoragePath: storagePath,
+                techDocumentUploadedAt: new Date().toISOString(),
+              });
+            }}
+            onRemoveFile={() =>
+              updateQuoteItem({
+                ...quoteItem,
+                ...negotiationItem,
+                techDocumentName: null,
+                techDocumentUrl: null,
+                techDocumentStoragePath: null,
+                techDocumentUploadedAt: null,
+              })
+            }
+            onUploadError={() => {
+              Toast.show({
+                type: "error",
+                text1: "Error uploading file",
+                text2: "Please try again",
+              });
+            }}
+            folderName="technical-documents"
+          />
+        )}
       </View>
 
       <View style={styles.formContainer}>
@@ -122,7 +164,6 @@ const QuoteTableList = ({
           keyboardType="numeric"
           onChangeText={(value) => {
             const newPrice = parseFloat(value);
-            console.log("newPrice", newPrice);
             if (isNaN(newPrice)) {
               return;
             }

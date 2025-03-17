@@ -18,6 +18,16 @@ const envSchema = z.object({
   DATABASE_TOKEN: z.string().optional(),
   EXPO_ACCESS_TOKEN: z.string(),
   REDIS_URL: z.string().default("redis://localhost:6379"),
+  WHATSAPP_API_KEY: z.string(),
+  WHATSAPP_BUSINESS_ACCOUNT_ID: z.string(),
+  WHATSAPP_PHONE_NUMBER_ID: z.string(),
+  WHATSAPP_WEBHOOK_SECRET: z.string(),
+  RESEND_API_KEY: z.string(),
+  RESEND_FROM_EMAIL: z.string(),
+  AWS_REGION: z.string(),
+  AWS_ACCESS_KEY_ID: z.string(),
+  AWS_SECRET_ACCESS_KEY: z.string(),
+  AWS_S3_BUCKET: z.string(),
 });
 
 // Parse and validate the environment variables

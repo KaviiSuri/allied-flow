@@ -369,13 +369,13 @@ export default function Clients() {
                 <TableRow key={team.id}>
                   <TableData>{team.name}</TableData>
                   <TableData>
-                    {team.adminUser?.name ? team.adminUser?.name : "-"}
+                    {team.adminUser?.name ? team.adminUser.name : "-"}
                   </TableData>
                   <TableData>
-                    {team.adminUser?.phone ? team.adminUser?.phone : "-"}
+                    {team.adminUser?.phone ? team.adminUser.phone : "-"}
                   </TableData>
                   <TableData>
-                    {team.adminUser?.email ? team.adminUser?.email : "-"}
+                    {team.adminUser?.email ? team.adminUser.email : "-"}
                   </TableData>
                   <View
                     style={{

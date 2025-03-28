@@ -108,7 +108,7 @@ export const ChartComponent = () => {
         yAxisSuffix="L"
         yAxisInterval={1}
         chartConfig={{
-          backgroundColor: "#f5f5f5",
+          backgroundColor: "#ffffff",
           backgroundGradientFrom: "#ffffff",
           backgroundGradientTo: "#ffffff",
           decimalPlaces: 0,

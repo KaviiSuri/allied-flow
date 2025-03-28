@@ -15,14 +15,63 @@ export const DashboardPage = () => {
     return date;
   });
 
-  const { data: summaryData } = api.analytics.getSummary.useQuery({
+  // Summary Analytics
+  const {
+    data: summaryData,
+    isLoading: isSummaryLoading,
+    error: summaryError,
+  } = api.analytics.getSummary.useQuery({
     start_date,
     end_date,
   });
 
+  // Product Rankings Analytics
+  const {
+    data: productRankings,
+    isLoading: isRankingsLoading,
+    error: rankingsError,
+  } = api.analytics.getProductRankings.useQuery({
+    dateRange: {
+      start_date,
+      end_date,
+    },
+    sortBy: "revenue",
+    sortOrder: "desc",
+    limit: 10,
+  });
+
+  // Revenue Series Analytics
+  const {
+    data: revenueSeries,
+    isLoading: isSeriesLoading,
+    error: seriesError,
+  } = api.analytics.getRevenueSeries.useQuery({
+    dateRange: {
+      start_date,
+      end_date,
+    },
+    comparison: true,
+  });
+
+  // Log all analytics data only when loading is complete
   useEffect(() => {
-    console.log(summaryData);
-  }, [summaryData]);
+    if (!isSummaryLoading && !isRankingsLoading && !isSeriesLoading) {
+      console.log("=== Analytics Data ===");
+      console.log("Summary Data:", summaryData);
+      console.log("Product Rankings:", productRankings);
+      console.log("Revenue Series:", revenueSeries);
+      console.log("=====================");
+    }
+  }, [
+    summaryData,
+    productRankings,
+    revenueSeries,
+    start_date,
+    end_date,
+    isSummaryLoading,
+    isRankingsLoading,
+    isSeriesLoading,
+  ]);
 
   return (
     <View style={dashboardWebStyles.container}>
@@ -58,12 +107,23 @@ export const DashboardPage = () => {
             />
           </View>
 
-          <View style={dashboardWebStyles.boardSectionContainer}>
-            <GraphComponent />
+          <View
+            style={{
+              flexDirection: "row",
+              gap: 10,
+              width: "100%",
+            }}
+          >
+            <View style={dashboardWebStyles.graphSectionContainer}>
+              <GraphComponent />
+            </View>
+            <View style={dashboardWebStyles.graphSectionContainer}>
+              <GraphComponent />
+            </View>
           </View>
         </View>
 
-        <TableSection />
+        {/* <TableSection /> */}
       </ScrollView>
     </View>
   );

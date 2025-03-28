@@ -63,6 +63,15 @@ export const dashboardWebStyles = StyleSheet.create({
     padding: 12,
     marginBottom: 10, // Ensures spacing between rows
   },
+  graphSectionContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+    flex: 1,
+    gap: 10,
+    paddingBottom: 10,
+  },
   titleText: {
     fontFamily: "Avenir",
     fontSize: 14,

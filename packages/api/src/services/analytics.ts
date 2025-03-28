@@ -221,8 +221,8 @@ const getProductRankings = async (
     .groupBy(products.id, products.name, products.make, products.cas)
     .orderBy(
       options.sortBy === "revenue" 
-        ? options.sortOrder === "desc" ? desc(sql`revenue`) : asc(sql`revenue`)
-        : options.sortOrder === "desc" ? desc(sql`orders`) : asc(sql`orders`)
+        ? options.sortOrder === "desc" ? desc(sql`CAST(COALESCE(SUM(CASE WHEN ${orders.type} = 'REGULAR' AND ${orders.status} IN ('PLACED', 'DISPATCHED', 'DELIVERED') THEN ${orderItems.price} * ${orderItems.quantity} ELSE 0 END), 0) AS INTEGER)`) : asc(sql`CAST(COALESCE(SUM(CASE WHEN ${orders.type} = 'REGULAR' AND ${orders.status} IN ('PLACED', 'DISPATCHED', 'DELIVERED') THEN ${orderItems.price} * ${orderItems.quantity} ELSE 0 END), 0) AS INTEGER)`)
+        : options.sortOrder === "desc" ? desc(sql`CAST(COUNT(DISTINCT CASE WHEN ${orders.type} = 'REGULAR' AND ${orders.status} IN ('PLACED', 'DISPATCHED', 'DELIVERED') THEN ${orders.id} END) AS INTEGER)`) : asc(sql`CAST(COUNT(DISTINCT CASE WHEN ${orders.type} = 'REGULAR' AND ${orders.status} IN ('PLACED', 'DISPATCHED', 'DELIVERED') THEN ${orders.id} END) AS INTEGER)`)
     )
     .limit(options.limit ?? 10);
 

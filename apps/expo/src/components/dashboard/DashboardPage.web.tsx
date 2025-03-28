@@ -49,6 +49,7 @@ export const DashboardPage = () => {
     }
   }, [summaryData, revenueData, productRankings]);
 
+
   return (
     <View style={dashboardWebStyles.container}>
       {/* dashboard body */}

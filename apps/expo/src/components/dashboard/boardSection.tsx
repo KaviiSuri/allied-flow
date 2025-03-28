@@ -8,7 +8,13 @@ import { MenuItem } from "../shared/dropdown/multiSelect";
 import Icon from "react-native-vector-icons/Feather";
 import { useState } from "react";
 
-export const BoardSection = ({ title }: { title: string }) => {
+export const BoardSection = ({
+  title,
+  score,
+}: {
+  title: string;
+  score: string;
+}) => {
   const [selected, setSelected] = useState<string | number>("All");
   return (
     <View style={dashboardWebStyles.boardSection}>
@@ -40,7 +46,7 @@ export const BoardSection = ({ title }: { title: string }) => {
           </SingleSelect>
         </SingleSelectDropdown>
       </View>
-      <Text style={dashboardWebStyles.indicator}>1275</Text>
+      <Text style={dashboardWebStyles.indicator}>{score ? score : 0}</Text>
     </View>
   );
 };

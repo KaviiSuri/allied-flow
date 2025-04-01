@@ -312,8 +312,8 @@ const getRevenueTimeSeries = async (
         )
       )
     )
-    .groupBy(sql`date`)
-    .orderBy(sql`date`);
+    .groupBy(sql`strftime(${dateFormat}, ${orders.createdAt})`)
+    .orderBy(sql`strftime(${dateFormat}, ${orders.createdAt})`);
 
   // Process results into separate series
   const current: TimeSeriesPoint[] = [];
